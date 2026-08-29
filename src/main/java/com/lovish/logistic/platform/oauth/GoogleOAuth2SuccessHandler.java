@@ -1,0 +1,116 @@
+package com.lovish.logistic.platform.oauth;
+
+import java.io.IOException;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
+
+import com.lovish.logistic.platform.entity.User;
+import com.lovish.logistic.platform.enums.AuthProvider;
+import com.lovish.logistic.platform.enums.Role;
+import com.lovish.logistic.platform.repository.UserRepository;
+import com.lovish.logistic.platform.service.JwtService;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@Component
+public class GoogleOAuth2SuccessHandler implements AuthenticationSuccessHandler {
+
+	private final UserRepository userRepository;
+	private final JwtService jwtService;
+
+	public GoogleOAuth2SuccessHandler(UserRepository userRepository, JwtService jwtService) {
+
+		this.userRepository = userRepository;
+		this.jwtService = jwtService;
+	}
+
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) throws IOException, ServletException {
+
+		OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+
+		String email = oauth2User.getAttribute("email");
+		String name = oauth2User.getAttribute("name");
+
+		User user = userRepository.findByEmail(email).orElse(null);
+
+		// First-time Google signup
+		if (user == null) {
+
+			user = new User();
+
+			user.setEmail(email);
+			user.setUsername(generateUniqueUsername(name, email));
+
+			user.setAuthProvider(AuthProvider.GOOGLE);
+			user.setRole(Role.CUSTOMER);
+			user.setEnabled(true);
+			user.setPassword(null);
+
+			user = userRepository.save(user);
+
+		} else {
+
+			// Existing LOCAL account with same email
+			if (user.getAuthProvider() == AuthProvider.LOCAL) {
+
+				response.sendRedirect("http://localhost:5173/oauth/callback?error=local_account");
+
+				return;
+			}
+
+			// Existing Google account
+			if (!user.isEnabled()) {
+
+				response.sendRedirect("http://localhost:5173/oauth/callback?error=account_disabled");
+
+				return;
+			}
+		}
+
+		// Generate our application's JWT tokens
+		String accessToken = jwtService.generateAccessToken(user);
+
+		String refreshToken = jwtService.generateRefreshToken(user);
+
+		String redirectUrl = "http://localhost:5173/oauth/callback" + "?token=" + accessToken + "&refreshToken="
+				+ refreshToken;
+
+		response.sendRedirect(redirectUrl);
+	}
+
+	private String generateUniqueUsername(String name, String email) {
+
+		String baseUsername;
+
+		if (name != null && !name.isBlank()) {
+
+			baseUsername = name.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+		} else {
+
+			baseUsername = email.substring(0, email.indexOf("@")).toLowerCase();
+		}
+
+		if (baseUsername.isBlank()) {
+			baseUsername = "googleuser";
+		}
+
+		String username = baseUsername;
+		int counter = 1;
+
+		while (userRepository.existsByUsername(username)) {
+
+			username = baseUsername + counter;
+			counter++;
+		}
+
+		return username;
+	}
+}
