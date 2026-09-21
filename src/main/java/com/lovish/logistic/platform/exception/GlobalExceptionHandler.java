@@ -81,14 +81,14 @@ public class GlobalExceptionHandler {
 				"You do not have permission to access this resource", request, null);
 	}
 
-	// InvalidIndicatorInputException
-	@ExceptionHandler(InvalidIndicatorInputException.class)
-	public ResponseEntity<ErrorResponse> handleInvalidIndicatorInput(InvalidIndicatorInputException ex,
+	// BadRequestException
+	@ExceptionHandler(BadRequestException.class)
+	public ResponseEntity<ErrorResponse> handleInvalidIndicatorInput(BadRequestException ex,
 			HttpServletRequest request) {
 
-		log.warn("Invalid indicator input: {}", ex.getMessage());
+		log.warn("Bad Request: {}", ex.getMessage());
 
-		return buildResponse(HttpStatus.BAD_REQUEST, "Invalid Indicator Input", ex.getMessage(), request, null);
+		return buildResponse(HttpStatus.BAD_REQUEST, "Bad Request", ex.getMessage(), request, null);
 	}
 
 	// DuplicateResourceException
@@ -131,14 +131,13 @@ public class GlobalExceptionHandler {
 		return buildResponse(HttpStatus.UNAUTHORIZED, "Invalid Credentials", ex.getMessage(), request, null);
 	}
 
-	// ScannerNotFound Exception
-	@ExceptionHandler(ScannerNotFoundException.class)
-	public ResponseEntity<ErrorResponse> handleScannerNotFound(ScannerNotFoundException ex,
-			HttpServletRequest request) {
+	// Unauthorized Exception
+	@ExceptionHandler(UnauthorizedException.class)
+	public ResponseEntity<ErrorResponse> handleScannerNotFound(UnauthorizedException ex, HttpServletRequest request) {
 
-		log.warn("Scanner not found: {}", ex.getMessage());
+		log.warn("Unauthorized: {}", ex.getMessage());
 
-		return buildResponse(HttpStatus.NOT_FOUND, "Scanner Not Found", ex.getMessage(), request, null);
+		return buildResponse(HttpStatus.UNAUTHORIZED, "Its Unauthorized", ex.getMessage(), request, null);
 	}
 
 //       UserNotFound Exception

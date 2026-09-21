@@ -63,6 +63,8 @@ public class AuthServiceImpl implements AuthService {
 			throw new InvalidCredentialsException();
 		}
 
+		System.out.println("Admin/User found: " + user.getUsername());
+		System.out.println("Password matches: " + passwordEncoder.matches(dto.getPassword(), user.getPassword()));
 		// Verify password
 		if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
 
