@@ -9,6 +9,7 @@ import com.lovish.logistic.platform.dto.ShipmentResponseDto;
 import com.lovish.logistic.platform.dto.ShipmentSummaryDto;
 import com.lovish.logistic.platform.dto.ShipmentTrackingResponseDto;
 import com.lovish.logistic.platform.dto.ShipmentUpdateRequestDto;
+import com.lovish.logistic.platform.enums.ShipmentStatus;
 
 public interface ShipmentService {
 
@@ -25,6 +26,8 @@ public interface ShipmentService {
 	ShipmentResponseDto cancelShipment(String id);
 
 	PriceEstimateResponseDto estimatePrice(PriceEstimateRequestDto request);
-	
+
 	ShipmentTrackingResponseDto getTrackingHistory(String trackingNumber);
+
+	ShipmentResponseDto updateShipmentStatus(String shipmentId, ShipmentStatus newStatus);
 }

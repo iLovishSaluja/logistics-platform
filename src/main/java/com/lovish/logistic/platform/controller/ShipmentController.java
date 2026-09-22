@@ -17,6 +17,7 @@ import com.lovish.logistic.platform.dto.PriceEstimateRequestDto;
 import com.lovish.logistic.platform.dto.PriceEstimateResponseDto;
 import com.lovish.logistic.platform.dto.ShipmentCreateRequestDto;
 import com.lovish.logistic.platform.dto.ShipmentResponseDto;
+import com.lovish.logistic.platform.dto.ShipmentStatusUpdateRequestDto;
 import com.lovish.logistic.platform.dto.ShipmentSummaryDto;
 import com.lovish.logistic.platform.dto.ShipmentTrackingResponseDto;
 import com.lovish.logistic.platform.dto.ShipmentUpdateRequestDto;
@@ -83,6 +84,15 @@ public class ShipmentController {
 	public ResponseEntity<ShipmentTrackingResponseDto> getTrackingHistory(@PathVariable String trackingNumber) {
 
 		ShipmentTrackingResponseDto response = shipmentService.getTrackingHistory(trackingNumber);
+
+		return ResponseEntity.ok(response);
+	}
+
+	@PatchMapping("/{shipmentId}/status")
+	public ResponseEntity<ShipmentResponseDto> updateShipmentStatus(@PathVariable String shipmentId,
+			@Valid @RequestBody ShipmentStatusUpdateRequestDto request) {
+
+		ShipmentResponseDto response = shipmentService.updateShipmentStatus(shipmentId, request.getStatus());
 
 		return ResponseEntity.ok(response);
 	}

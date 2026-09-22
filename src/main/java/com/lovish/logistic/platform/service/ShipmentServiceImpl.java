@@ -34,16 +34,16 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private final ShipmentMapper shipmentMapper;
 	private final UserRepository userRepository;
 	private final PricingService pricingService;
+	private final ShipmentStatusService shipmentStatusService;
 
 	public ShipmentServiceImpl(ShipmentRepository shipmentRepository, ShipmentMapper shipmentMapper,
-			UserRepository userRepository, PricingService pricingService) {
-
+			UserRepository userRepository, PricingService pricingService, ShipmentStatusService shipmentStatusService) {
 		super();
-
 		this.shipmentRepository = shipmentRepository;
 		this.shipmentMapper = shipmentMapper;
 		this.userRepository = userRepository;
 		this.pricingService = pricingService;
+		this.shipmentStatusService = shipmentStatusService;
 	}
 
 	@Override
@@ -210,5 +210,34 @@ public class ShipmentServiceImpl implements ShipmentService {
 				.toTrackingHistoryDtoList(shipment.getTrackingHistory());
 
 		return new ShipmentTrackingResponseDto(shipment.getTrackingNumber(), shipment.getStatus(), trackingHistory);
+	}
+
+	@Override
+	public ShipmentResponseDto updateShipmentStatus(String shipmentId, ShipmentStatus newStatus) {
+
+		Shipment shipment = shipmentRepository.findById(shipmentId)
+				.orElseThrow(() -> new ResourceNotFoundException("Shipment not found with id: " + shipmentId));
+
+		ShipmentStatus currentStatus = shipment.getStatus();
+
+		boolean validTransition = shipmentStatusService.isValidTransition(currentStatus, newStatus);
+
+		if (!validTransition) {
+			throw new BadRequestException(
+					"Invalid shipment status transition from " + currentStatus + " to " + newStatus);
+		}
+
+		shipment.setStatus(newStatus);
+
+		String currentUserId = getCurrentUserId();
+
+		addTrackingEvent(shipment, newStatus, shipment.getSenderAddress().getCity(),
+				"Shipment status changed from " + currentStatus + " to " + newStatus, currentUserId, null);
+
+		shipment.setUpdatedAt(LocalDateTime.now());
+
+		Shipment updatedShipment = shipmentRepository.save(shipment);
+
+		return shipmentMapper.toResponseDto(updatedShipment);
 	}
 }

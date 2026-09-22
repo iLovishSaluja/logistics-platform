@@ -8,12 +8,15 @@ public class PasswordHashGenerator {
 
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-		String password = "Admin@12345";
+		String password1 = "Admin@12345";
 
-		String hash = encoder.encode(password);
+		String password2 = "Agent@12345";
 
-		System.out.println("Password: " + password);
-		System.out.println("BCrypt Hash: " + hash);
-		System.out.println("Matches: " + encoder.matches(password, hash));
+		String hash1 = encoder.encode(password1);
+		String hash2 = encoder.encode(password2);
+
+		System.out.println("Password2: " + password2);
+		System.out.println("BCrypt Hash2: " + hash2);
+		System.out.println("Matches: " + encoder.matches(password2, hash2));
 	}
 }
