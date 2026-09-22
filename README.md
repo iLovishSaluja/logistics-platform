@@ -1,410 +1,367 @@
 # 🚚 Logistics Platform
 
-### Production-Style Logistics & Shipment Management Backend
+### Production-Oriented Logistics & Shipment Management Backend
 
-![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-green?style=for-the-badge&logo=springboot)
-![Spring Security](https://img.shields.io/badge/Spring_Security-JWT_|_OAuth2.0-red?style=for-the-badge&logo=springsecurity)
-![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb)
-![Build](https://img.shields.io/badge/Maven-Build-C71A36?style=for-the-badge&logo=apachemaven)
+<p align="center">
 
-A production-oriented **Logistics and Shipment Management Platform** built with **Java 21, Spring Boot, Spring Security, JWT, OAuth 2.0, and MongoDB**.
+A modular, production-oriented logistics and shipment management platform built with **Java 21**, **Spring Boot**, **Spring Security**, and **MongoDB**.
 
-The project models the backend operations of a modern logistics company, covering secure authentication, shipment management, server-side pricing, shipment tracking, controlled shipment lifecycle transitions, delivery-agent assignment, and future delivery operations.
+Designed around secure authentication, shipment lifecycle management, server-side pricing, tracking, controlled status transitions, delivery-agent assignment, and future logistics operations.
 
-The primary goal of this project is to build a **realistic, secure, and scalable backend system** rather than a simple CRUD application.
+</p>
+
+<p align="center">
+
+![Java 21](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-Build-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)
+
+</p>
+
+<p align="center">
+
+![JWT](https://img.shields.io/badge/JWT-Authentication-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+![OAuth 2.0](https://img.shields.io/badge/OAuth%202.0-Google-4285F4?style=for-the-badge&logo=google&logoColor=white)
+![REST API](https://img.shields.io/badge/REST-API-02569B?style=for-the-badge)
+![Postman](https://img.shields.io/badge/Postman-Testing-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
+![Git](https://img.shields.io/badge/Git-Version%20Control-F05032?style=for-the-badge&logo=git&logoColor=white)
+
+</p>
 
 ---
 
-  📚 Table of Contents
+## 📖 Table of Contents
 
--- 🎯 Project Overview
--- ✨ Highlights
--- 🛠️ Technology Stack
--- 🏗️ Architecture
--- 👥 User Roles
--- 🔐 Authentication & Authorization
--- 👤 User Management
--- 📦 Shipment Management
--- 💰 Server-Side Pricing
--- 🧮 Price Estimation
--- 🔄 Shipment Lifecycle
--- 🧠 Status Transition Engine
--- 📍 Shipment Tracking
--- 🔎 Shipment Retrieval
--- ✏️ Shipment Updates
--- ❌ Shipment Cancellation
--- 🚚 Delivery Agent Management
--- 🚛 Delivery Agent Workflow
--- 🏢 Hub Management
--- 💳 Payments & COD
--- 🔔 Notifications
--- 📄 Invoice & Rating
--- 🔐 API Security
--- 🧪 Validation & Error Handling
--- 🧪 Testing
--- 📡 API Overview
--- 📊 Development Status
--- 🚧 Current Development
--- ⏱️ Planned Features
--- 🗺️ Development Roadmap
--- 🧱 Production Engineering
--- ⚙️ Local Setup
--- 🔧 Configuration
--- 📈 Future Architecture
--- 📌 Current Project State
--- 🤝 Contributing
--- 📄 License
--- 👤 Author
+- [📌 Project Overview](#-project-overview)
+- [🎯 Project Goals](#-project-goals)
+- [🛠️ Technology Stack](#️-technology-stack)
+- [📊 Project Status](#-project-status)
+- [✨ Key Features](#-key-features)
+- [🔐 Authentication & Authorization](#-authentication--authorization)
+- [👤 User Management](#-user-management)
+- [📦 Shipment Management](#-shipment-management)
+- [💰 Server-Side Pricing Engine](#-server-side-pricing-engine)
+- [🧮 Price Estimation](#-price-estimation)
+- [🔄 Shipment Lifecycle](#-shipment-lifecycle)
+- [🧠 Status Transition Engine](#-status-transition-engine)
+- [📍 Shipment Tracking](#-shipment-tracking)
+- [🔎 Shipment Retrieval](#-shipment-retrieval)
+- [✏️ Shipment Updates](#️-shipment-updates)
+- [❌ Shipment Cancellation](#-shipment-cancellation)
+- [🚚 Delivery Agent Management](#-delivery-agent-management)
+- [🚛 Delivery Agent Workflow](#-delivery-agent-workflow)
+- [🏢 Hub Management](#-hub-management)
+- [💳 Payments & COD](#-payments--cod)
+- [🔔 Notifications](#-notifications)
+- [📄 Invoice & Rating](#-invoice--rating)
+- [🛡️ API Security](#️-api-security)
+- [🧪 Validation & Error Handling](#-validation--error-handling)
+- [🧪 Testing](#-testing)
+- [📡 API Overview](#-api-overview)
+- [📊 Development Status](#-development-status)
+- [🗺️ Development Roadmap](#️-development-roadmap)
+- [🧱 Production-Oriented Engineering](#-production-oriented-engineering)
+- [🏗️ Architecture](#️-architecture)
+- [📁 Project Structure](#-project-structure)
+- [👥 User Roles](#-user-roles)
+- [🔐 Authentication Architecture](#-authentication-architecture)
+- [🔑 JWT Authentication](#-jwt-authentication)
+- [💰 Pricing Architecture](#-pricing-architecture)
+- [🔄 Shipment Workflow Architecture](#-shipment-workflow-architecture)
+- [📍 Tracking Architecture](#-tracking-architecture)
+- [🚚 Delivery Assignment Architecture](#-delivery-assignment-architecture)
+- [🧩 Modular Monolith Design](#-modular-monolith-design)
+- [⚙️ Local Setup](#️-local-setup)
+- [⚙️ Configuration](#️-configuration)
+- [🧪 API Testing with Postman](#-api-testing-with-postman)
+- [📡 Example API Workflow](#-example-api-workflow)
+- [📈 Future Architecture](#-future-architecture)
+- [📌 Current Project State](#-current-project-state)
+- [📋 Feature Matrix](#-feature-matrix)
+- [🧩 Business Rules](#-business-rules)
+- [📈 Future Production Enhancements](#-future-production-enhancements)
+- [🔍 API Design Principles](#-api-design-principles)
+- [🛡️ Security Principles](#️-security-principles)
+- [🧪 Error Handling Strategy](#-error-handling-strategy)
+- [📝 Logging](#-logging)
+- [📊 Operational Visibility](#-operational-visibility)
+- [🏢 Hub Operations — Future Design](#-hub-operations--future-design)
+- [💳 Payment Abstraction — Future Design](#-payment-abstraction--future-design)
+- [🔔 Notification Architecture — Future Design](#-notification-architecture--future-design)
+- [🗂️ Data Model Overview](#️-data-model-overview)
+- [🧭 Shipment Ownership Model](#-shipment-ownership-model)
+- [🔄 Shipment State Machine](#-shipment-state-machine)
+- [📦 Shipment Lifecycle Example](#-shipment-lifecycle-example)
+- [🧪 Example Validation Rules](#-example-validation-rules)
+- [📚 Development Philosophy](#-development-philosophy)
+- [🧱 Why Modular Monolith First?](#-why-modular-monolith-first)
+- [📈 Scalability Direction](#-scalability-direction)
+- [🧰 Development Tools](#-development-tools)
+- [🖥️ Development Environment](#️-development-environment)
+- [🔗 Repository](#-repository)
+- [🤝 Contributing](#-contributing)
+- [🔒 Security Notice](#-security-notice)
+- [📄 License](#-license)
+- [👤 Author](#-author)
 
-🎯 Project Overview
+---
 
-Logistics Platform is a backend-focused logistics and shipment management system designed as a modular monolith.
+# 📌 Project Overview
 
-The project focuses on implementing the core backend capabilities required by a modern logistics company while maintaining clean separation between:
+The **Logistics Platform** is a backend system designed to model the core operations of a modern logistics and shipment management company.
 
--- API controllers
--- Business services
--- Data repositories
--- DTOs
--- Mapping logic
--- Security
--- Validation
--- Exception handling
--- Shipment workflow
--- Pricing logic
+The application is intentionally implemented as a **modular monolith** using Spring Boot. It provides a foundation for customer shipment management, administrative operations, delivery-agent workflows, pricing, tracking, authentication, and future hub and payment operations.
 
-The platform currently provides functionality for:
+The project is being developed with a strong focus on **production-oriented backend engineering practices** rather than implementing only basic CRUD operations.
 
--- Secure user authentication
--- JWT access and refresh tokens
--- Google OAuth 2.0 authentication
--- Role-based authorization
--- Shipment creation and management
--- Tracking-number generation
--- Server-side shipment pricing
--- Price estimation
--- Shipment cancellation
--- Shipment tracking history
--- Controlled shipment status transitions
--- Delivery-agent assignment
--- Delivery-agent assigned-shipment retrieval
--- Centralized validation
--- Centralized exception handling
--- Manual API testing through Postman
+### Core Focus Areas
 
-The architecture is intentionally kept as a modular monolith for V1.
+- 🔐 Secure authentication and authorization
+- 📦 Shipment lifecycle management
+- 💰 Server-side pricing
+- 🧮 Price estimation
+- 📍 Shipment tracking
+- 🔄 Controlled shipment status transitions
+- 🚚 Delivery-agent assignment
+- 👥 Role-based access control
+- 🧪 API validation and testing
+- 🧱 Layered backend architecture
+- 🛡️ Ownership and authorization checks
+- 📈 Production-oriented engineering practices
 
-This avoids unnecessary distributed-system complexity while allowing the project to evolve into a larger logistics platform.
+---
 
-✨ Highlights
+# 🎯 Project Goals
 
-<div align="center">
+The platform is being built to simulate the backend architecture and business workflows of a real logistics company.
 
-Area	Status
-🔐 Authentication	🟢 Completed
-🛡️ Authorization	🟢 Completed
-📦 Shipment Management	🟢 Completed
-💰 Server-Side Pricing	🟢 Completed
-🧮 Price Estimation	🟢 Completed
-📍 Tracking History	🟢 Completed
-🔄 Status Transition Engine	🟢 Completed
-🚚 Delivery-Agent Assignment	🟢 Completed
-🚛 Delivery Operations	🔄 In Progress
-🏢 Hub Operations	⏱️ Planned
-💳 Payments	⏱️ Planned
-🔔 Notifications	⏱️ Planned
-📄 Invoices	⏱️ Planned
-⭐ Ratings	⏱️ Planned
-🧪 Automated Testing	⏱️ Planned
-🐳 Dockerization	⏱️ Planned
-📊 Monitoring	⏱️ Planned
+### Primary Goals
 
-</div>
+- Build a secure Java backend using modern Spring Boot practices.
+- Implement a complete shipment lifecycle.
+- Keep pricing logic under server control.
+- Prevent unauthorized shipment manipulation.
+- Implement role-based operational access.
+- Maintain shipment tracking history.
+- Introduce controlled delivery-agent workflows.
+- Design the system so future modules can be added without rewriting the core application.
+- Keep the architecture suitable for eventual production hardening.
 
-🛠️ Technology Stack
-Backend
+---
 
--- ☕ Java 21 — Primary backend language
--- 🌱 Spring Boot — Application framework
--- 🔐 Spring Security — Authentication and authorization
--- 🎟️ JWT — Access and refresh token authentication
--- 🔑 OAuth 2.0 — Google authentication
--- 📡 REST APIs — Client-server communication
--- 📦 Maven — Build and dependency management
--- 📝 SLF4J — Application logging
+# 🛠️ Technology Stack
 
-Database
+| Technology | Purpose |
+|---|---|
+| ☕ **Java 21** | Backend development |
+| 🌱 **Spring Boot** | Application framework |
+| 🔐 **Spring Security** | Authentication and authorization |
+| 🎟️ **JWT** | Access and refresh token authentication |
+| 🔑 **OAuth 2.0** | Google authentication |
+| 🍃 **MongoDB** | Primary database |
+| 📡 **REST API** | Client-server communication |
+| 📦 **Maven** | Build and dependency management |
+| 🧪 **Postman** | Manual API testing |
+| 📝 **SLF4J** | Application logging |
+| 🌿 **Git** | Version control |
+| 🐙 **GitHub** | Source-code hosting |
 
--- 🍃 MongoDB — Primary database
--- 📑 MongoDB repositories — Data access layer
--- 🔎 Repository-based querying — Shipment and user retrieval
+---
 
-Development & Testing
+# 📊 Project Status
 
--- 🧪 Postman — API testing
--- 🛠️ Spring Tool Suite / IntelliJ IDEA / Eclipse — Development
--- 🐙 Git / GitHub — Version control
+| Area | Status |
+|---|---|
+| 🔐 Authentication | ✅ Completed |
+| 🛡️ Authorization | ✅ Completed |
+| 👤 User Management Foundation | ✅ Completed |
+| 📦 Shipment CRUD | ✅ Completed |
+| 💰 Server-Side Pricing | ✅ Completed |
+| 🧮 Price Estimation | ✅ Completed |
+| 📍 Tracking History | ✅ Completed |
+| 🔄 Status Transition Engine | ✅ Completed |
+| 👨‍💼 Admin Shipment Assignment | ✅ Completed |
+| 🚚 Assigned Shipment Retrieval | ✅ Completed |
+| 🧪 Manual API Testing | ✅ Completed |
+| 🚛 Delivery Agent Operational Workflow | 🔄 In Progress |
+| 🏢 Hub Management | ⏱️ Planned |
+| 💳 Payments | ⏱️ Planned |
+| 🔔 Notifications | ⏱️ Planned |
+| 📄 Invoices & Ratings | ⏱️ Planned |
+| 📊 Reports & Audit Logging | ⏱️ Planned |
+| 🧪 Automated Testing | ⏱️ Planned |
+| 📚 Swagger / OpenAPI | ⏱️ Planned |
+| 🐳 Dockerization | ⏱️ Planned |
+| 🚀 Production Deployment | ⏱️ Planned |
+| 📈 Monitoring & Observability | ⏱️ Planned |
 
-Frontend Integration
+### Status Legend
 
--- ⚛️ React — Planned frontend/client integration
--- 📡 REST APIs — Backend communication layer
+- ✅ **Completed** — Implemented and tested
+- 🔄 **In Progress** — Currently being developed
+- ⏱️ **Planned** — Scheduled for a future development phase
 
-React is represented as a future client integration. The current repository is primarily a Spring Boot backend.
+---
 
-🏗️ Architecture
+# ✨ Key Features
 
-The application follows a layered architecture.
+## 🔐 Authentication & Authorization
 
-                         ┌──────────────────────────┐
-                         │        Client            │
-                         │                          │
-                         │ React / Postman / Other  │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │        REST API          │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │      Controllers         │
-                         │                          │
-                         │ Request / Response       │
-                         │ Validation / Routing     │
-                         └────────────┬─────────────┘
-                                      │
-                                      ▼
-                         ┌──────────────────────────┐
-                         │        Services          │
-                         │                          │
-                         │ Business Logic            │
-                         │ Pricing                   │
-                         │ Shipment Workflow         │
-                         │ Authentication            │
-                         └────────────┬─────────────┘
-                                      │
-                    ┌─────────────────┼─────────────────┐
-                    │                 │                 │
-                    ▼                 ▼                 ▼
-          ┌────────────────┐ ┌────────────────┐ ┌────────────────┐
-          │  Repositories  │ │    Mappers     │ │    Security    │
-          │                │ │                │ │                │
-          │ Data Access    │ │ DTO Conversion │ │ JWT / OAuth    │
-          └───────┬────────┘ └────────────────┘ └────────────────┘
-                  │
-                  ▼
-          ┌────────────────┐
-          │    MongoDB     │
-          │                │
-          │ Persistent     │
-          │ Data           │
-          └────────────────┘
-🧱 Layer Responsibilities
-Controller Layer
+### ✅ Completed
 
-Responsible for:
+- ✅ User registration
+- ✅ User login
+- ✅ Login using username or email
+- ✅ BCrypt password hashing
+- ✅ JWT access tokens
+- ✅ JWT refresh tokens
+- ✅ JWT authentication filter
+- ✅ Role-based authorization
+- ✅ Account enable/disable support
+- ✅ Authentication-provider tracking
+- ✅ Google OAuth 2.0 authentication
+- ✅ Protected role-specific APIs
+- ✅ Current authenticated-user resolution
 
--- HTTP endpoints
--- Request mapping
--- Request validation
--- Authentication context access
--- Response generation
+### Supported Roles
 
-Service Layer
+- 👤 `CUSTOMER`
+- 🚚 `DELIVERY_AGENT`
+- 🏢 `HUB_OPERATOR`
+- 🛡️ `ADMIN`
 
-Responsible for:
+### Authentication Providers
 
--- Business rules
--- Pricing calculations
--- Shipment workflow
--- Status transition validation
--- Ownership checks
--- Assignment validation
--- Authentication-related business logic
+- 🔑 `LOCAL`
+- 🌐 `GOOGLE`
 
-Repository Layer
+---
 
-Responsible for:
+# 👤 User Management
 
--- Database access
--- User queries
--- Shipment queries
--- Pricing configuration queries
+The platform maintains user accounts with role and authentication-provider information.
 
-DTO Layer
+### User Structure
 
-Responsible for:
-
--- API request contracts
--- API response contracts
--- Input validation
--- Separation between persistence entities and API models
-
-Security Layer
-
-Responsible for:
-
--- JWT authentication
--- JWT refresh tokens
--- Google OAuth 2.0
--- Role-based authorization
--- Current-user resolution
--- Protected API access
-
-👥 User Roles
-
-The platform is designed around four operational roles.
-
-Role	Responsibility
-👤 CUSTOMER	Create, manage and track shipments
-🚚 DELIVERY_AGENT	Handle assigned shipments and delivery operations
-🏢 HUB_OPERATOR	Manage hub operations and shipment movement
-🛡️ ADMIN	Manage users, pricing, assignments and configuration
-🔐 Authentication & Authorization
-
-Authentication is implemented using a combination of:
-
--- Local username/email authentication
--- BCrypt password hashing
--- JWT access tokens
--- JWT refresh tokens
--- JWT authentication filter
--- Google OAuth 2.0
--- Role-based authorization
-
-🟢 Completed Authentication Features
-
--- ✅ User registration
--- ✅ User login
--- ✅ Login using username or email
--- ✅ JWT access tokens
--- ✅ JWT refresh tokens
--- ✅ JWT authentication filter
--- ✅ BCrypt password hashing
--- ✅ Role-based authorization
--- ✅ Account enable/disable
--- ✅ Authentication-provider tracking
--- ✅ Google OAuth 2.0 authentication
--- ✅ Protected role-specific APIs
--- ✅ Current authenticated-user resolution
-
-🔑 Authentication Providers
-
-Currently supported:
-
-LOCAL
-GOOGLE
-
-The user model stores the authentication provider and provider-specific identifier.
-
-Example:
-
+```text
 User
- ├── username
- ├── email
- ├── password
- ├── role
- ├── authProvider
- ├── providerId
- ├── enabled
- ├── createdAt
- └── updatedAt
-👤 User Management
+├── id
+├── username
+├── email
+├── password
+├── role
+├── authProvider
+├── providerId
+├── enabled
+├── createdAt
+└── updatedAt
+```
 
-The platform maintains user accounts containing authentication, authorization and account-state information.
+### Completed
 
-🟢 Completed
+- ✅ Customer registration
+- ✅ Customer login
+- ✅ Google login
+- ✅ JWT authentication
+- ✅ Delivery-agent authentication
+- ✅ Admin authentication
+- ✅ Role-based API protection
+- ✅ Authentication-provider tracking
 
--- ✅ Customer registration
--- ✅ Customer login
--- ✅ Google login
--- ✅ JWT authentication
--- ✅ Delivery-agent authentication
--- ✅ Admin authentication
--- ✅ Role-based API protection
--- ✅ Authentication-provider separation
+### Planned
 
-⏱️ Planned
+- ⏱️ Admin user-management APIs
+- ⏱️ User activation/deactivation APIs
+- ⏱️ Profile management
+- ⏱️ Password-change functionality
+- ⏱️ Account recovery
+- ⏱️ Delivery-agent management
 
--- ⏱️ Admin user-management APIs
--- ⏱️ User activation/deactivation APIs
--- ⏱️ Profile management
--- ⏱️ Password change
--- ⏱️ Account recovery
--- ⏱️ Advanced delivery-agent management
+---
 
-📦 Shipment Management
+# 📦 Shipment Management
 
 Shipment management is one of the core implemented modules.
 
-A shipment contains information such as:
+Customers can create shipments containing sender and receiver information, package information, delivery priority, distance, and COD selection.
 
--- Sender address
--- Receiver address
--- Sender details
--- Receiver details
--- Package weight
--- Package dimensions
--- Package description
--- Delivery priority
--- Distance
--- COD selection
--- Calculated cost
--- Current shipment status
--- Tracking history
--- Assigned delivery agent
--- Creation timestamp
--- Update timestamp
+### Shipment Capabilities
 
-Every shipment receives a unique tracking number.
+- ✅ Sender address
+- ✅ Receiver address
+- ✅ Sender details
+- ✅ Receiver details
+- ✅ Package weight
+- ✅ Package dimensions
+- ✅ Package description
+- ✅ Delivery priority
+- ✅ Distance
+- ✅ COD selection
+- ✅ Unique tracking-number generation
+- ✅ Shipment creation
+- ✅ Shipment retrieval
+- ✅ Customer shipment retrieval
+- ✅ Shipment update
+- ✅ Shipment cancellation
 
-Example:
+### Shipment Structure
 
-TRK-196B639CBBC1
-📦 Shipment Structure
+```text
 Shipment
- ├── id
- ├── trackingNumber
- ├── customerId
- ├── senderAddress
- ├── receiverAddress
- ├── packageDetails
- ├── priority
- ├── cost
- ├── status
- ├── trackingHistory
- ├── assignedDeliveryAgentId
- ├── createdAt
- └── updatedAt
-💰 Server-Side Pricing
+├── id
+├── trackingNumber
+├── customerId
+├── senderAddress
+├── receiverAddress
+├── packageDetails
+├── priority
+├── cost
+├── status
+├── trackingHistory
+├── assignedDeliveryAgentId
+├── createdAt
+└── updatedAt
+```
 
-The platform does not trust customers to submit the final shipping price.
+### Example Tracking Number
 
-Instead, the final price is calculated by the backend using the active pricing configuration.
+```text
+TRK-196B639CBBC1
+```
 
-This provides centralized control over pricing and prevents clients from manipulating the final shipment cost through request payloads.
+---
 
-Pricing Architecture
-                  PricingConfig
-                       │
-                       ▼
-             PricingConfigRepository
-                       │
-                       ▼
-                PricingService
-                       │
-                       ▼
-             DefaultPricingService
-                       │
-                       ▼
-              Calculated Price
-🧮 Pricing Formula
+# 💰 Server-Side Pricing Engine
 
-The current pricing model follows:
+The platform does not allow customers to submit their own final shipment price.
 
+Instead, the final price is calculated by the backend using an active pricing configuration.
+
+This ensures that clients cannot manipulate the final shipment cost by modifying the price in an API request.
+
+## Pricing Architecture
+
+```text
+PricingConfig
+      │
+      ▼
+PricingConfigRepository
+      │
+      ▼
+PricingService
+      │
+      ▼
+DefaultPricingService
+      │
+      ▼
+Calculated Shipment Price
+```
+
+## Pricing Formula
+
+```text
 Base Charge
      +
 Weight × Per-KG Rate
@@ -420,80 +377,106 @@ Shipping Cost
 COD Handling Fee
      ↓
 Final Price
-⚡ Priority Multipliers
-STANDARD → 1.0×
-EXPRESS  → 1.5×
-URGENT   → 2.0×
-💵 Example Pricing Configuration
-Base Charge  = ₹50
-Per KG Rate  = ₹20
-Per KM Rate  = ₹2
+```
 
-STANDARD     = 1.0×
-EXPRESS      = 1.5×
-URGENT       = 2.0×
+## Priority Multipliers
 
-COD Fee      = ₹30
-🧮 Pricing Example
+| Priority | Multiplier |
+|---|---:|
+| `STANDARD` | 1.0× |
+| `EXPRESS` | 1.5× |
+| `URGENT` | 2.0× |
 
-Input:
+## Example Pricing Configuration
 
+```text
+Base Charge = ₹50
+Per KG Rate = ₹20
+Per KM Rate = ₹2
+
+STANDARD = 1.0×
+EXPRESS  = 1.5×
+URGENT   = 2.0×
+
+COD Fee = ₹30
+```
+
+## Example Calculation
+
+```text
 Weight   = 2.5 KG
 Distance = 100 KM
 Priority = STANDARD
 COD      = No
 
-Calculation:
-
-₹50
-+
-(2.5 × ₹20)
-+
-(100 × ₹2)
+₹50 + (2.5 × ₹20) + (100 × ₹2)
 
 = ₹300
+```
 
-The customer does not control the final price.
+### Business Rule
 
-The server calculates the final price from the active pricing configuration.
+The customer does not control the final shipping price.
 
-⚙️ Admin Pricing Configuration
+The server calculates the final price using the active pricing configuration.
 
-Administrators can configure the active pricing rules.
+---
 
-🟢 Implemented APIs
-Method	Endpoint	Access
-POST	/api/admin/pricing	ADMIN
-GET	/api/admin/pricing/active	ADMIN
+# ⚙️ Admin Pricing Configuration
 
-The active configuration is used by the pricing service for shipment calculations.
+Administrators can configure the active pricing rules used by the pricing engine.
 
-🧮 Price Estimation
+### ✅ Completed APIs
 
-Customers can estimate shipping costs before creating a shipment.
+| Method | Endpoint | Access |
+|---|---|---|
+| `POST` | `/api/admin/pricing` | `ADMIN` |
+| `GET` | `/api/admin/pricing/active` | `ADMIN` |
 
-Endpoint
+The active pricing configuration is used by the backend for new price calculations.
+
+---
+
+# 🧮 Price Estimation
+
+Customers can estimate the shipping price before creating a shipment.
+
+### API
+
+```http
 POST /api/shipments/estimate
-Request
+```
+
+### Request
+
+```json
 {
   "weight": 2.5,
   "distanceKm": 100,
   "priority": "STANDARD",
   "cod": false
 }
-Response
+```
+
+### Response
+
+```json
 {
   "estimatedPrice": 300
 }
+```
 
-The same centralized PricingService is used during shipment creation.
+The same centralized `PricingService` is used during shipment creation so that pricing logic remains consistent across the application.
 
-This prevents pricing logic from being duplicated between estimation and actual shipment creation.
+---
 
-🔄 Shipment Lifecycle
+# 🔄 Shipment Lifecycle
 
-The primary shipment lifecycle is:
+The platform uses a centralized shipment status-transition engine.
 
+## Main Lifecycle
+
+```text
 CREATED
    ↓
 CONFIRMED
@@ -505,15 +488,25 @@ IN_TRANSIT
 OUT_FOR_DELIVERY
    ↓
 DELIVERED
-Exceptional States
+```
+
+## Exceptional States
+
+```text
 CANCELLED
 FAILED_DELIVERY
 RETURNED
-🧠 Shipment Status Transition Engine
+```
 
-The platform uses a centralized transition engine to prevent invalid shipment-state changes.
+---
 
-Valid Transitions
+# 🧠 Shipment Status Transition Engine
+
+A centralized service validates whether a shipment is allowed to move from one status to another.
+
+## Valid Transitions
+
+```text
 CREATED
  ├──→ CONFIRMED
  └──→ CANCELLED
@@ -534,49 +527,60 @@ OUT_FOR_DELIVERY
 FAILED_DELIVERY
  ├──→ OUT_FOR_DELIVERY
  └──→ RETURNED
-🔒 Terminal Shipment States
+```
 
-The following states are terminal:
+## Terminal States
 
+The following states cannot transition into another shipment state:
+
+```text
 DELIVERED
 CANCELLED
 RETURNED
+```
 
-Once a shipment reaches a terminal state, it cannot transition into another shipment status.
+### Completed
 
-🟢 Status Engine Completed
+- ✅ Centralized transition validation
+- ✅ Invalid-transition rejection
+- ✅ Terminal-state protection
+- ✅ Tracking-event creation for status changes
+- ✅ Status-update API
 
--- ✅ Centralized transition validation
--- ✅ Invalid transition rejection
--- ✅ Terminal-state protection
--- ✅ Tracking-event creation for status changes
--- ✅ Status update API
+### Status Update API
 
-Status Update Endpoint
+```http
 PATCH /api/shipments/{shipmentId}/status
+```
 
-Example request:
+### Example Request
 
+```json
 {
   "status": "CONFIRMED"
 }
+```
 
-Invalid transitions return a controlled 400 Bad Request.
+Invalid transitions are rejected with a controlled `400 Bad Request` response.
 
-📍 Shipment Tracking
+---
 
-The platform maintains a tracking history rather than storing only the latest shipment status.
+# 📍 Shipment Tracking
+
+The platform maintains tracking history instead of storing only the latest shipment status.
 
 Each tracking event can contain:
 
--- Status
--- Timestamp
--- Location
--- Description
--- Performed by
--- Notes
+- 📌 Status
+- 🕒 Timestamp
+- 📍 Location
+- 📝 Description
+- 👤 Performed By
+- 📄 Notes
 
-📍 Tracking Example
+## Example Tracking History
+
+```text
 TRK-196B639CBBC1
 
 ✓ CREATED
@@ -596,42 +600,58 @@ TRK-196B639CBBC1
 
 ✓ DELIVERED
   Shipment delivered
-🔎 Tracking API
+```
+
+### Tracking API
+
+```http
 GET /api/shipments/tracking/{trackingNumber}/history
+```
 
-The tracking-history architecture provides the foundation for future operational visibility and real-time tracking integrations.
+This tracking-history model provides the foundation for future real-time shipment visibility.
 
-🔎 Shipment Retrieval
-🟢 Implemented APIs
-Method	Endpoint	Purpose
-GET	/api/shipments/{id}	Get shipment by ID
-GET	/api/shipments/tracking/{trackingNumber}	Get shipment by tracking number
-GET	/api/shipments/tracking/{trackingNumber}/history	Get tracking history
-GET	/api/shipments/my	Get customer's shipments
-✏️ Shipment Updates
+---
 
-Customers can update shipment information during the permitted early shipment lifecycle.
+# 🔎 Shipment Retrieval
 
-Supported information includes:
+### ✅ Implemented APIs
 
--- Sender address
--- Receiver address
--- Package details
--- Priority
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/shipments/{id}` | Get shipment by ID |
+| `GET` | `/api/shipments/tracking/{trackingNumber}` | Get shipment by tracking number |
+| `GET` | `/api/shipments/tracking/{trackingNumber}/history` | Get tracking history |
+| `GET` | `/api/shipments/my` | Get customer's shipments |
 
-⏱️ Planned Improvements
+---
 
--- ⏱️ Stronger state-based update restrictions
--- ⏱️ Automatic price re-estimation when price-affecting fields change
--- ⏱️ Audit logging
--- ⏱️ Field-level update rules
+# ✏️ Shipment Updates
 
-❌ Shipment Cancellation
+Customers can update shipment information during the permitted early stage of the shipment lifecycle.
 
-Customers can cancel their own shipment while it is in:
+### Supported Information
 
-CREATED
-Cancellation Flow
+- ✅ Sender address
+- ✅ Receiver address
+- ✅ Package details
+- ✅ Delivery priority
+
+### Planned Improvements
+
+- ⏱️ Stronger state-based update restrictions
+- ⏱️ Automatic price re-estimation when price-affecting fields change
+- ⏱️ Audit logging
+- ⏱️ Field-level update rules
+
+---
+
+# ❌ Shipment Cancellation
+
+Customers can cancel their own shipment only while it is in the `CREATED` state.
+
+## Cancellation Flow
+
+```text
 Cancellation Request
         ↓
 Find Shipment
@@ -645,50 +665,70 @@ Set Status = CANCELLED
 Create Tracking Event
         ↓
 Save Shipment
+```
 
-CANCELLED is a terminal shipment state.
+## Business Rules
 
-🚚 Delivery Agent Management
+- ✅ Customer ownership is verified
+- ✅ Cancellation is restricted to the permitted state
+- ✅ Shipment status becomes `CANCELLED`
+- ✅ Tracking history is updated
+- ✅ `CANCELLED` is treated as a terminal state
 
-Delivery-agent operations are currently being expanded.
+---
 
-🟢 Completed
-Delivery Agent Authentication
+# 🚚 Delivery Agent Management
 
-Delivery agents can authenticate using the existing JWT authentication system.
+Delivery operations are currently being expanded.
 
-Assigned Shipment Retrieval
+## ✅ Delivery Agent Authentication
+
+Delivery Agents authenticate through the existing JWT authentication system.
+
+## ✅ View Assigned Shipments
+
+```http
 GET /api/delivery/shipments
+```
 
-The backend automatically identifies the authenticated delivery agent.
+The API automatically identifies the authenticated Delivery Agent and returns only shipments assigned to that agent.
 
-The delivery agent does not provide their own user ID in the request.
+The Delivery Agent does not provide their own user ID in the request.
 
-Only shipments assigned to the authenticated delivery agent are returned.
+---
 
-🛡️ Admin Shipment Assignment
+# 👨‍💼 Admin Shipment Assignment
 
-Administrators can assign shipments to delivery agents.
+Administrators can assign shipments to Delivery Agents.
 
+### API
+
+```http
 POST /api/admin/shipments/{shipmentId}/assign
+```
 
-Example:
+### Example Request
 
+```json
 {
   "deliveryAgentId": "delivery-agent-user-id"
 }
-🔍 Assignment Validation
+```
 
-The backend validates:
+## Assignment Validation
 
--- ✅ Shipment exists
--- ✅ Delivery agent exists
--- ✅ Selected user has DELIVERY_AGENT role
--- ✅ Shipment is not already assigned
--- ✅ Shipment is in an assignable state
--- ✅ Assignment is performed by an authorized administrator
+The system validates:
 
-🔄 Current Assignment Flow
+- ✅ Shipment exists
+- ✅ Delivery Agent exists
+- ✅ Selected user has the `DELIVERY_AGENT` role
+- ✅ Shipment is not already assigned
+- ✅ Shipment is in an assignable state
+- ✅ Assignment is performed by an authorized Admin
+
+## Assignment Flow
+
+```text
 ADMIN
   │
   ▼
@@ -708,17 +748,25 @@ DELIVERY_AGENT
   │
   ▼
 GET /api/delivery/shipments
-🚛 Delivery Agent Workflow
-🟢 Completed
+```
+
+---
+
+# 🚛 Delivery Agent Workflow
+
+## ✅ Currently Implemented
+
+```text
 Delivery Agent Login
         ↓
-View Assigned Shipments
-        ↓
 Admin Assignment
-🔄 In Progress
+        ↓
+View Assigned Shipments
+```
 
-The next operational stage focuses on turning an assigned shipment into an actual delivery workflow.
+## 🔄 Currently In Progress
 
+```text
 Assigned
    ↓
 Accept / Reject
@@ -732,37 +780,41 @@ Out For Delivery
 Delivery Confirmation
    ↓
 Delivered
-🚧 Delivery Operations
-🔄 In Progress
+```
 
--- 🔄 Delivery-agent accept/reject workflow
--- 🔄 Pickup workflow
--- 🔄 In-transit workflow
--- 🔄 Out-for-delivery workflow
--- 🔄 Delivery confirmation
--- 🔄 Failed-delivery workflow
--- 🔄 Delivery proof
--- 🔄 OTP verification
--- 🔄 COD collection
+## 🔄 Delivery Features in Progress
 
-These features build on the already implemented shipment status-transition engine.
+- 🔄 Accept assignment
+- 🔄 Reject assignment
+- 🔄 Pickup confirmation
+- 🔄 Delivery-progress updates
+- 🔄 Delivery notes
+- 🔄 Failed-delivery workflow
+- 🔄 Delivery proof
+- 🔄 OTP verification
+- 🔄 Signature/photo proof
+- 🔄 COD collection
 
-🏢 Hub Management
+---
+
+# 🏢 Hub Management
 
 Hub operations are planned as the next major logistics module.
 
-⏱️ Planned Capabilities
+## ⏱️ Planned Capabilities
 
--- ⏱️ Hub CRUD
--- ⏱️ Hub operator role
--- ⏱️ Shipment arrival scanning
--- ⏱️ Shipment outbound scanning
--- ⏱️ Shipment routing
--- ⏱️ Local delivery assignment
--- ⏱️ Hub inventory
--- ⏱️ Hub-based shipment visibility
+- ⏱️ Hub CRUD
+- ⏱️ Hub Operator role operations
+- ⏱️ Shipment arrival scanning
+- ⏱️ Shipment outbound scanning
+- ⏱️ Shipment routing
+- ⏱️ Local delivery assignment
+- ⏱️ Hub inventory
+- ⏱️ Hub-based shipment visibility
 
-🏢 Planned Hub Workflow
+## Planned Hub Workflow
+
+```text
 Origin
   ↓
 Origin Hub
@@ -774,158 +826,278 @@ Destination Hub
 Delivery Agent
   ↓
 Customer
-💳 Payments & COD
+```
+
+---
+
+# 💳 Payments & COD
 
 The platform is designed to support both Cash on Delivery and online payments.
 
-⏱️ Planned COD Lifecycle
+## ⏱️ Planned COD Lifecycle
+
+```text
 COD_PENDING
      ↓
 COD_COLLECTED
      ↓
 SETTLED
-⏱️ Planned Online Payment Lifecycle
+```
+
+## ⏱️ Planned Online Payment Lifecycle
+
+```text
 PENDING
    ↓
 PAID
    ↓
 REFUNDED
+```
 
-Failed payments:
+## Failed Payment Flow
 
+```text
 PENDING
    ↓
 FAILED
-🧩 Payment Abstraction
+```
 
-A payment abstraction is planned so the business layer does not become tightly coupled to one payment provider.
+A `PaymentGateway` abstraction is planned so that a real payment provider can be integrated later without tightly coupling business logic to a specific payment provider.
 
-Conceptually:
+---
 
-PaymentService
-      │
-      ├── MockPaymentService
-      │
-      └── FuturePaymentGateway
+# 🔔 Notifications
 
-This allows a real payment provider to be introduced later without redesigning the entire shipment business layer.
+Shipment notifications are planned as part of the platform's future communication layer.
 
-🔔 Notifications
-⏱️ Planned Shipment Notifications
+## ⏱️ Planned Notifications
 
--- ⏱️ Shipment created
--- ⏱️ Price confirmed
--- ⏱️ Shipment picked up
--- ⏱️ Hub arrival
--- ⏱️ Out for delivery
--- ⏱️ Delivered
--- ⏱️ Failed delivery
--- ⏱️ Returned
--- ⏱️ Payment updates
--- ⏱️ COD updates
+- ⏱️ Shipment Created
+- ⏱️ Price Confirmed
+- ⏱️ Shipment Picked Up
+- ⏱️ Hub Arrival
+- ⏱️ Out For Delivery
+- ⏱️ Delivered
+- ⏱️ Failed Delivery
+- ⏱️ Returned
+- ⏱️ Payment / COD Updates
 
-The initial notification architecture is planned around email notifications.
+## Planned Notification Channels
 
-Future integrations may include:
+- ⏱️ Email notifications
+- ⏱️ SMS notifications
+- ⏱️ Push notifications
 
--- ⏱️ SMS
--- ⏱️ Push notifications
+The initial notification implementation is expected to focus on email.
 
-📄 Invoice & Rating
-⏱️ Invoice
+---
 
-Customers will eventually be able to download shipment invoices or receipts containing:
+# 📄 Invoice & Rating
 
--- ⏱️ Shipment details
--- ⏱️ Tracking number
--- ⏱️ Customer information
--- ⏱️ Origin and destination
--- ⏱️ Package details
--- ⏱️ Priority
--- ⏱️ Shipping cost
--- ⏱️ COD/payment information
--- ⏱️ Invoice date
+## ⏱️ Invoice
 
-⭐ Delivery Rating
+Customers will eventually be able to download shipment invoices or receipts.
+
+### Planned Invoice Information
+
+- ⏱️ Shipment details
+- ⏱️ Tracking number
+- ⏱️ Customer information
+- ⏱️ Origin and destination
+- ⏱️ Package details
+- ⏱️ Priority
+- ⏱️ Shipping cost
+- ⏱️ COD/payment information
+- ⏱️ Invoice date
+
+## ⏱️ Delivery Rating
 
 After successful delivery:
 
+```text
 1–5 Star Rating
        +
 Optional Feedback
+```
 
-The planned business rule is:
+### Planned Rule
 
--- ⏱️ One rating per shipment
--- ⏱️ Rating available after successful delivery
--- ⏱️ Optional customer feedback
+- ⏱️ One rating per shipment
 
-🔐 API Security
+---
+
+# 🛡️ API Security
 
 Role-based API protection is implemented using Spring Security.
 
-API Access Structure
-/auth/**          → Authentication
-/api/customer/**  → CUSTOMER
-/api/delivery/**  → DELIVERY_AGENT / ADMIN
-/api/admin/**     → ADMIN
+## Authentication Flow
+
+```text
+Client
+  │
+  ▼
+Login / OAuth
+  │
+  ▼
+Authentication
+  │
+  ▼
+JWT Access Token
+  │
+  ▼
+Protected API
+  │
+  ▼
+JWT Authentication Filter
+  │
+  ▼
+Security Context
+  │
+  ▼
+Role Authorization
+  │
+  ▼
+Controller
+```
+
+## Role-Based Access
+
+| Area | Role |
+|---|---|
+| Authentication | Public / Authenticated |
+| Customer shipment operations | `CUSTOMER` |
+| Delivery operations | `DELIVERY_AGENT` |
+| Administrative operations | `ADMIN` |
+| Future hub operations | `HUB_OPERATOR` |
 
 JWT authentication is applied to protected APIs.
 
-Ownership-sensitive operations also validate the authenticated user before modifying or retrieving protected resources.
+Ownership-sensitive operations additionally validate that the authenticated user is authorized to operate on the requested resource.
 
-🧪 Validation & Error Handling
+---
 
-The platform uses request DTO validation for API input.
+# 🧪 Validation & Error Handling
 
-Validation includes:
+The platform uses request DTO validation to protect API contracts and reject invalid input.
 
--- ✅ Required fields
--- ✅ Indian phone-number validation
--- ✅ Indian PIN-code validation
--- ✅ Positive package dimensions
--- ✅ Positive package weight
--- ✅ Valid priority
--- ✅ Valid distance
--- ✅ Required shipment status
+## Validation Areas
 
-Validation failures are handled through centralized exception handling.
+- ✅ Required fields
+- ✅ Indian phone-number validation
+- ✅ Indian PIN-code validation
+- ✅ Positive package dimensions
+- ✅ Positive package weight
+- ✅ Valid shipment priority
+- ✅ Valid distance
+- ✅ Required shipment status
+- ✅ Request DTO validation
+- ✅ Centralized exception handling
 
-📋 Validation Error Example
+## Example Validation Response
+
+```json
 {
   "message": "Validation Failed",
   "validationErrors": {
     "postalCode": "Invalid postal code"
   }
 }
+```
 
-The API is designed to return controlled and structured validation responses instead of exposing internal application errors directly to clients.
+Validation errors are returned through the centralized exception-handling mechanism.
 
-🧪 Testing
+---
 
-Manual API testing is currently performed using Postman.
+# 🧪 Testing
 
-🟢 Tested
+Manual API testing is currently performed using Postman throughout development.
 
--- ✅ Customer registration
--- ✅ Customer login
--- ✅ Admin login
--- ✅ Delivery-agent login
--- ✅ JWT authentication
--- ✅ Role-based authorization
--- ✅ Shipment creation
--- ✅ Shipment retrieval
--- ✅ Shipment update
--- ✅ Shipment cancellation
--- ✅ Price estimation
--- ✅ Admin pricing configuration
--- ✅ Tracking history
--- ✅ Valid shipment status transitions
--- ✅ Invalid shipment status transitions
--- ✅ Admin → Delivery-agent assignment
--- ✅ Delivery-agent → assigned-shipment retrieval
+## ✅ Tested
 
-🔬 End-to-End Assignment Test
+- ✅ Customer registration
+- ✅ Customer login
+- ✅ Admin login
+- ✅ Delivery Agent login
+- ✅ JWT authentication
+- ✅ Role-based authorization
+- ✅ Shipment creation
+- ✅ Shipment retrieval
+- ✅ Shipment update
+- ✅ Shipment cancellation
+- ✅ Price estimation
+- ✅ Admin pricing configuration
+- ✅ Tracking history
+- ✅ Valid shipment status transitions
+- ✅ Invalid shipment status transitions
+- ✅ Admin → Delivery Agent assignment
+- ✅ Delivery Agent → assigned shipment retrieval
+
+## 🔄 Testing in Progress
+
+- 🔄 Delivery Agent accept/reject workflow
+- 🔄 Pickup workflow
+- 🔄 Delivery status progression
+- 🔄 Delivery confirmation
+- 🔄 Failed-delivery workflow
+
+## ⏱️ Future Testing
+
+- ⏱️ Automated unit tests
+- ⏱️ Service-layer tests
+- ⏱️ Controller tests
+- ⏱️ Repository tests
+- ⏱️ Integration tests
+- ⏱️ Security tests
+- ⏱️ End-to-end workflow tests
+
+---
+
+# 📡 API Overview
+
+## 🔐 Authentication APIs
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/auth/register` | Register a local user |
+| `POST` | `/auth/login` | Authenticate using username/email and password |
+
+## 📦 Customer Shipment APIs
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/shipments` | Create shipment |
+| `POST` | `/api/shipments/estimate` | Estimate shipment price |
+| `GET` | `/api/shipments/{id}` | Get shipment by ID |
+| `GET` | `/api/shipments/my` | Get customer's shipments |
+| `GET` | `/api/shipments/tracking/{trackingNumber}` | Get shipment by tracking number |
+| `GET` | `/api/shipments/tracking/{trackingNumber}/history` | Get tracking history |
+| `PUT` | `/api/shipments/{id}` | Update shipment |
+| `PATCH` | `/api/shipments/{id}/cancel` | Cancel shipment |
+| `PATCH` | `/api/shipments/{shipmentId}/status` | Update shipment status |
+
+## 🛡️ Admin APIs
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/admin/pricing` | Create/update pricing configuration |
+| `GET` | `/api/admin/pricing/active` | Get active pricing configuration |
+| `POST` | `/api/admin/shipments/{shipmentId}/assign` | Assign shipment to Delivery Agent |
+
+## 🚚 Delivery Agent APIs
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/delivery/shipments` | Retrieve shipments assigned to authenticated Delivery Agent |
+
+Additional Delivery Agent APIs will be added as the operational workflow is implemented.
+
+---
+
+# 🧪 Example End-to-End Assignment Test
+
+The currently implemented assignment flow can be represented as:
+
+```text
 Customer creates shipment
         ↓
 Shipment = CREATED
@@ -939,930 +1111,960 @@ Delivery Agent authenticates
 GET /api/delivery/shipments
         ↓
 Assigned shipment returned
-📡 API Overview
-🔐 Authentication APIs
-POST /auth/register
-POST /auth/login
-📦 Customer Shipment APIs
-POST   /api/shipments
-POST   /api/shipments/estimate
-
-GET    /api/shipments/{id}
-GET    /api/shipments/my
-
-GET    /api/shipments/tracking/{trackingNumber}
-GET    /api/shipments/tracking/{trackingNumber}/history
-
-PUT    /api/shipments/{id}
-PATCH  /api/shipments/{id}/cancel
-
-PATCH  /api/shipments/{shipmentId}/status
-🛡️ Admin APIs
-POST /api/admin/pricing
-GET  /api/admin/pricing/active
-
-POST /api/admin/shipments/{shipmentId}/assign
-🚚 Delivery Agent APIs
-GET /api/delivery/shipments
-
-Additional delivery-agent APIs will be introduced as the operational workflow progresses.
-
-📊 Development Status
-
-The project uses three primary development states:
-
-<div align="center">
-
-Symbol	Meaning
-🟢	Completed
-🔄	In Progress
-⏱️	Planned
-
-</div>
-
-🟢 Completed Features
-Project Foundation
-
--- 🟢 Spring Boot project setup
--- 🟢 Maven configuration
--- 🟢 Java 21 configuration
--- 🟢 MongoDB configuration
--- 🟢 Layered architecture
-
-Authentication
-
--- 🟢 User entity
--- 🟢 User repository
--- 🟢 Local registration
--- 🟢 Local login
--- 🟢 Username/email login
--- 🟢 BCrypt password hashing
--- 🟢 JWT access token
--- 🟢 JWT refresh token
--- 🟢 JWT authentication filter
--- 🟢 Role-based authorization
--- 🟢 Customer role
--- 🟢 Admin role
--- 🟢 Delivery-agent role
--- 🟢 Hub-operator role
--- 🟢 Google OAuth 2.0
--- 🟢 Current-user resolution
-
-Shipment Management
-
--- 🟢 Shipment entity
--- 🟢 Shipment repository
--- 🟢 Shipment DTOs
--- 🟢 Address validation
--- 🟢 Package validation
--- 🟢 Shipment creation
--- 🟢 Tracking-number generation
--- 🟢 Shipment retrieval
--- 🟢 Customer shipment retrieval
--- 🟢 Shipment update
--- 🟢 Shipment cancellation
-
-Pricing
-
--- 🟢 Pricing configuration
--- 🟢 Admin pricing API
--- 🟢 Price estimate API
--- 🟢 Server-side shipment pricing
--- 🟢 Centralized pricing service
-
-Tracking & Workflow
-
--- 🟢 Tracking history
--- 🟢 Tracking-event creation
--- 🟢 Shipment status transition engine
--- 🟢 Invalid-transition validation
--- 🟢 Terminal-state protection
--- 🟢 Status update API
-
-Delivery Operations
-
--- 🟢 Delivery-agent authentication
--- 🟢 Delivery-agent assigned shipments
--- 🟢 Admin shipment assignment
--- 🟢 Assignment validation
--- 🟢 Postman API testing
-
-🔄 In Progress
-
-The current development focus is the operational delivery workflow.
-
--- 🔄 Delivery-agent accept/reject
--- 🔄 Pickup workflow
--- 🔄 In-transit workflow
--- 🔄 Out-for-delivery workflow
--- 🔄 Delivery confirmation
--- 🔄 Failed-delivery workflow
--- 🔄 Delivery proof
--- 🔄 OTP verification
--- 🔄 COD collection
-
-⏱️ Planned Features
-User Management
-
--- ⏱️ Admin user management
--- ⏱️ User activation/deactivation APIs
--- ⏱️ Profile management
--- ⏱️ Password change
--- ⏱️ Account recovery
--- ⏱️ Advanced delivery-agent management
-
-Shipment
-
--- ⏱️ Shipment pagination
--- ⏱️ Shipment search
--- ⏱️ Shipment filtering
--- ⏱️ Advanced ownership rules
--- ⏱️ Field-level update rules
--- ⏱️ Audit logging
-
-Hub Operations
-
--- ⏱️ Hub management
--- ⏱️ Hub operators
--- ⏱️ Hub scan-in
--- ⏱️ Hub scan-out
--- ⏱️ Shipment routing
--- ⏱️ Hub inventory
--- ⏱️ Destination-hub operations
-
-Payments
-
--- ⏱️ COD settlement
--- ⏱️ Online payments
--- ⏱️ Payment abstraction
--- ⏱️ Mock payment service
--- ⏱️ Refund workflow
-
-Notifications
-
--- ⏱️ Email notifications
--- ⏱️ SMS notifications
--- ⏱️ Push notifications
--- ⏱️ Event-driven notification architecture
-
-Documents
-
--- ⏱️ Invoice generation
--- ⏱️ PDF receipts
--- ⏱️ Delivery documents
-
-Customer Experience
-
--- ⏱️ Delivery rating
--- ⏱️ Customer feedback
--- ⏱️ Shipment search
--- ⏱️ Advanced shipment filtering
-
-Administration
-
--- ⏱️ Admin reports
--- ⏱️ Audit logs
--- ⏱️ Auto assignment
--- ⏱️ Pricing administration improvements
--- ⏱️ Operational dashboards
-
-Infrastructure
-
--- ⏱️ Swagger / OpenAPI
--- ⏱️ Automated testing
--- ⏱️ Dockerization
--- ⏱️ Production deployment
--- ⏱️ Monitoring
--- ⏱️ Observability
-
-Location & Logistics Intelligence
-
--- ⏱️ Maps integration
--- ⏱️ Geocoding
--- ⏱️ Distance calculation
--- ⏱️ ETA calculation
--- ⏱️ Route optimization
-
-🗺️ Development Roadmap
-Phase 1 — Foundation
-
-Status: 🟢 Completed
-
--- 🟢 Project setup
--- 🟢 Java 21
--- 🟢 Spring Boot
--- 🟢 Maven
--- 🟢 MongoDB
--- 🟢 Spring Security
--- 🟢 JWT
--- 🟢 Google OAuth 2.0
--- 🟢 Role-based authorization
-
-Phase 2 — Shipment Management
-
-Status: 🟢 Completed
-
--- 🟢 Shipment entity
--- 🟢 Shipment CRUD
--- 🟢 Validation
--- 🟢 Tracking number
--- 🟢 Pricing
--- 🟢 Price estimation
--- 🟢 Cancellation
--- 🟢 Tracking history
-
-Phase 3 — Shipment Workflow
-
-Status: 🟢 Completed
-
--- 🟢 Status transition engine
--- 🟢 Status validation
--- 🟢 Terminal-state protection
--- 🟢 Delivery-agent role
--- 🟢 Admin assignment
--- 🟢 Assigned shipment retrieval
-
-Phase 4 — Delivery Operations
-
-Status: 🔄 In Progress
-
--- 🔄 Accept / Reject
--- 🔄 Pickup
--- 🔄 In Transit
--- 🔄 Out for Delivery
--- 🔄 Delivery Proof
--- 🔄 OTP
--- 🔄 Failed Delivery
--- 🔄 COD Collection
-
-Phase 5 — Hub Operations
-
-Status: ⏱️ Planned
-
--- ⏱️ Hub Management
--- ⏱️ Hub Operators
--- ⏱️ Shipment Routing
--- ⏱️ Scan-In
--- ⏱️ Scan-Out
--- ⏱️ Hub Inventory
--- ⏱️ Hub Visibility
-
-Phase 6 — Platform Features
-
-Status: ⏱️ Planned
+```
+
+This verifies the relationship between shipment ownership, administrative assignment, authentication, and Delivery Agent-specific retrieval.
+
+---
+
+# 📊 Development Status
+
+## 🟢 Completed Features
+
+### 🔐 Authentication & Security
+
+- ✅ Spring Boot project setup
+- ✅ Maven configuration
+- ✅ Java 21
+- ✅ MongoDB configuration
+- ✅ User entity
+- ✅ User repository
+- ✅ Local registration
+- ✅ Local login
+- ✅ Username/email login
+- ✅ BCrypt password hashing
+- ✅ JWT access token
+- ✅ JWT refresh token
+- ✅ JWT authentication filter
+- ✅ Role-based authorization
+- ✅ Customer role
+- ✅ Admin role
+- ✅ Delivery Agent role
+- ✅ Hub Operator role foundation
+- ✅ Google OAuth 2.0
+
+### 📦 Shipment Management
+
+- ✅ Shipment entity
+- ✅ Shipment repository
+- ✅ Shipment DTOs
+- ✅ Address validation
+- ✅ Package validation
+- ✅ Shipment creation
+- ✅ Tracking-number generation
+- ✅ Shipment retrieval
+- ✅ Customer shipment retrieval
+- ✅ Shipment update
+- ✅ Shipment cancellation
+
+### 💰 Pricing
+
+- ✅ Pricing configuration
+- ✅ Admin pricing API
+- ✅ Price-estimation API
+- ✅ Server-side shipment pricing
+- ✅ Priority-based pricing
+- ✅ COD pricing foundation
+
+### 📍 Tracking & Workflow
+
+- ✅ Tracking history
+- ✅ Tracking-event creation
+- ✅ Shipment status-transition engine
+- ✅ Invalid-transition validation
+- ✅ Terminal-state protection
+- ✅ Delivery Agent authentication
+- ✅ Delivery Agent assigned-shipment retrieval
+- ✅ Admin shipment assignment
+- ✅ Assignment validation
+
+### 🧪 Testing
+
+- ✅ Postman API testing
+- ✅ Authentication testing
+- ✅ Authorization testing
+- ✅ Shipment workflow testing
+- ✅ Pricing testing
+- ✅ Tracking testing
+- ✅ Assignment testing
+
+---
+
+# 🔄 Current Development
+
+The current development focus is the operational Delivery Agent workflow.
+
+### 🔄 In Progress
+
+- 🔄 Delivery Agent accept/reject
+- 🔄 Pickup workflow
+- 🔄 In-transit workflow
+- 🔄 Out-for-delivery workflow
+- 🔄 Delivery confirmation
+- 🔄 Failed-delivery workflow
+- 🔄 Delivery proof
+- 🔄 OTP verification
+- 🔄 COD collection
+
+The goal is to connect the already implemented assignment layer with the complete physical delivery lifecycle.
+
+---
+
+# ⏱️ Planned Modules
+
+## 🏢 Hub Operations
 
--- ⏱️ Payments
--- ⏱️ COD Settlement
--- ⏱️ Notifications
--- ⏱️ Invoices
--- ⏱️ Ratings
--- ⏱️ Reports
--- ⏱️ Audit Logs
-
-Phase 7 — Production Hardening
-
-Status: ⏱️ Planned
-
--- ⏱️ Pagination
--- ⏱️ Search
--- ⏱️ Filtering
--- ⏱️ Swagger / OpenAPI
--- ⏱️ Automated Tests
--- ⏱️ Docker
--- ⏱️ Production Deployment
--- ⏱️ Monitoring
--- ⏱️ Observability
-
-🧱 Production-Oriented Engineering
-
-The project is being developed beyond simple CRUD implementation.
-
-The primary engineering goals are:
-
--- 🟢 Layered architecture
--- 🟢 DTO-based API contracts
--- 🟢 Mapper-based entity conversion
--- 🟢 Centralized business logic
--- 🟢 Role-based authorization
--- 🟢 JWT security
--- 🟢 Server-side pricing
--- 🟢 State-transition validation
--- 🟢 Ownership validation
--- 🟢 Input validation
--- 🟢 Centralized exception handling
--- 🟢 Structured logging
-
-Future engineering improvements include:
-
--- ⏱️ MongoDB indexing improvements
--- ⏱️ Pagination
--- ⏱️ Search and filtering
--- ⏱️ Automated testing
--- ⏱️ API documentation
--- ⏱️ Environment-based configuration
--- ⏱️ Secure secret management
--- ⏱️ Docker support
--- ⏱️ Production deployment
--- ⏱️ Monitoring and observability
-
-⚙️ Local Setup
-Prerequisites
-
-Install the following:
-
--- ☕ Java 21
--- 📦 Maven
--- 🍃 MongoDB
--- 🐙 Git
--- 🧪 Postman
--- 🛠️ Spring Tool Suite
--- 🛠️ IntelliJ IDEA
--- 🛠️ Eclipse
-
-📥 Clone Repository
-git clone https://github.com/iLovishSaluja/logistics-platform.git
-cd logistics-platform
-🔐 Environment Configuration
-
-Never commit real credentials or secrets to GitHub.
-
-Use environment variables for sensitive configuration.
-
-Example:
-
-spring.data.mongodb.uri=${MONGODB_URI}
-
-spring.security.oauth2.client.registration.google.client-id=${GOOGLE_CLIENT_ID}
-
-spring.security.oauth2.client.registration.google.client-secret=${GOOGLE_CLIENT_SECRET}
-
-jwt.secret=${JWT_SECRET}
-🔧 Application Port
-
-The Logistics Platform currently runs on:
-
-8081
-
-Configuration:
-
-server.port=8081
-🏗️ Build Project
-
-Using Maven Wrapper:
-
-Windows
-mvnw.cmd clean install
-Linux / macOS
-./mvnw clean install
-▶️ Run Application
-Windows
-mvnw.cmd spring-boot:run
-Linux / macOS
-./mvnw spring-boot:run
-
-Application:
-
-http://localhost:8081
-🧪 API Testing with Postman
-
-The recommended development workflow is:
-
-Start MongoDB
-      ↓
-Start Spring Boot Application
-      ↓
-Authenticate
-      ↓
-Copy Access Token
-      ↓
-Authorize Protected Requests
-      ↓
-Test APIs
-      ↓
-Verify MongoDB Data
-🔑 Authentication Flow
-Local Authentication
-Register
-   ↓
-Login
-   ↓
-Access Token
-   ↓
-Protected API
-Google Authentication
-Google Login
-     ↓
-OAuth Callback
-     ↓
-User Resolution
-     ↓
-JWT Authentication
-     ↓
-Protected API
-🛡️ Protected Request Flow
-HTTP Request
-     ↓
-Authorization Header
-     ↓
-JWT Filter
-     ↓
-Token Validation
-     ↓
-User Resolution
-     ↓
-SecurityContext
-     ↓
-Role Validation
-     ↓
-Controller
-     ↓
-Service
-     ↓
-Repository
-📦 Shipment Creation Flow
-Customer
-   ↓
-POST /api/shipments
-   ↓
-Request Validation
-   ↓
-Authenticated User Check
-   ↓
-Shipment DTO
-   ↓
-Pricing Service
-   ↓
-Tracking Number Generation
-   ↓
-Shipment Creation
-   ↓
-Tracking Event
-   ↓
+- ⏱️ Hub management
+- ⏱️ Hub Operator operations
+- ⏱️ Shipment hub routing
+- ⏱️ Hub scan-in
+- ⏱️ Hub scan-out
+- ⏱️ Hub inventory
+- ⏱️ Hub-based shipment visibility
+
+## 🔎 Shipment Operations
+
+- ⏱️ Shipment pagination
+- ⏱️ Shipment search
+- ⏱️ Shipment filtering
+- ⏱️ Advanced tracking
+- ⏱️ Improved shipment update restrictions
+
+## 💳 Payments
+
+- ⏱️ COD settlement
+- ⏱️ Online payment gateway
+- ⏱️ Payment abstraction
+- ⏱️ Payment status management
+- ⏱️ Refund workflow
+
+## 🔔 Notifications
+
+- ⏱️ Email notifications
+- ⏱️ SMS notifications
+- ⏱️ Push notifications
+- ⏱️ Shipment event notifications
+
+## 📄 Business Features
+
+- ⏱️ Invoice generation
+- ⏱️ PDF receipts
+- ⏱️ Delivery ratings
+- ⏱️ Customer feedback
+- ⏱️ Admin reports
+- ⏱️ Audit logging
+
+## 🤖 Automation & Intelligence
+
+- ⏱️ Automatic Delivery Agent assignment
+- ⏱️ Maps/geocoding integration
+- ⏱️ Distance calculation
+- ⏱️ ETA calculation
+- ⏱️ Scheduled background jobs
+
+## 🚀 Production Hardening
+
+- ⏱️ Swagger / OpenAPI
+- ⏱️ Automated testing
+- ⏱️ Dockerization
+- ⏱️ Production deployment
+- ⏱️ Monitoring
+- ⏱️ Observability
+- ⏱️ Performance optimization
+
+---
+
+# 🗺️ Development Roadmap
+
+## Phase 1 — Foundation
+
+```text
+Java 21
+Spring Boot
+Maven
 MongoDB
-   ↓
-Response
-💰 Pricing Flow
-Shipment Request
-       ↓
-Pricing Configuration
-       ↓
-Base Charge
-       ↓
-Weight Charge
-       ↓
-Distance Charge
-       ↓
-Priority Multiplier
-       ↓
-COD Fee
-       ↓
-Final Price
-       ↓
-Shipment
-🚚 Delivery Assignment Flow
-ADMIN
-  ↓
-Select Shipment
-  ↓
-Select Delivery Agent
-  ↓
-Validate User Role
-  ↓
-Validate Shipment
-  ↓
-Validate Assignment State
-  ↓
-Save Agent ID
-  ↓
-Delivery Agent
-  ↓
-GET /api/delivery/shipments
-🔄 Shipment State Flow
-┌───────────┐
-│  CREATED  │
-└─────┬─────┘
-      │
-      ▼
-┌────────────┐
-│ CONFIRMED  │
-└──────┬─────┘
-       │
-       ▼
-┌────────────┐
-│ PICKED_UP  │
-└──────┬─────┘
-       │
-       ▼
-┌────────────┐
-│ IN_TRANSIT │
-└──────┬─────┘
-       │
-       ▼
-┌─────────────────┐
-│ OUT_FOR_DELIVERY│
-└───────┬─────────┘
-        │
-        ▼
-┌───────────┐
-│ DELIVERED │
-└───────────┘
-📍 Tracking Architecture
+JWT
+Google OAuth 2.0
+Spring Security
+Layered Architecture
+```
 
-Tracking history is stored as part of the shipment lifecycle.
+**Status: ✅ COMPLETED**
 
-Conceptually:
+---
 
+## Phase 2 — Shipment Management
+
+```text
+Shipment CRUD
+Validation
+Tracking Number
+Pricing
+Price Estimation
+Cancellation
+Tracking History
+```
+
+**Status: ✅ COMPLETED**
+
+---
+
+## Phase 3 — Shipment Workflow
+
+```text
+Status Transition Engine
+Tracking Events
+Delivery Agent Authentication
+Admin Assignment
+Assigned Shipments
+Assignment Validation
+```
+
+**Status: ✅ COMPLETED**
+
+---
+
+## Phase 4 — Delivery Operations
+
+```text
+Accept / Reject
+Pickup
+In Transit
+Out For Delivery
+Delivery Confirmation
+Failed Delivery
+Delivery Proof
+OTP
+COD Collection
+```
+
+**Status: 🔄 IN PROGRESS**
+
+---
+
+## Phase 5 — Hub Operations
+
+```text
+Hub Management
+Hub Operators
+Shipment Routing
+Scan-In / Scan-Out
+Hub Inventory
+```
+
+**Status: ⏱️ PLANNED**
+
+---
+
+## Phase 6 — Platform Features
+
+```text
+Payments
+Notifications
+Invoices
+Ratings
+Reports
+Audit Logs
+```
+
+**Status: ⏱️ PLANNED**
+
+---
+
+## Phase 7 — Production Hardening
+
+```text
+Pagination
+Search
+Filtering
+Swagger / OpenAPI
+Automated Tests
+Docker
+Deployment
+Monitoring
+Observability
+```
+
+**Status: ⏱️ PLANNED**
+
+---
+
+# 🧱 Production-Oriented Engineering
+
+The project is being developed beyond basic CRUD implementation.
+
+## Engineering Principles
+
+- ✅ Layered architecture
+- ✅ DTO-based API contracts
+- ✅ Mapper-based entity conversion
+- ✅ Centralized business logic
+- ✅ Role-based authorization
+- ✅ JWT security
+- ✅ Server-side pricing
+- ✅ State-transition validation
+- ✅ Ownership validation
+- ✅ Input validation
+- ✅ Centralized exception handling
+
+## ⏱️ Production Hardening Goals
+
+- ⏱️ Structured logging
+- ⏱️ MongoDB indexing
+- ⏱️ Pagination
+- ⏱️ Search and filtering
+- ⏱️ Automated testing
+- ⏱️ API documentation
+- ⏱️ Environment-based configuration
+- ⏱️ Secure secret management
+- ⏱️ Docker support
+- ⏱️ Deployment readiness
+- ⏱️ Monitoring and observability
+
+---
+
+# 🏗️ Architecture
+
+The current application follows a layered architecture.
+
+```text
+                         ┌─────────────────────┐
+                         │      REST API       │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │    Controllers      │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │      Services       │
+                         │                     │
+                         │ Business Logic      │
+                         │ Pricing             │
+                         │ Shipment Workflow   │
+                         │ Authentication      │
+                         └──────────┬──────────┘
+                                    │
+                  ┌─────────────────┼─────────────────┐
+                  ▼                 ▼                 ▼
+           ┌────────────┐    ┌────────────┐    ┌────────────┐
+           │ Repository │    │   Mapper   │    │  Security  │
+           └─────┬──────┘    └────────────┘    └────────────┘
+                 │
+                 ▼
+           ┌────────────┐
+           │  MongoDB   │
+           └────────────┘
+```
+
+## Layer Responsibilities
+
+### 🎮 Controller Layer
+
+Responsible for:
+
+- HTTP endpoints
+- Request mapping
+- Request validation
+- Authentication-context access
+- Response generation
+
+### ⚙️ Service Layer
+
+Responsible for:
+
+- Business rules
+- Pricing calculations
+- Shipment workflow
+- Status-transition validation
+- Ownership checks
+- Assignment validation
+- Authentication-related business logic
+
+### 🗄️ Repository Layer
+
+Responsible for:
+
+- Database access
+- User queries
+- Shipment queries
+- Pricing-configuration queries
+
+### 📦 DTO Layer
+
+Responsible for:
+
+- API request contracts
+- API response contracts
+- Input validation
+- Separation between persistence entities and API models
+
+### 🔐 Security Layer
+
+Responsible for:
+
+- JWT authentication
+- Authentication filters
+- Role-based authorization
+- OAuth 2.0 integration
+- Current-user resolution
+
+---
+
+# 📁 Project Structure
+
+The application follows a conventional Spring Boot layered structure.
+
+```text
+src/
+└── main/
+    ├── java/
+    │   └── com/
+    │       └── lovish/
+    │           └── logistic/
+    │               └── platform/
+    │                   ├── controller/
+    │                   ├── service/
+    │                   ├── repository/
+    │                   ├── dto/
+    │                   ├── entity/
+    │                   ├── mapper/
+    │                   ├── security/
+    │                   ├── exception/
+    │                   └── configuration/
+    │
+    └── resources/
+        └── application.properties
+```
+
+Package names and individual classes may evolve as the platform continues to grow.
+
+---
+
+# 👥 User Roles
+
+The platform is designed around multiple operational roles.
+
+| Role | Responsibilities |
+|---|---|
+| 👤 `CUSTOMER` | Create shipments, manage permitted shipment information and track deliveries |
+| 🚚 `DELIVERY_AGENT` | Handle assigned shipments and perform delivery operations |
+| 🏢 `HUB_OPERATOR` | Manage hub operations and shipment movement |
+| 🛡️ `ADMIN` | Manage pricing, assignments, users and operational configuration |
+
+---
+
+# 🔐 Authentication Architecture
+
+## Local Authentication
+
+```text
+Registration
+     ↓
+Validate Request
+     ↓
+Hash Password
+     ↓
+Save User
+     ↓
+Login
+     ↓
+Verify Credentials
+     ↓
+Generate JWT Access + Refresh Tokens
+```
+
+## Google OAuth 2.0
+
+```text
+Client
+  ↓
+Google Login
+  ↓
+Google Authorization
+  ↓
+OAuth Callback
+  ↓
+Find / Create User
+  ↓
+Assign Authentication Provider
+  ↓
+Authenticated Application Session
+```
+
+The application tracks the authentication provider associated with each account.
+
+---
+
+# 🔑 JWT Authentication
+
+Protected requests use JWT-based authentication.
+
+```text
+Client
+  │
+  │ Authorization: Bearer <access-token>
+  ▼
+JWT Authentication Filter
+  │
+  ▼
+Validate Token
+  │
+  ▼
+Extract User Identity
+  │
+  ▼
+Load User
+  │
+  ▼
+Set Security Context
+  │
+  ▼
+Controller
+```
+
+The platform uses:
+
+- 🔑 Access tokens
+- 🔄 Refresh tokens
+- 🛡️ JWT authentication filtering
+- 👥 Role-based authorization
+
+---
+
+# 💰 Pricing Architecture
+
+Pricing is deliberately controlled by the backend.
+
+```text
+                  ADMIN
+                    │
+                    ▼
+          Pricing Configuration
+                    │
+                    ▼
+          PricingConfigRepository
+                    │
+                    ▼
+              PricingService
+                    │
+          ┌─────────┴─────────┐
+          ▼                   ▼
+     Price Estimate       Shipment Creation
+          │                   │
+          └─────────┬─────────┘
+                    ▼
+              Final Price
+```
+
+This keeps pricing logic centralized and prevents clients from directly controlling the final shipping cost.
+
+---
+
+# 🔄 Shipment Workflow Architecture
+
+```text
+             Shipment Created
+                    │
+                    ▼
+                CREATED
+               /       \
+              /         \
+             ▼           ▼
+       CONFIRMED      CANCELLED
+             │
+             ▼
+         PICKED_UP
+             │
+             ▼
+         IN_TRANSIT
+             │
+             ▼
+      OUT_FOR_DELIVERY
+          /       \
+         /         \
+        ▼           ▼
+   DELIVERED   FAILED_DELIVERY
+                    /      \
+                   /        \
+                  ▼          ▼
+          OUT_FOR_DELIVERY  RETURNED
+```
+
+The transition engine is responsible for enforcing valid movement between states.
+
+---
+
+# 📍 Tracking Architecture
+
+Tracking history is maintained alongside the shipment's current state.
+
+```text
 Shipment
    │
    ├── Current Status
    │
    └── Tracking History
-          │
-          ├── CREATED
-          ├── CONFIRMED
-          ├── PICKED_UP
-          ├── IN_TRANSIT
-          ├── OUT_FOR_DELIVERY
-          └── DELIVERED
+           │
+           ├── Event 1
+           ├── Event 2
+           ├── Event 3
+           ├── Event 4
+           └── Event N
+```
+
+This allows the platform to preserve the shipment's operational history rather than overwriting previous states.
+
+---
+
+# 🚚 Delivery Assignment Architecture
+
+```text
+                    ADMIN
+                      │
+                      ▼
+              Select Shipment
+                      │
+                      ▼
+          Select Delivery Agent
+                      │
+                      ▼
+            Validate Assignment
+                      │
+                      ▼
+       assignedDeliveryAgentId
+                      │
+                      ▼
+              Assigned Shipment
+                      │
+                      ▼
+              DELIVERY_AGENT
+                      │
+                      ▼
+         GET /api/delivery/shipments
+```
+
+The authenticated Delivery Agent can retrieve only shipments assigned to that account.
+
+---
+
+# 🧩 Modular Monolith Design
+
+The application is intentionally kept as a modular monolith for the current development stage.
+
+```text
+                 ┌─────────────────────────────┐
+                 │     Logistics Platform      │
+                 │                             │
+                 │  ┌───────────────────────┐  │
+                 │  │ Authentication Module │  │
+                 │  └───────────────────────┘  │
+                 │                             │
+                 │  ┌───────────────────────┐  │
+                 │  │ Shipment Module       │  │
+                 │  └───────────────────────┘  │
+                 │                             │
+                 │  ┌───────────────────────┐  │
+                 │  │ Pricing Module         │  │
+                 │  └───────────────────────┘  │
+                 │                             │
+                 │  ┌───────────────────────┐  │
+                 │  │ Tracking Module        │  │
+                 │  └───────────────────────┘  │
+                 │                             │
+                 │  ┌───────────────────────┐  │
+                 │  │ Delivery Module        │  │
+                 │  └───────────────────────┘  │
+                 │                             │
+                 │  ┌───────────────────────┐  │
+                 │  │ Hub Module             │  │
+                 │  └───────────────────────┘  │
+                 │                             │
+                 │  ┌───────────────────────┐  │
+                 │  │ Payment Module         │  │
+                 │  └───────────────────────┘  │
+                 └─────────────────────────────┘
+```
 
-This allows the system to retain the shipment journey instead of only the current state.
+Future modules can be introduced without immediately splitting the application into multiple distributed services.
 
-🔒 Security Principles
+---
 
-The backend follows several security principles.
+# ⚙️ Local Setup
 
--- 🟢 Passwords are hashed using BCrypt
--- 🟢 Protected APIs require authentication
--- 🟢 Role-based authorization is applied
--- 🟢 JWT tokens are used for API authentication
--- 🟢 OAuth 2.0 is used for Google authentication
--- 🟢 Ownership is checked for customer-sensitive operations
--- 🟢 Pricing is calculated server-side
--- 🟢 Clients cannot directly control final pricing
--- 🟢 Input validation is applied to request DTOs
--- ⏱️ Production secret-management improvements are planned
+## Prerequisites
 
-🧩 Business Rules
+Install the following tools:
 
-The platform uses backend-enforced business rules.
+- ☕ Java 21
+- 📦 Maven
+- 🍃 MongoDB
+- 🌿 Git
+- 🧪 Postman
+- 🛠️ Spring Tool Suite / IntelliJ IDEA / Eclipse
 
-Shipment Ownership
+## 1. Clone the Repository
 
-A customer should only be able to operate on shipments belonging to that customer.
+```bash
+git clone https://github.com/iLovishSaluja/logistics-platform.git
+cd logistics-platform
+```
 
-Pricing
+## 2. Configure MongoDB
 
-Final shipment cost is calculated by the server.
+Make sure MongoDB is running locally or provide a MongoDB connection string through environment configuration.
 
-Cancellation
+Example:
 
-Customer cancellation is restricted to the permitted shipment lifecycle state.
+```properties
+spring.data.mongodb.uri=${MONGODB_URI}
+```
 
-Status Transitions
+## 3. Configure Google OAuth 2.0
 
-Shipment states can only move through valid transitions.
+Configure the Google OAuth client credentials through environment variables.
 
-Assignment
+```properties
+spring.security.oauth2.client.registration.google.client-id=${GOOGLE_CLIENT_ID}
+spring.security.oauth2.client.registration.google.client-secret=${GOOGLE_CLIENT_SECRET}
+```
 
-Only authorized administrators can assign shipments to delivery agents.
+Do not commit real OAuth credentials to GitHub.
 
-Terminal States
+## 4. Configure JWT Secret
 
-Delivered, cancelled and returned shipments cannot continue through the normal shipment lifecycle.
+Use an environment variable for the JWT secret.
 
-📊 Data Model Overview
-User
-User
- ├── id
- ├── username
- ├── email
- ├── password
- ├── role
- ├── authProvider
- ├── providerId
- ├── enabled
- ├── createdAt
- └── updatedAt
-Shipment
-Shipment
- ├── id
- ├── trackingNumber
- ├── customerId
- ├── senderAddress
- ├── receiverAddress
- ├── packageDetails
- ├── priority
- ├── cost
- ├── status
- ├── trackingHistory
- ├── assignedDeliveryAgentId
- ├── createdAt
- └── updatedAt
-🗃️ MongoDB
+```properties
+jwt.secret=${JWT_SECRET}
+```
 
-MongoDB is used as the primary persistence layer.
+Never commit real production secrets to source control.
 
-The application uses repository abstractions for database access.
+---
 
-The shipment repository supports operations such as:
+# 🏗️ Build the Project
 
--- Find by tracking number
--- Check tracking-number existence
--- Find shipments by customer
--- Find shipments by delivery agent
--- Find shipments by status
+The project includes the Maven Wrapper.
 
-🧠 Why MongoDB?
+## macOS / Linux
 
-The logistics domain contains naturally evolving documents such as:
+```bash
+./mvnw clean install
+```
 
--- Shipment details
--- Nested addresses
--- Package information
--- Tracking history
--- Assignment information
+## Windows
 
-MongoDB provides a document-oriented persistence model that fits these structures well.
+```bat
+mvnw.cmd clean install
+```
 
-📦 DTO Architecture
+---
 
-DTOs are used to keep API contracts separate from persistence entities.
+# ▶️ Run the Application
 
-Examples include:
+## macOS / Linux
 
-AddressDto
-PackageDetailsDto
-ShipmentCreateRequestDto
-ShipmentUpdateRequestDto
+```bash
+./mvnw spring-boot:run
+```
 
-This approach helps prevent API clients from directly controlling persistence-layer models.
+## Windows
 
-🛡️ Centralized Exception Handling
+```bat
+mvnw.cmd spring-boot:run
+```
 
-The application uses centralized exception handling to provide consistent API responses.
+The application runs on:
 
-The objective is to avoid exposing raw framework exceptions to API clients.
+```text
+http://localhost:8081
+```
 
-Example validation response:
+---
 
-{
-  "message": "Validation Failed",
-  "validationErrors": {
-    "postalCode": "Invalid postal code"
-  }
-}
-📝 Logging
+# ⚙️ Configuration
 
-The project follows structured backend logging practices.
+Current development server port:
 
-The logging layer uses:
+```properties
+server.port=8081
+```
 
-SLF4J
+Environment-specific configuration should remain outside the source code wherever possible.
 
-The goal is to avoid uncontrolled console logging and move toward production-friendly application logging.
+## Recommended Environment Variables
 
-🧪 Testing Strategy
-Current
+```text
+MONGODB_URI
+GOOGLE_CLIENT_ID
+GOOGLE_CLIENT_SECRET
+JWT_SECRET
+```
 
--- 🟢 Manual API testing using Postman
--- 🟢 Authentication testing
--- 🟢 Authorization testing
--- 🟢 Shipment CRUD testing
--- 🟢 Pricing testing
--- 🟢 Tracking testing
--- 🟢 Status transition testing
--- 🟢 Assignment testing
+---
 
-Future
+# 🔒 Security Configuration Guidelines
 
--- ⏱️ Unit tests
--- ⏱️ Service-layer tests
--- ⏱️ Controller tests
--- ⏱️ Repository tests
--- ⏱️ Integration tests
--- ⏱️ Security tests
--- ⏱️ End-to-end API tests
+Never commit:
 
-📖 API Design Principles
+- ❌ MongoDB production credentials
+- ❌ Google OAuth client secrets
+- ❌ JWT signing secrets
+- ❌ Payment-provider secrets
+- ❌ API keys
+- ❌ Private credentials
 
-The API is designed around:
+Use environment variables or a secure secret-management system.
 
--- RESTful resource endpoints
--- HTTP methods appropriate to operations
--- DTO-based request contracts
--- Structured JSON responses
--- Authentication for protected resources
--- Role-based authorization
--- Validation before business processing
--- Centralized exception handling
+---
 
-🌐 Frontend Integration
+# 🧪 API Testing with Postman
 
-The backend is designed to be consumed by a frontend client.
+The project is currently tested manually through Postman.
 
-Potential frontend architecture:
+A typical authenticated workflow is:
 
-React Application
-       │
-       │ HTTP / REST
-       ▼
-Spring Boot Backend
-       │
-       ▼
-MongoDB
+```text
+Register / Login
+      ↓
+Receive JWT Access Token
+      ↓
+Add Bearer Token
+      ↓
+Call Protected API
+      ↓
+Validate Response
+```
 
-The React badge in this README represents the planned/client-side integration rather than an implemented frontend contained in the current backend repository.
+For protected APIs, use:
 
-🖥️ Planned React Client
-⏱️ Planned
+```text
+Authorization
+Type: Bearer Token
+Token: <JWT_ACCESS_TOKEN>
+```
 
-The future React client can provide separate interfaces for:
+---
 
-Customer
+# 📡 Example API Workflow
 
--- ⏱️ Registration
--- ⏱️ Login
--- ⏱️ Shipment creation
--- ⏱️ Price estimation
--- ⏱️ Shipment tracking
--- ⏱️ Shipment history
--- ⏱️ Cancellation
--- ⏱️ Delivery rating
+## Customer Flow
 
-Delivery Agent
-
--- ⏱️ Assigned shipments
--- ⏱️ Accept/reject
--- ⏱️ Pickup
--- ⏱️ Status updates
--- ⏱️ Delivery proof
--- ⏱️ COD collection
-
-Hub Operator
-
--- ⏱️ Hub dashboard
--- ⏱️ Scan-in
--- ⏱️ Scan-out
--- ⏱️ Shipment routing
--- ⏱️ Hub inventory
-
-Admin
-
--- ⏱️ User management
--- ⏱️ Pricing configuration
--- ⏱️ Shipment assignment
--- ⏱️ Reports
--- ⏱️ Operational monitoring
-
-🏢 Future Hub Architecture
-
-The planned hub system will introduce an additional operational layer.
-
-Shipment
+```text
+Register
    ↓
-Origin
+Login
    ↓
-Origin Hub
+Receive JWT
    ↓
-Transit Hub
+Estimate Price
    ↓
-Destination Hub
+Create Shipment
    ↓
-Delivery Agent
+Receive Tracking Number
    ↓
-Customer
+View Shipment
+   ↓
+Track Shipment
+   ↓
+Update / Cancel if permitted
+```
 
-Each hub can eventually maintain:
+## Admin Flow
 
--- ⏱️ Incoming shipments
--- ⏱️ Outgoing shipments
--- ⏱️ Shipment scans
--- ⏱️ Routing information
--- ⏱️ Local inventory
--- ⏱️ Assigned operators
+```text
+Login
+   ↓
+Receive JWT
+   ↓
+Configure Pricing
+   ↓
+View Active Pricing
+   ↓
+Select Shipment
+   ↓
+Assign Delivery Agent
+```
 
-📊 Future Admin Capabilities
+## Delivery Agent Flow
 
-The administration layer is planned to eventually support:
+```text
+Login
+   ↓
+Receive JWT
+   ↓
+View Assigned Shipments
+   ↓
+Accept Assignment
+   ↓
+Pickup
+   ↓
+In Transit
+   ↓
+Out For Delivery
+   ↓
+Delivery Confirmation
+```
 
--- ⏱️ User management
--- ⏱️ Delivery-agent management
--- ⏱️ Hub management
--- ⏱️ Pricing configuration
--- ⏱️ Shipment assignment
--- ⏱️ Reports
--- ⏱️ Audit logs
--- ⏱️ Stuck-shipment monitoring
--- ⏱️ Operational dashboards
--- ⏱️ System configuration
+The Delivery Agent operational steps after assignment are currently under development.
 
-📈 Future Architecture
+---
 
-The current implementation intentionally follows a modular monolith architecture.
+# 📈 Future Architecture
 
-As the platform grows, individual capabilities could eventually be separated into independent services if operational requirements justify the added complexity.
+The current application is intentionally implemented as a modular monolith.
 
-Potential future architecture:
+As the platform grows, individual modules could eventually be separated into independent services if operational requirements justify the added distributed-system complexity.
 
-                         API Gateway
-                              │
-              ┌───────────────┼────────────────┐
-              │               │                │
-              ▼               ▼                ▼
-       Authentication     Shipment         Pricing
-          Service          Service          Service
-              │               │                │
-              └───────────────┼────────────────┘
-                              │
-              ┌───────────────┼────────────────┐
-              │               │                │
-              ▼               ▼                ▼
-            Hub           Delivery          Payment
-          Service          Service          Service
-              │               │                │
-              └───────────────┼────────────────┘
-                              │
-                              ▼
-                       Notification
-                          Service
+## Potential Future Architecture
 
-For V1, these capabilities remain within a single Spring Boot application.
+```text
+                         ┌─────────────────┐
+                         │   API Gateway   │
+                         └────────┬────────┘
+                                  │
+              ┌───────────────────┼───────────────────┐
+              │                   │                   │
+              ▼                   ▼                   ▼
+       ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+       │   Auth      │     │  Shipment   │     │   Pricing   │
+       │   Service   │     │   Service   │     │   Service   │
+       └──────┬──────┘     └──────┬──────┘     └──────┬──────┘
+              │                   │                   │
+              └───────────────────┼───────────────────┘
+                                  │
+              ┌───────────────────┼───────────────────┐
+              │                   │                   │
+              ▼                   ▼                   ▼
+       ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+       │     Hub     │     │  Delivery   │     │   Payment   │
+       │   Service   │     │   Service   │     │   Service   │
+       └──────┬──────┘     └──────┬──────┘     └──────┬──────┘
+              │                   │                   │
+              └───────────────────┼───────────────────┘
+                                  ▼
+                         ┌─────────────────┐
+                         │ Notification    │
+                         │    Service      │
+                         └─────────────────┘
+```
 
-🚀 Production Readiness Roadmap
+For V1, these capabilities remain inside a single Spring Boot application.
 
-The long-term production-hardening plan includes:
+This keeps the project easier to develop, test, debug, and evolve before introducing unnecessary distributed-system complexity.
 
--- ⏱️ Automated testing
--- ⏱️ API documentation
--- ⏱️ Pagination
--- ⏱️ Search and filtering
--- ⏱️ Database indexing
--- ⏱️ Secure secret management
--- ⏱️ Docker
--- ⏱️ CI/CD
--- ⏱️ Production deployment
--- ⏱️ Monitoring
--- ⏱️ Observability
--- ⏱️ Health checks
--- ⏱️ Structured logs
--- ⏱️ Metrics
--- ⏱️ Distributed tracing if required
+---
 
-🐳 Docker
-⏱️ Planned
-
-The project is planned to support containerized deployment.
-
-Potential architecture:
-
-┌───────────────────────┐
-│    React Frontend     │
-└───────────┬───────────┘
-            │
-            ▼
-┌───────────────────────┐
-│   Spring Boot API     │
-└───────────┬───────────┘
-            │
-            ▼
-┌───────────────────────┐
-│       MongoDB         │
-└───────────────────────┘
-☁️ Production Deployment
-⏱️ Planned
-
-Potential deployment improvements include:
-
--- ⏱️ Cloud deployment
--- ⏱️ Environment-specific configuration
--- ⏱️ Secure environment variables
--- ⏱️ HTTPS
--- ⏱️ Database security
--- ⏱️ Health checks
--- ⏱️ Monitoring
--- ⏱️ Logging
--- ⏱️ Automated deployment
-
-📊 Monitoring & Observability
-⏱️ Planned
-
-The platform can eventually introduce:
-
--- ⏱️ Application health monitoring
--- ⏱️ Metrics
--- ⏱️ Error tracking
--- ⏱️ Request tracing
--- ⏱️ Database monitoring
--- ⏱️ Shipment-processing monitoring
--- ⏱️ Stuck-shipment detection
--- ⏱️ Operational alerts
-
-🧭 Current Project State
+# 📌 Current Project State
 
 The project has progressed beyond basic authentication and CRUD.
 
-Current implemented flow:
+## Current Implemented Flow
 
+```text
 Authentication
       ↓
 Authorization
@@ -1884,10 +2086,11 @@ Status Transition Engine
 Delivery Agent Assignment
       ↓
 Assigned Shipment Retrieval
-🔄 Current Development Direction
+```
 
-The next major development stage is:
+## Current Development Focus
 
+```text
 Assignment
     ↓
 Accept / Reject
@@ -1901,298 +2104,705 @@ Out For Delivery
 Delivery Proof
     ↓
 Delivered
+```
 
-This stage will convert the existing assignment infrastructure into a complete operational delivery workflow.
+---
 
-🧩 Feature Status Legend
+# 📋 Feature Matrix
 
-Throughout this README:
+| Feature | Status |
+|---|---|
+| User Registration | ✅ Completed |
+| User Login | ✅ Completed |
+| Username / Email Login | ✅ Completed |
+| BCrypt Password Hashing | ✅ Completed |
+| JWT Access Tokens | ✅ Completed |
+| JWT Refresh Tokens | ✅ Completed |
+| JWT Authentication Filter | ✅ Completed |
+| Role-Based Authorization | ✅ Completed |
+| Google OAuth 2.0 | ✅ Completed |
+| Customer Role | ✅ Completed |
+| Admin Role | ✅ Completed |
+| Delivery Agent Role | ✅ Completed |
+| Hub Operator Role Foundation | ✅ Completed |
+| Shipment Creation | ✅ Completed |
+| Shipment Retrieval | ✅ Completed |
+| Shipment Update | ✅ Completed |
+| Shipment Cancellation | ✅ Completed |
+| Tracking Number Generation | ✅ Completed |
+| Address Validation | ✅ Completed |
+| Package Validation | ✅ Completed |
+| Pricing Configuration | ✅ Completed |
+| Server-Side Pricing | ✅ Completed |
+| Price Estimation | ✅ Completed |
+| Tracking History | ✅ Completed |
+| Tracking Events | ✅ Completed |
+| Status Transition Engine | ✅ Completed |
+| Invalid Transition Validation | ✅ Completed |
+| Admin Shipment Assignment | ✅ Completed |
+| Assignment Validation | ✅ Completed |
+| Delivery Agent Assigned Shipments | ✅ Completed |
+| Postman API Testing | ✅ Completed |
+| Delivery Agent Accept / Reject | 🔄 In Progress |
+| Pickup Workflow | 🔄 In Progress |
+| In-Transit Workflow | 🔄 In Progress |
+| Out-for-Delivery Workflow | 🔄 In Progress |
+| Delivery Confirmation | 🔄 In Progress |
+| Failed Delivery Workflow | 🔄 In Progress |
+| Delivery Proof / OTP | 🔄 In Progress |
+| COD Collection | 🔄 In Progress |
+| Hub Management | ⏱️ Planned |
+| Hub Operator Operations | ⏱️ Planned |
+| Shipment Hub Routing | ⏱️ Planned |
+| Hub Scan-In / Scan-Out | ⏱️ Planned |
+| Shipment Pagination | ⏱️ Planned |
+| Search & Filtering | ⏱️ Planned |
+| Swagger / OpenAPI | ⏱️ Planned |
+| Automated Testing | ⏱️ Planned |
+| COD Settlement | ⏱️ Planned |
+| Online Payment Gateway | ⏱️ Planned |
+| Payment Abstraction | ⏱️ Planned |
+| Email Notifications | ⏱️ Planned |
+| SMS / Push Notifications | ⏱️ Planned |
+| Invoice / PDF Receipt | ⏱️ Planned |
+| Delivery Rating | ⏱️ Planned |
+| Admin Reports | ⏱️ Planned |
+| Audit Logging | ⏱️ Planned |
+| Automatic Assignment | ⏱️ Planned |
+| Maps / Geocoding | ⏱️ Planned |
+| Distance Calculation | ⏱️ Planned |
+| ETA Calculation | ⏱️ Planned |
+| Scheduled Background Jobs | ⏱️ Planned |
+| Dockerization | ⏱️ Planned |
+| Production Deployment | ⏱️ Planned |
+| Monitoring & Observability | ⏱️ Planned |
 
-🟢 Completed
+---
 
-The feature has been implemented and is part of the current project functionality.
+# 🧩 Business Rules
 
-🔄 In Progress
+The platform is designed around explicit backend business rules rather than allowing clients to directly control sensitive operations.
 
-The feature is currently being developed or is the immediate development focus.
+## 💰 Pricing
 
-⏱️ Planned
+- ✅ Final shipment price is calculated server-side.
+- ✅ Customers cannot directly control the final price.
+- ✅ Active pricing configuration is maintained by Admin.
+- ✅ Priority affects the calculated price.
+- ✅ Distance and package weight participate in pricing.
 
-The feature is part of the future roadmap and has not yet been implemented.
+## 📦 Shipment Ownership
 
-📌 Feature Summary
-Module	Status
-Project Setup	🟢 Completed
-Java 21	🟢 Completed
-Spring Boot	🟢 Completed
-Maven	🟢 Completed
-MongoDB	🟢 Completed
-Spring Security	🟢 Completed
-JWT	🟢 Completed
-Google OAuth 2.0	🟢 Completed
-User Authentication	🟢 Completed
-Role-Based Authorization	🟢 Completed
-Shipment CRUD	🟢 Completed
-Shipment Validation	🟢 Completed
-Server-Side Pricing	🟢 Completed
-Price Estimation	🟢 Completed
-Shipment Cancellation	🟢 Completed
-Tracking History	🟢 Completed
-Status Transition Engine	🟢 Completed
-Delivery-Agent Assignment	🟢 Completed
-Assigned Shipment Retrieval	🟢 Completed
-Delivery Accept/Reject	🔄 In Progress
-Pickup Workflow	🔄 In Progress
-Delivery Proof	🔄 In Progress
-COD Collection	🔄 In Progress
-Hub Management	⏱️ Planned
-Online Payments	⏱️ Planned
-Notifications	⏱️ Planned
-Invoices	⏱️ Planned
-Ratings	⏱️ Planned
-Pagination	⏱️ Planned
-Search & Filtering	⏱️ Planned
-Swagger / OpenAPI	⏱️ Planned
-Automated Testing	⏱️ Planned
-Docker	⏱️ Planned
-Production Deployment	⏱️ Planned
-Monitoring	⏱️ Planned
-🧠 Engineering Philosophy
+- ✅ Customer operations are ownership-aware.
+- ✅ Authenticated users are resolved from the security context.
+- ✅ Sensitive shipment operations validate the requesting user's authority.
 
-The project focuses on learning and applying production-oriented backend engineering principles rather than building only a basic CRUD application.
+## 🔄 Status Transitions
 
-The core principles are:
+- ✅ Status changes are validated centrally.
+- ✅ Invalid transitions are rejected.
+- ✅ Terminal states cannot transition further.
+- ✅ Status changes can generate tracking events.
 
--- Keep business logic inside services
--- Keep controllers lightweight
--- Keep persistence logic inside repositories
--- Use DTOs for API contracts
--- Validate input at the API boundary
--- Enforce authorization at the backend
--- Never trust client-controlled pricing
--- Validate state transitions centrally
--- Validate ownership for protected resources
--- Keep authentication separate from business logic
--- Prefer reusable services over duplicated logic
--- Build incrementally
--- Test every feature before moving forward
--- Keep the architecture extensible
+## 🚚 Assignment
 
-🔍 Example Business Flow
+- ✅ Only authorized Admin operations can assign shipments.
+- ✅ Assigned users must have the `DELIVERY_AGENT` role.
+- ✅ Existing assignments are validated.
+- ✅ Delivery Agents retrieve their own assigned shipments.
 
-A complete future shipment journey can eventually look like:
+---
 
-Customer
+# 📈 Future Production Enhancements
+
+The following improvements are intentionally separated from the currently implemented core.
+
+## ⏱️ Scalability
+
+- ⏱️ Database indexing
+- ⏱️ Pagination
+- ⏱️ Query optimization
+- ⏱️ Caching
+- ⏱️ Background processing
+- ⏱️ Asynchronous events
+
+## ⏱️ Reliability
+
+- ⏱️ Automated testing
+- ⏱️ Integration testing
+- ⏱️ Health checks
+- ⏱️ Retry mechanisms
+- ⏱️ Failure handling
+- ⏱️ Transaction boundaries where appropriate
+
+## ⏱️ Observability
+
+- ⏱️ Structured logging
+- ⏱️ Metrics
+- ⏱️ Monitoring
+- ⏱️ Distributed tracing if services are separated
+- ⏱️ Operational dashboards
+
+## ⏱️ Deployment
+
+- ⏱️ Docker
+- ⏱️ Container orchestration
+- ⏱️ CI/CD
+- ⏱️ Cloud deployment
+- ⏱️ Environment-specific configuration
+- ⏱️ Secure secret management
+
+---
+
+# 🔍 API Design Principles
+
+The backend follows REST-oriented API design principles.
+
+### Principles
+
+- ✅ Resource-oriented endpoints
+- ✅ HTTP methods aligned with operations
+- ✅ DTO-based request contracts
+- ✅ DTO-based response contracts
+- ✅ Validation at the API boundary
+- ✅ Centralized exception handling
+- ✅ Authentication for protected resources
+- ✅ Role-based authorization
+- ✅ Ownership validation
+- ✅ Business-rule validation in services
+
+---
+
+# 🛡️ Security Principles
+
+Security is treated as a backend responsibility.
+
+## Implemented
+
+- ✅ Password hashing using BCrypt
+- ✅ JWT authentication
+- ✅ Refresh-token support
+- ✅ Spring Security authorization
+- ✅ Role-based API protection
+- ✅ Authenticated-user resolution
+- ✅ Ownership checks
+- ✅ Server-side pricing
+
+## ⏱️ Future Security Hardening
+
+- ⏱️ Rate limiting
+- ⏱️ Token rotation improvements
+- ⏱️ Security headers
+- ⏱️ Audit logging
+- ⏱️ Brute-force protection
+- ⏱️ Secret-management integration
+- ⏱️ Automated security testing
+
+---
+
+# 🧪 Error Handling Strategy
+
+The application uses centralized exception handling to keep API error responses consistent.
+
+## Error Flow
+
+```text
+Invalid Request
+      ↓
+DTO Validation
+      ↓
+Exception
+      ↓
+Global Exception Handler
+      ↓
+Structured Error Response
+```
+
+## Example
+
+```json
+{
+  "message": "Validation Failed",
+  "validationErrors": {
+    "postalCode": "Invalid postal code"
+  }
+}
+```
+
+This approach keeps controllers clean and provides clients with predictable error responses.
+
+---
+
+# 📝 Logging
+
+Application logging is intended to use structured logging through SLF4J rather than direct console output.
+
+## Logging Goals
+
+- ⏱️ Request tracing
+- ⏱️ Authentication events
+- ⏱️ Shipment lifecycle events
+- ⏱️ Assignment events
+- ⏱️ Pricing events
+- ⏱️ Exception logging
+- ⏱️ Operational diagnostics
+
+Sensitive information such as passwords, JWT secrets, OAuth client secrets, and other credentials should never be logged.
+
+---
+
+# 📊 Operational Visibility
+
+Future operational dashboards can expose:
+
+- ⏱️ Total shipments
+- ⏱️ Active shipments
+- ⏱️ Delivered shipments
+- ⏱️ Failed deliveries
+- ⏱️ Returned shipments
+- ⏱️ Pending assignments
+- ⏱️ Delivery-agent workload
+- ⏱️ Hub workload
+- ⏱️ Revenue / pricing metrics
+- ⏱️ COD collection status
+- ⏱️ Stuck shipments
+
+---
+
+# 🏢 Hub Operations — Future Design
+
+The planned hub module will introduce physical logistics-center operations.
+
+```text
+Shipment
+   ↓
+Origin Hub
+   ↓
+Scan-In
+   ↓
+Processing
+   ↓
+Scan-Out
+   ↓
+Destination Hub
+   ↓
+Delivery Agent
+```
+
+Potential responsibilities include:
+
+- ⏱️ Shipment receiving
+- ⏱️ Shipment scanning
+- ⏱️ Shipment routing
+- ⏱️ Local assignment
+- ⏱️ Inventory visibility
+- ⏱️ Hub-level tracking
+
+---
+
+# 💳 Payment Abstraction — Future Design
+
+Payment integration is planned around an abstraction rather than directly coupling the business layer to a specific provider.
+
+```text
+             PaymentService
+                   │
+        ┌──────────┴──────────┐
+        ▼                     ▼
+  Online Payment          COD Payment
+        │                     │
+        ▼                     ▼
+ PaymentGateway          COD Collection
+```
+
+This allows the implementation to support a real payment provider later without rewriting the core shipment business logic.
+
+---
+
+# 🔔 Notification Architecture — Future Design
+
+```text
+Shipment Event
+      │
+      ▼
+Notification Service
+      │
+      ├──────────────► Email
+      │
+      ├──────────────► SMS
+      │
+      └──────────────► Push
+```
+
+Potential events include:
+
+- ⏱️ Shipment created
+- ⏱️ Shipment confirmed
+- ⏱️ Shipment picked up
+- ⏱️ Hub arrival
+- ⏱️ Out for delivery
+- ⏱️ Delivered
+- ⏱️ Failed delivery
+- ⏱️ Returned
+- ⏱️ Payment updates
+
+---
+
+# 🗂️ Data Model Overview
+
+## User
+
+```text
+User
+├── id
+├── username
+├── email
+├── password
+├── role
+├── authProvider
+├── providerId
+├── enabled
+├── createdAt
+└── updatedAt
+```
+
+## Shipment
+
+```text
+Shipment
+├── id
+├── trackingNumber
+├── customerId
+├── senderAddress
+├── receiverAddress
+├── packageDetails
+├── priority
+├── distance
+├── cost
+├── status
+├── trackingHistory
+├── assignedDeliveryAgentId
+├── createdAt
+└── updatedAt
+```
+
+---
+
+# 🧭 Shipment Ownership Model
+
+```text
+CUSTOMER
    │
+   │ owns
    ▼
-Create Shipment
+SHIPMENT
    │
-   ▼
-Server Calculates Price
+   ├──────────────► TRACKING HISTORY
    │
-   ▼
-Shipment Created
+   ├──────────────► PRICING
    │
-   ▼
-Shipment Confirmed
-   │
-   ▼
-Admin Assignment
-   │
-   ▼
-Delivery Agent Accepts
-   │
-   ▼
-Pickup
-   │
-   ▼
-In Transit
-   │
-   ▼
-Hub Operations
-   │
-   ▼
-Out For Delivery
-   │
-   ▼
-Delivery Verification
-   │
-   ▼
-Delivered
-   │
-   ▼
-Rating / Feedback
-🔐 Security Architecture
-                    Client
-                      │
-                      ▼
-                Authentication
-                      │
-          ┌───────────┴───────────┐
-          │                       │
-          ▼                       ▼
-       LOCAL                   GOOGLE
-          │                       │
-          └───────────┬───────────┘
-                      ▼
-                JWT Creation
-                      │
-                      ▼
-               JWT Auth Filter
-                      │
-                      ▼
-               Current User
-                      │
-                      ▼
-                Role Check
-                      │
-                      ▼
-              Protected API
-💰 Pricing Security Model
-Client
-  │
-  │ Shipment details
-  ▼
+   └──────────────► DELIVERY AGENT
+```
+
+The authenticated customer is used to determine ownership-sensitive operations instead of trusting arbitrary user identifiers supplied by the client.
+
+---
+
+# 🔄 Shipment State Machine
+
+| Current State | Allowed Next State |
+|---|---|
+| `CREATED` | `CONFIRMED`, `CANCELLED` |
+| `CONFIRMED` | `PICKED_UP` |
+| `PICKED_UP` | `IN_TRANSIT` |
+| `IN_TRANSIT` | `OUT_FOR_DELIVERY` |
+| `OUT_FOR_DELIVERY` | `DELIVERED`, `FAILED_DELIVERY` |
+| `FAILED_DELIVERY` | `OUT_FOR_DELIVERY`, `RETURNED` |
+| `DELIVERED` | None |
+| `CANCELLED` | None |
+| `RETURNED` | None |
+
+This state machine is enforced by the centralized shipment workflow logic.
+
+---
+
+# 📦 Shipment Lifecycle Example
+
+```text
+1. Customer creates shipment
+             ↓
+2. Backend validates request
+             ↓
+3. Pricing service calculates cost
+             ↓
+4. Tracking number generated
+             ↓
+5. Shipment stored as CREATED
+             ↓
+6. Admin confirms / assigns
+             ↓
+7. Delivery workflow begins
+             ↓
+8. Shipment progresses through valid states
+             ↓
+9. Tracking history records events
+             ↓
+10. Shipment reaches DELIVERED
+```
+
+---
+
+# 🧪 Example Validation Rules
+
+The API validates shipment-related information before processing.
+
+## Address
+
+- ✅ Required fields
+- ✅ Valid Indian PIN code
+- ✅ Valid phone-number format where applicable
+
+## Package
+
+- ✅ Weight must be positive
+- ✅ Length must be positive
+- ✅ Width must be positive
+- ✅ Height must be positive
+
+## Shipment
+
+- ✅ Required priority
+- ✅ Valid shipment status
+- ✅ Valid distance
+- ✅ Ownership checks
+- ✅ Assignment checks
+
+---
+
+# 📚 Development Philosophy
+
+The project follows a gradual development strategy.
+
+```text
+Foundation
+    ↓
+Authentication
+    ↓
+Authorization
+    ↓
+CRUD
+    ↓
+Business Rules
+    ↓
+Workflow
+    ↓
+Operational Modules
+    ↓
+Testing
+    ↓
+Production Hardening
+```
+
+The objective is to avoid prematurely introducing complex distributed infrastructure before the core business workflows are stable.
+
+---
+
+# 🧱 Why Modular Monolith First?
+
+The current architecture intentionally keeps the system inside one Spring Boot application.
+
+### Benefits During V1 Development
+
+- ✅ Easier local development
+- ✅ Easier debugging
+- ✅ Simpler deployment
+- ✅ Lower operational complexity
+- ✅ Faster feature development
+- ✅ Easier API testing
+- ✅ Clear separation of modules inside one application
+
+Microservices can be considered later if actual scalability or organizational requirements justify them.
+
+---
+
+# 📈 Scalability Direction
+
+The architecture is designed so that modules can evolve independently over time.
+
+### Potential Future Boundaries
+
+```text
+Authentication
+      │
+      ├── User Management
+      │
+      ├── Shipment Management
+      │
+      ├── Pricing
+      │
+      ├── Delivery
+      │
+      ├── Hub Operations
+      │
+      ├── Payments
+      │
+      └── Notifications
+```
+
+These boundaries provide a possible path toward service decomposition without requiring microservices during the early development stages.
+
+---
+
+# 🧰 Development Tools
+
+The current development workflow uses:
+
+- ☕ Java 21
+- 🌱 Spring Boot
+- 🛡️ Spring Security
+- 🍃 MongoDB
+- 📦 Maven
+- 🧪 Postman
+- 🛠️ Spring Tool Suite / IDE
+- 🌿 Git
+- 🐙 GitHub
+
+---
+
+# 🖥️ Development Environment
+
+The application is currently configured for local development.
+
+```text
 Backend
-  │
-  ├── Weight
-  ├── Distance
-  ├── Priority
-  └── COD
-       │
-       ▼
-Pricing Configuration
-       │
-       ▼
-Pricing Service
-       │
-       ▼
-Final Price
+   ↓
+Spring Boot
+   ↓
+localhost:8081
+   ↓
+MongoDB
+```
 
-The client provides shipment parameters.
+API testing is performed using Postman.
 
-The backend determines the final price.
+---
 
-🧪 Quality Goals
+# 🔗 Repository
 
-The project aims to progressively improve:
+**GitHub Repository**
 
--- 🟢 Input validation
--- 🟢 Authentication
--- 🟢 Authorization
--- 🟢 Business-rule enforcement
--- 🟢 Centralized exception handling
--- 🟢 Structured logging
--- 🔄 Delivery workflow completeness
--- ⏱️ Automated test coverage
--- ⏱️ API documentation
--- ⏱️ Production deployment
--- ⏱️ Observability
+https://github.com/iLovishSaluja/logistics-platform
 
-📁 Suggested Project Structure
-src/
-└── main/
-    ├── java/
-    │   └── com/
-    │       └── lovish/
-    │           └── logistic/
-    │               └── platform/
-    │
-    │                   ├── config/
-    │                   ├── controller/
-    │                   ├── dto/
-    │                   ├── entity/
-    │                   ├── enums/
-    │                   ├── exception/
-    │                   ├── mapper/
-    │                   ├── repository/
-    │                   ├── security/
-    │                   └── service/
-    │
-    └── resources/
-        ├── application.properties
-        └── ...
+---
 
-The exact package structure may evolve as additional modules are introduced.
-
-📝 Git Workflow
-
-The project is developed incrementally.
-
-Typical workflow:
-
-Implement Feature
-      ↓
-Test Feature
-      ↓
-Fix Issues
-      ↓
-Verify APIs
-      ↓
-Update README
-      ↓
-Commit
-      ↓
-Push to GitHub
-
-Recommended commit style:
-
-feat: add delivery agent assignment
-fix: validate shipment status transition
-refactor: improve pricing service
-docs: update README
-test: add shipment service tests
-🤝 Contributing
+# 🤝 Contributing
 
 This project is primarily being developed as a portfolio and learning project focused on production-oriented Java backend engineering.
 
-Suggestions, issues and improvements are welcome.
+Suggestions, improvements, architectural discussions, and bug reports are welcome.
 
-When contributing:
+## Contribution Guidelines
 
--- Keep changes focused
--- Follow the existing architecture
--- Avoid unnecessary complexity
--- Validate business rules server-side
--- Add tests where applicable
--- Update documentation for major features
--- Use meaningful commit messages
+- Keep changes focused.
+- Follow the existing layered architecture.
+- Keep business logic inside services.
+- Use DTOs for API contracts.
+- Validate API input.
+- Avoid exposing persistence entities unnecessarily.
+- Do not commit secrets.
+- Add tests as automated testing is introduced.
+- Keep documentation updated with significant feature changes.
 
-📄 License
+---
 
-This project is currently unlicensed and intended for:
+# 🔒 Security Notice
 
--- Personal development
--- Educational purposes
--- Backend engineering practice
--- Portfolio demonstration
+If you discover a security issue:
 
-A formal open-source license such as MIT may be added in the future if the project is released for open-source contributions.
+- Do not publish sensitive credentials.
+- Do not commit secrets to the repository.
+- Remove accidentally exposed credentials immediately.
+- Rotate compromised credentials.
+- Report security concerns responsibly.
 
-👤 Author
+---
 
-<div align="center">
+# 📄 License
 
-Lovish Saluja
-Java Backend Developer
+This project is currently unlicensed and intended for personal, educational, and portfolio purposes.
 
-☕ Java 21
-🌱 Spring Boot
-🔐 Spring Security
-🍃 MongoDB
-📡 REST APIs
-🎟️ JWT
-🔑 OAuth 2.0
-📦 Maven
+A formal open-source license such as MIT may be added in the future if the project is opened for broader contributions.
 
-</div>
+---
 
-🚚 Logistics Platform
+# 👤 Author
 
-<div align="center">
+## Lovish Saluja
 
-Building a production-style logistics backend with Java & Spring Boot.
+**Java Backend Developer**
 
-Authentication • Shipments • Pricing • Tracking • Delivery Operations
+### Technical Focus
+
+- ☕ Java
+- 🌱 Spring Boot
+- 🔐 Spring Security
+- 🎟️ JWT
+- 🔑 OAuth 2.0
+- 🍃 MongoDB
+- 📡 REST APIs
+- 📦 Maven
+- 🧱 Backend Architecture
+- 🧠 Data Structures & Algorithms
+- 🚚 Logistics Platform
+
+<p align="center">
+
+Building a production-oriented logistics backend with **Java 21 & Spring Boot**.
+
+</p>
+
+<p align="center">
+
+Authentication → Shipment Management → Pricing → Tracking → Delivery Operations → Hub Operations → Production Hardening
+
+</p>
+
+<p align="center">
 
 ⭐ If you find the project interesting, consider giving the repository a star!
+
+</p>
+
+---
+
+## 📌 Project Status Summary
+
+| Category | Status |
+|---|---|
+| 🔐 Authentication | ✅ Completed |
+| 🛡️ Authorization | ✅ Completed |
+| 📦 Shipment Management | ✅ Completed |
+| 💰 Pricing Engine | ✅ Completed |
+| 📍 Tracking | ✅ Completed |
+| 🔄 Status Workflow | ✅ Completed |
+| 🚚 Delivery Assignment | ✅ Completed |
+| 🧪 Manual API Testing | ✅ Completed |
+| 🚛 Delivery Operations | 🔄 In Progress |
+| 🏢 Hub Operations | ⏱️ Planned |
+| 💳 Payments | ⏱️ Planned |
+| 🔔 Notifications | ⏱️ Planned |
+| 📄 Invoices & Ratings | ⏱️ Planned |
+| 📊 Reports & Auditing | ⏱️ Planned |
+| 📚 API Documentation | ⏱️ Planned |
+| 🧪 Automated Testing | ⏱️ Planned |
+| 🐳 Docker | ⏱️ Planned |
+| 🚀 Deployment | ⏱️ Planned |
+| 📈 Monitoring | ⏱️ Planned |
+
+---
+
+<p align="center">
+
+🚚 **Logistics Platform • Java 21 • Spring Boot • MongoDB • Maven**
+
+</p>
