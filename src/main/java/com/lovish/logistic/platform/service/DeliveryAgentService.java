@@ -9,4 +9,6 @@ public interface DeliveryAgentService {
 	List<ShipmentSummaryDto> getAssignedShipments();
 
 	void assignShipment(String shipmentId, String deliveryAgentId);
+
+	void acceptAssignment(String shipmentId);
 }

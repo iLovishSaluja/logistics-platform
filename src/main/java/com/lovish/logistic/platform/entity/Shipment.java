@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.lovish.logistic.platform.enums.AssignmentStatus;
 import com.lovish.logistic.platform.enums.Priority;
 import com.lovish.logistic.platform.enums.ShipmentStatus;
 
@@ -23,6 +24,8 @@ public class Shipment {
 
 	private String assignedDeliveryAgentId;
 
+	private AssignmentStatus assignmentStatus;
+
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
@@ -34,8 +37,8 @@ public class Shipment {
 
 	public Shipment(String id, String trackingNumber, String customerId, Address senderAddress, Address receiverAddress,
 			PackageDetails packageDetails, Priority priority, BigDecimal cost, ShipmentStatus status,
-			String assignedDeliveryAgentId, LocalDateTime createdAt, LocalDateTime updatedAt,
-			List<TrackingHistory> trackingHistory) {
+			String assignedDeliveryAgentId, AssignmentStatus assignmentStatus, LocalDateTime createdAt,
+			LocalDateTime updatedAt, List<TrackingHistory> trackingHistory) {
 		super();
 		this.id = id;
 		this.trackingNumber = trackingNumber;
@@ -47,6 +50,7 @@ public class Shipment {
 		this.cost = cost;
 		this.status = status;
 		this.assignedDeliveryAgentId = assignedDeliveryAgentId;
+		this.assignmentStatus = assignmentStatus;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.trackingHistory = trackingHistory;
@@ -154,6 +158,14 @@ public class Shipment {
 
 	public void setTrackingHistory(List<TrackingHistory> trackingHistory) {
 		this.trackingHistory = trackingHistory;
+	}
+
+	public AssignmentStatus getAssignmentStatus() {
+		return assignmentStatus;
+	}
+
+	public void setAssignmentStatus(AssignmentStatus assignmentStatus) {
+		this.assignmentStatus = assignmentStatus;
 	}
 
 }

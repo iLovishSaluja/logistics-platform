@@ -3,9 +3,9 @@ package com.lovish.logistic.platform.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.lovish.logistic.platform.enums.AssignmentStatus;
+import com.lovish.logistic.platform.enums.Priority;
 import com.lovish.logistic.platform.enums.ShipmentStatus;
-
-import com.lovish.logistic.platform.enums.*;
 
 public class ShipmentSummaryDto {
 
@@ -14,6 +14,7 @@ public class ShipmentSummaryDto {
 	private ShipmentStatus status;
 	private Priority priority;
 	private BigDecimal cost;
+	private AssignmentStatus assignmentStatus;
 	private LocalDateTime createdAt;
 
 	public ShipmentSummaryDto() {
@@ -21,13 +22,14 @@ public class ShipmentSummaryDto {
 	}
 
 	public ShipmentSummaryDto(String id, String trackingNumber, ShipmentStatus status, Priority priority,
-			BigDecimal cost, LocalDateTime createdAt) {
+			BigDecimal cost, AssignmentStatus assignmentStatus, LocalDateTime createdAt) {
 		super();
 		this.id = id;
 		this.trackingNumber = trackingNumber;
 		this.status = status;
 		this.priority = priority;
 		this.cost = cost;
+		this.assignmentStatus = assignmentStatus;
 		this.createdAt = createdAt;
 	}
 
@@ -77,6 +79,14 @@ public class ShipmentSummaryDto {
 
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public AssignmentStatus getAssignmentStatus() {
+		return assignmentStatus;
+	}
+
+	public void setAssignmentStatus(AssignmentStatus assignmentStatus) {
+		this.assignmentStatus = assignmentStatus;
 	}
 
 }

@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import com.lovish.logistic.platform.dto.ShipmentSummaryDto;
 import com.lovish.logistic.platform.entity.Shipment;
 import com.lovish.logistic.platform.entity.User;
+import com.lovish.logistic.platform.enums.AssignmentStatus;
 import com.lovish.logistic.platform.exception.BadRequestException;
 import com.lovish.logistic.platform.exception.ResourceNotFoundException;
+import com.lovish.logistic.platform.exception.UnauthorizedException;
 import com.lovish.logistic.platform.mapper.ShipmentMapper;
 import com.lovish.logistic.platform.repository.ShipmentRepository;
 import com.lovish.logistic.platform.repository.UserRepository;
@@ -68,6 +70,40 @@ public class DeliveryAgentServiceImpl implements DeliveryAgentService {
 		}
 
 		shipment.setAssignedDeliveryAgentId(deliveryAgentId);
+		shipment.setAssignmentStatus(AssignmentStatus.PENDING);
+		shipment.setUpdatedAt(java.time.LocalDateTime.now());
+
+		shipmentRepository.save(shipment);
+	}
+
+	@Override
+	public void acceptAssignment(String shipmentId) {
+
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		User deliveryAgent = userRepository.findByUsername(username)
+				.orElseThrow(() -> new ResourceNotFoundException("Current user not found"));
+
+		Shipment shipment = shipmentRepository.findById(shipmentId)
+				.orElseThrow(() -> new ResourceNotFoundException("Shipment not found with id: " + shipmentId));
+
+		if (shipment.getAssignedDeliveryAgentId() == null) {
+			throw new BadRequestException("Shipment is not assigned to any delivery agent");
+		}
+
+		if (!shipment.getAssignedDeliveryAgentId().equals(deliveryAgent.getId())) {
+
+			throw new UnauthorizedException("You are not authorized to accept this assignment");
+		}
+
+		if (shipment.getAssignmentStatus() != AssignmentStatus.PENDING) {
+
+			throw new BadRequestException(
+					"Assignment cannot be accepted in its current status: " + shipment.getAssignmentStatus());
+		}
+
+		shipment.setAssignmentStatus(AssignmentStatus.ACCEPTED);
+
 		shipment.setUpdatedAt(java.time.LocalDateTime.now());
 
 		shipmentRepository.save(shipment);

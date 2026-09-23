@@ -71,6 +71,7 @@ public class ShipmentMapper {
 		dto.setId(shipment.getId());
 		dto.setTrackingNumber(shipment.getTrackingNumber());
 		dto.setStatus(shipment.getStatus());
+		dto.setAssignmentStatus(shipment.getAssignmentStatus());
 		dto.setPriority(shipment.getPriority());
 		dto.setCost(shipment.getCost());
 		dto.setCreatedAt(shipment.getCreatedAt());
