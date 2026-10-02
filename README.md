@@ -6,7 +6,7 @@
 
 A modular, production-oriented logistics and shipment management platform built with **Java 21**, **Spring Boot**, **Spring Security**, and **MongoDB**.
 
-Designed around secure authentication, shipment lifecycle management, server-side pricing, tracking, controlled status transitions, delivery-agent assignment, and future logistics operations.
+Designed around secure authentication, shipment lifecycle management, server-side pricing, tracking, controlled status transitions, hub-based shipment operations, delivery-agent workflows, failed-delivery handling, and future logistics operations.
 
 </p>
 
@@ -52,8 +52,11 @@ Designed around secure authentication, shipment lifecycle management, server-sid
 - [❌ Shipment Cancellation](#-shipment-cancellation)
 - [🚚 Delivery Agent Management](#-delivery-agent-management)
 - [👨‍💼 Admin Shipment Assignment](#-admin-shipment-assignment)
-- [🚛 Delivery Agent Workflow](#-delivery-agent-workflow)
 - [🏢 Hub Management](#-hub-management)
+- [🧑‍💼 Hub Operator Operations](#-hub-operator-operations)
+- [🚛 Delivery Agent Workflow](#-delivery-agent-workflow)
+- [🧾 Assignment History](#-assignment-history)
+- [🧪 Delivery Attempts & Failed Delivery](#-delivery-attempts--failed-delivery)
 - [💳 Payments & COD](#-payments--cod)
 - [🔔 Notifications](#-notifications)
 - [📄 Invoice & Rating](#-invoice--rating)
@@ -88,7 +91,7 @@ Designed around secure authentication, shipment lifecycle management, server-sid
 - [🧪 Error Handling Strategy](#-error-handling-strategy)
 - [📝 Logging](#-logging)
 - [📊 Operational Visibility](#-operational-visibility)
-- [🏢 Hub Operations — Future Design](#-hub-operations--future-design)
+- [🏢 Hub Operations — Current & Future Design](#-hub-operations--current--future-design)
 - [💳 Payment Abstraction — Future Design](#-payment-abstraction--future-design)
 - [🔔 Notification Architecture — Future Design](#-notification-architecture--future-design)
 - [🗂️ Data Model Overview](#️-data-model-overview)
@@ -126,6 +129,7 @@ The project is being developed with a strong focus on **production-oriented back
 - 📍 Shipment tracking
 - 🔄 Controlled shipment status transitions
 - 🚚 Delivery-agent assignment
+- 🏢 Hub-based shipment operations
 - 👥 Role-based access control
 - 🧪 API validation and testing
 - 🧱 Layered backend architecture
@@ -147,6 +151,9 @@ The platform is being built to simulate the backend architecture and business wo
 - Implement role-based operational access.
 - Maintain shipment tracking history.
 - Introduce controlled delivery-agent workflows.
+- Introduce hub-based operational ownership.
+- Support controlled shipment assignment and reassignment.
+- Handle failed-delivery scenarios through explicit business rules.
 - Design the system so future modules can be added without rewriting the core application.
 - Keep the architecture suitable for eventual production hardening.
 
@@ -183,18 +190,25 @@ The platform is being built to simulate the backend architecture and business wo
 | 🧮 Price Estimation | ✅ Completed |
 | 📍 Tracking History | ✅ Completed |
 | 🔄 Status Transition Engine | ✅ Completed |
-| 👨‍💼 Admin Shipment Assignment | ✅ Completed |
-| 🚚 Assigned Shipment Retrieval | ✅ Completed |
+| 🏢 Hub Management | ✅ Completed |
+| 🧑‍💼 Hub Staff-to-Hub Assignment | ✅ Completed |
+| 🗺️ Automatic Origin/Destination Hub Mapping | ✅ Completed |
+| 🚚 Delivery Agent Assignment | ✅ Completed |
 | 🔄 Assignment Status Management | ✅ Completed |
 | 🤝 Delivery Agent Assignment Acceptance | ✅ Completed |
-| 🧪 Manual API Testing | ✅ Completed |
-| 🚛 Delivery Agent Operational Workflow | 🔄 In Progress |
-| 🏢 Hub Management | ⏱️ Planned |
-| 💳 Payments | ⏱️ Planned |
+| 🔁 Delivery Agent Reassignment / Retry | ✅ Completed |
+| 🧾 Assignment History | ✅ Completed |
+| 🧪 Delivery Attempt Tracking | ✅ Completed |
+| ❌ Failed-Delivery Workflow | ✅ Completed |
+| 🔢 Maximum 2 Delivery Attempts | ✅ Completed |
+| 🏢 Pickup From Hub After Failed Attempts | ✅ Completed |
+| 🚛 Delivery Agent Operational Workflow | ✅ Completed |
+| 🧪 End-to-End Integration Testing | ✅ Completed |
+| 💳 Payments / COD Collection | ⏱️ Planned |
 | 🔔 Notifications | ⏱️ Planned |
 | 📄 Invoices & Ratings | ⏱️ Planned |
 | 📊 Reports & Audit Logging | ⏱️ Planned |
-| 🧪 Automated Testing | ⏱️ Planned |
+| 🧪 Automated Tests | ⏱️ Planned |
 | 📚 Swagger / OpenAPI | ⏱️ Planned |
 | 🐳 Dockerization | ⏱️ Planned |
 | 🚀 Production Deployment | ⏱️ Planned |
@@ -202,7 +216,7 @@ The platform is being built to simulate the backend architecture and business wo
 
 ### Status Legend
 
-- ✅ **Completed** — Implemented and tested
+- ✅ **Completed** — Implemented and manually integration-tested
 - 🔄 **In Progress** — Currently being developed
 - ⏱️ **Planned** — Scheduled for a future development phase
 
@@ -227,6 +241,7 @@ The platform is being built to simulate the backend architecture and business wo
 - ✅ Google OAuth 2.0 authentication
 - ✅ Protected role-specific APIs
 - ✅ Current authenticated-user resolution
+- ✅ Method-level authorization using `@PreAuthorize`
 
 ### Supported Roles
 
@@ -258,6 +273,7 @@ User
 ├── authProvider
 ├── providerId
 ├── enabled
+├── hubId
 ├── createdAt
 └── updatedAt
 ```
@@ -269,9 +285,11 @@ User
 - ✅ Google login
 - ✅ JWT authentication
 - ✅ Delivery-agent authentication
+- ✅ Hub Operator authentication
 - ✅ Admin authentication
 - ✅ Role-based API protection
 - ✅ Authentication-provider tracking
+- ✅ Hub membership for operational staff
 
 ### Planned
 
@@ -280,7 +298,7 @@ User
 - ⏱️ Profile management
 - ⏱️ Password-change functionality
 - ⏱️ Account recovery
-- ⏱️ Delivery-agent management
+- ⏱️ Advanced delivery-agent management
 
 ---
 
@@ -289,6 +307,8 @@ User
 Shipment management is one of the core implemented modules.
 
 Customers can create shipments containing sender and receiver information, package information, delivery priority, distance, and COD selection.
+
+The backend automatically resolves the shipment's origin and destination hubs from the sender and receiver cities using active hub records.
 
 ### Shipment Capabilities
 
@@ -308,6 +328,14 @@ Customers can create shipments containing sender and receiver information, packa
 - ✅ Customer shipment retrieval
 - ✅ Shipment update
 - ✅ Shipment cancellation
+- ✅ Automatic origin hub assignment
+- ✅ Automatic destination hub assignment
+- ✅ Current hub tracking
+- ✅ Destination hub tracking
+- ✅ Delivery-agent assignment state
+- ✅ Delivery attempt tracking
+- ✅ Failed-delivery workflow
+- ✅ Pickup-from-hub terminal workflow
 
 ### Shipment Structure
 
@@ -323,6 +351,8 @@ Shipment
 ├── cost
 ├── status
 ├── trackingHistory
+├── currentHubId
+├── destinationHubId
 ├── assignedDeliveryAgentId
 ├── assignmentStatus
 ├── createdAt
@@ -334,6 +364,26 @@ Shipment
 ```text
 TRK-196B639CBBC1
 ```
+
+### Hub Mapping Rule
+
+During shipment creation:
+
+```text
+Sender City
+    ↓
+Active Origin Hub
+    ↓
+Shipment.currentHubId
+
+Receiver City
+    ↓
+Active Destination Hub
+    ↓
+Shipment.destinationHubId
+```
+
+If an active hub cannot be found for either city, shipment creation is rejected instead of creating a shipment without the required hub relationship.
 
 ---
 
@@ -476,7 +526,7 @@ The same centralized `PricingService` is used during shipment creation so that p
 
 # 🔄 Shipment Lifecycle
 
-The platform uses a centralized shipment status-transition engine.
+The platform uses a centralized shipment status-transition engine and a separate assignment workflow.
 
 ## Main Lifecycle
 
@@ -494,15 +544,34 @@ OUT_FOR_DELIVERY
 DELIVERED
 ```
 
+## Failed Delivery Lifecycle
+
+```text
+OUT_FOR_DELIVERY
+       ↓
+FAILED_DELIVERY
+       ↓
+Hub Operator Retry / Reassignment
+       ↓
+OUT_FOR_DELIVERY
+       ↓
+FAILED_DELIVERY
+       ↓
+PICKUP_FROM_HUB
+```
+
+A shipment can have a maximum of **2 actual delivery attempts**.
+
 ## Exceptional States
 
 ```text
 CANCELLED
 FAILED_DELIVERY
+PICKUP_FROM_HUB
 RETURNED
 ```
 
-### Assignment Workflow
+## Assignment Workflow
 
 Assignment status is a separate workflow from the shipment lifecycle.
 
@@ -512,10 +581,30 @@ CREATED → CONFIRMED → PICKED_UP → IN_TRANSIT → OUT_FOR_DELIVERY → DELI
 
 Assignment Status
 PENDING → ACCEPTED
-       └→ REJECTED
+        └→ REJECTED
 ```
 
 `assignmentStatus` must not be treated as a replacement for `ShipmentStatus`.
+
+## Operational Ownership
+
+```text
+HUB_OPERATOR
+    ↓
+Normal shipment assignment / reassignment / retry
+    ↓
+DELIVERY_AGENT
+    ↓
+Pickup → In Transit → Out For Delivery
+    ↓
+Delivered / Failed Delivery
+
+After 2 failed delivery attempts
+    ↓
+HUB_OPERATOR
+    ↓
+PICKUP_FROM_HUB
+```
 
 ---
 
@@ -545,6 +634,7 @@ OUT_FOR_DELIVERY
 
 FAILED_DELIVERY
  ├──→ OUT_FOR_DELIVERY
+ ├──→ PICKUP_FROM_HUB
  └──→ RETURNED
 ```
 
@@ -555,6 +645,7 @@ The following states cannot transition into another shipment state:
 ```text
 DELIVERED
 CANCELLED
+PICKUP_FROM_HUB
 RETURNED
 ```
 
@@ -564,6 +655,9 @@ RETURNED
 - ✅ Invalid-transition rejection
 - ✅ Terminal-state protection
 - ✅ Tracking-event creation for status changes
+- ✅ Role-specific operational status workflow
+- ✅ Failed-delivery transition support
+- ✅ Pickup-from-hub transition support
 - ✅ Status-update API
 
 ### Status Update API
@@ -581,6 +675,27 @@ PATCH /api/shipments/{shipmentId}/status
 ```
 
 Invalid transitions are rejected with a controlled `400 Bad Request` response.
+
+### Role Responsibility
+
+```text
+HUB_OPERATOR
+    ↓
+CREATED → CONFIRMED
+
+DELIVERY_AGENT
+    ↓
+CONFIRMED → PICKED_UP
+PICKED_UP → IN_TRANSIT
+IN_TRANSIT → OUT_FOR_DELIVERY
+OUT_FOR_DELIVERY → DELIVERED
+OUT_FOR_DELIVERY → FAILED_DELIVERY
+
+HUB_OPERATOR
+    ↓
+FAILED_DELIVERY → OUT_FOR_DELIVERY
+FAILED_DELIVERY → PICKUP_FROM_HUB
+```
 
 ---
 
@@ -698,7 +813,7 @@ Save Shipment
 
 # 🚚 Delivery Agent Management
 
-Delivery operations are currently being expanded.
+Delivery operations are now implemented around authenticated Delivery Agents and Hub Operator-controlled assignments.
 
 ## ✅ Delivery Agent Authentication
 
@@ -726,23 +841,25 @@ ACCEPTED
 REJECTED
 ```
 
-### Current Assignment Flow
+### Assignment Flow
 
 ```text
-ADMIN ASSIGNS
+HUB OPERATOR
+      ↓
+Assign / Reassign
       ↓
 PENDING
       ↓
-DELIVERY AGENT ACCEPTS
-      ↓
-ACCEPTED
+DELIVERY AGENT
+      ├──→ ACCEPTED
+      └──→ REJECTED
 ```
 
 ### Important Rule
 
 Accepting an assignment changes only the `assignmentStatus`.
 
-It does **not** change the shipment's `status`.
+It does **not** automatically change the shipment's `status`.
 
 For example:
 
@@ -752,7 +869,7 @@ CREATED
 
 Assignment Status:
 PENDING
-       ↓
+   ↓
 ACCEPTED
 ```
 
@@ -762,92 +879,293 @@ The shipment remains `CREATED` until the appropriate shipment-status workflow op
 
 # 👨‍💼 Admin Shipment Assignment
 
-Administrators can assign shipments to Delivery Agents.
+The architecture now separates **normal operational assignment** from **administrative control**.
 
-### API
+### Normal Operational Assignment
+
+Day-to-day shipment assignment, reassignment, and delivery retry are handled by the Hub Operator for shipments belonging to the operator's hub.
+
+### Administrative Assignment
+
+The existing Admin assignment capability remains available for administrative control. The planned production architecture will expose the Admin operation as an emergency/company-wide override rather than using it as the normal hub workflow.
+
+### Current Admin API
 
 ```http
 PATCH /api/admin/shipments/{shipmentId}/assign?deliveryAgentId={agentId}
 ```
 
-### Example
-
-```http
-PATCH /api/admin/shipments/6ab3eea1a61a831face727d5/assign?deliveryAgentId=delivery-agent-user-id
-```
-
-The Delivery Agent ID is provided as a query parameter.
-
-The endpoint currently returns:
-
-```text
-HTTP 200 OK
-```
-
-with an empty response body.
-
-## Assignment Validation
+### Assignment Validation
 
 The system validates:
 
 - ✅ Shipment exists
 - ✅ Delivery Agent exists
 - ✅ Selected user has the `DELIVERY_AGENT` role
-- ✅ Shipment is not already assigned
+- ✅ Shipment is not already assigned when using the normal assignment path
 - ✅ Shipment is in an assignable state
-- ✅ Assignment is performed by an authorized Admin
+- ✅ Authorized role performs the operation
 
-## Assignment Flow
+---
+
+# 🏢 Hub Management
+
+Hub management is now implemented as an operational foundation for the logistics workflow.
+
+## ✅ Completed Capabilities
+
+- ✅ Hub entity
+- ✅ Hub CRUD
+- ✅ Active/inactive hub support
+- ✅ Unique hub code validation
+- ✅ Hub address management
+- ✅ Hub Operator assignment to a hub
+- ✅ Delivery Agent assignment to a hub
+- ✅ Hub-based shipment ownership checks
+- ✅ Automatic origin hub resolution
+- ✅ Automatic destination hub resolution
+- ✅ Current hub tracking on shipments
+
+### Admin Hub APIs
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/admin/hubs` | Create hub |
+| `GET` | `/api/admin/hubs` | Get all hubs |
+| `GET` | `/api/admin/hubs/{hubId}` | Get hub by ID |
+| `PUT` | `/api/admin/hubs/{hubId}` | Update hub |
+| `PATCH` | `/api/admin/hubs/{hubId}/deactivate` | Deactivate hub |
+| `PATCH` | `/api/admin/hubs/{hubId}/operators/{userId}` | Assign Hub Operator |
+| `PATCH` | `/api/admin/hubs/{hubId}/agents/{userId}` | Assign Delivery Agent |
+
+### Hub Relationship
 
 ```text
-ADMIN
-  │
-  ▼
-Select Shipment
-  │
-  ▼
-Select Delivery Agent
-  │
-  ▼
-Validate Assignment
-  │
-  ▼
-assignedDeliveryAgentId
-  │
-  ▼
-assignmentStatus = PENDING
-  │
-  ▼
-DELIVERY_AGENT
-  │
-  ▼
-GET /api/delivery/shipments
-  │
-  ▼
-PATCH /api/delivery/shipments/{shipmentId}/accept
-  │
-  ▼
-assignmentStatus = ACCEPTED
+                    ADMIN
+                      │
+          ┌───────────┴───────────┐
+          ▼                       ▼
+   HUB_OPERATOR            DELIVERY_AGENT
+          │                       │
+          └───────────┬───────────┘
+                      ▼
+                     HUB
+                      │
+                      ▼
+                  SHIPMENTS
 ```
+
+### Shipment Hub Mapping
+
+```text
+Sender City
+    ↓
+Active Hub
+    ↓
+currentHubId
+
+Receiver City
+    ↓
+Active Hub
+    ↓
+destinationHubId
+```
+
+The shipment creation service rejects the request when an active hub cannot be found for the sender or receiver city.
+
+---
+
+# 🧑‍💼 Hub Operator Operations
+
+The Hub Operator is responsible for normal day-to-day shipment assignment and hub-level operational decisions.
+
+## Authorization
+
+Hub Operator APIs are protected using role-based authorization and additional service-level hub ownership checks.
+
+A Hub Operator can operate only on shipments whose `currentHubId` matches the operator's assigned `hubId`.
+
+A Hub Operator can assign only Delivery Agents who belong to the same hub.
+
+## Assignment APIs
+
+```http
+PATCH /api/hub/shipments/{shipmentId}/assign?deliveryAgentId={deliveryAgentId}
+```
+
+```http
+PATCH /api/hub/shipments/{shipmentId}/reassign?deliveryAgentId={deliveryAgentId}
+```
+
+```http
+PATCH /api/hub/shipments/{shipmentId}/retry?deliveryAgentId={deliveryAgentId}
+```
+
+```http
+PATCH /api/hub/shipments/{shipmentId}/pickup-from-hub
+```
+
+### Assignment Rules
+
+- ✅ Current authenticated user must be a `HUB_OPERATOR`
+- ✅ Hub Operator must be assigned to an active hub
+- ✅ Shipment must belong to the operator's current hub
+- ✅ Delivery Agent must have role `DELIVERY_AGENT`
+- ✅ Delivery Agent must belong to the same hub
+- ✅ Initial assignment starts as `PENDING`
+- ✅ Reassignment prevents assigning the same agent through the normal reassign operation
+- ✅ Retry may assign the same or a different agent
+- ✅ Retry is allowed only after a failed delivery attempt
+- ✅ Retry is blocked after 2 actual delivery attempts
+
+---
+
+# 🧾 Assignment History
+
+Assignment changes are recorded separately from the shipment's current assignment.
+
+## Assignment History Data
+
+```text
+AssignmentHistory
+├── id
+├── shipmentId
+├── deliveryAgentId
+├── previousDeliveryAgentId
+├── performedBy
+├── action
+├── hubId
+├── timestamp
+├── reason
+└── notes
+```
+
+## Supported Assignment Actions
+
+```text
+ASSIGNED
+REASSIGNED
+ACCEPTED
+REJECTED
+EMERGENCY_ASSIGNED
+```
+
+This preserves an operational audit trail of assignment and reassignment decisions instead of overwriting the previous assignment information.
+
+---
+
+# 🧪 Delivery Attempts & Failed Delivery
+
+Failed delivery is implemented as a separate operational workflow.
+
+## Delivery Attempt Model
+
+```text
+DeliveryAttempt
+├── id
+├── shipmentId
+├── attemptNumber
+├── deliveryAgentId
+├── attemptedAt
+├── failureReason
+└── notes
+```
+
+## Failed Delivery Reasons
+
+The failure request supports a structured failure reason and optional notes.
+
+```text
+CUSTOMER_UNAVAILABLE
+WRONG_ADDRESS
+PHONE_UNREACHABLE
+CUSTOMER_REFUSED
+OTHER
+```
+
+## Maximum Delivery Attempts
+
+The platform allows a maximum of **2 actual delivery attempts** per shipment.
+
+```text
+Attempt 1
+   ↓
+FAILED_DELIVERY
+   ↓
+Hub Operator decides retry
+   ↓
+Attempt 2
+   ↓
+FAILED_DELIVERY
+   ↓
+PICKUP_FROM_HUB
+```
+
+### Important Assignment Rule
+
+An assignment rejection does **not** consume a delivery attempt.
+
+If an agent rejects a retry assignment, the Hub Operator can assign another eligible agent.
+
+The delivery attempt counter increases only when an actual delivery attempt is recorded as failed.
+
+### Failed Delivery API
+
+```http
+PATCH /api/delivery/shipments/{shipmentId}/failed-delivery
+```
+
+### Retry API
+
+```http
+PATCH /api/hub/shipments/{shipmentId}/retry?deliveryAgentId={deliveryAgentId}
+```
+
+### Pickup From Hub API
+
+```http
+PATCH /api/hub/shipments/{shipmentId}/pickup-from-hub
+```
+
+After the second failed delivery attempt:
+
+```text
+status = PICKUP_FROM_HUB
+assignedDeliveryAgentId = null
+assignmentStatus = null
+```
+
+This makes the shipment available for customer collection from the designated hub.
 
 ---
 
 # 🚛 Delivery Agent Workflow
 
-## ✅ Currently Implemented
+## ✅ Implemented Workflow
 
 ```text
 Delivery Agent Login
         ↓
-Admin Assignment
+View Assigned Shipments
         ↓
 Assignment Status = PENDING
-        ↓
-View Assigned Shipments
         ↓
 Accept Assignment
         ↓
 Assignment Status = ACCEPTED
+        ↓
+Pickup
+        ↓
+In Transit
+        ↓
+Out For Delivery
+        ├──────────────→ Delivered
+        │
+        └──────────────→ Failed Delivery
+                              ↓
+                         Hub Operator Retry
+                              ↓
+                         Next Attempt
 ```
 
 ## Assignment Acceptance API
@@ -865,73 +1183,46 @@ PATCH /api/delivery/shipments/{shipmentId}/accept
 - ✅ Assignment changes from `PENDING` to `ACCEPTED`
 - ✅ Shipment status is not changed by acceptance
 
-The endpoint currently returns:
+## Delivery Status APIs
 
-```text
-HTTP 200 OK
+```http
+PATCH /api/delivery/shipments/{shipmentId}/pickup
+PATCH /api/delivery/shipments/{shipmentId}/in-transit
+PATCH /api/delivery/shipments/{shipmentId}/out-for-delivery
+PATCH /api/delivery/shipments/{shipmentId}/delivered
+PATCH /api/delivery/shipments/{shipmentId}/failed-delivery
 ```
 
-with an empty response body.
+The Delivery Agent controller is explicitly protected so Delivery Agent operational APIs cannot be used by ordinary customers or Hub Operators.
 
-## 🔄 Currently In Progress
+## Failed Delivery Workflow
 
 ```text
-Accepted
-   ↓
-Pickup
-   ↓
-In Transit
-   ↓
-Out For Delivery
-   ↓
-Delivery Confirmation
-   ↓
-Delivered
+OUT_FOR_DELIVERY
+      ↓
+Delivery Agent reports failure
+      ↓
+DeliveryAttempt recorded
+      ↓
+FAILED_DELIVERY
+      ↓
+Hub Operator reviews
+      ↓
+Retry / Reassign
+      ↓
+OUT_FOR_DELIVERY
 ```
 
-## 🔄 Delivery Features in Progress
-
-- 🔄 Reject assignment
-- 🔄 Pickup confirmation
-- 🔄 Delivery-progress updates
-- 🔄 Delivery notes
-- 🔄 Failed-delivery workflow
-- 🔄 Delivery proof
-- 🔄 OTP verification
-- 🔄 Signature/photo proof
-- 🔄 COD collection
-
----
-
-# 🏢 Hub Management
-
-Hub operations are planned as the next major logistics module.
-
-## ⏱️ Planned Capabilities
-
-- ⏱️ Hub CRUD
-- ⏱️ Hub Operator role operations
-- ⏱️ Shipment arrival scanning
-- ⏱️ Shipment outbound scanning
-- ⏱️ Shipment routing
-- ⏱️ Local delivery assignment
-- ⏱️ Hub inventory
-- ⏱️ Hub-based shipment visibility
-
-## Planned Hub Workflow
+## After Two Failed Attempts
 
 ```text
-Origin
-  ↓
-Origin Hub
-  ↓
-Intermediate Hub
-  ↓
-Destination Hub
-  ↓
-Delivery Agent
-  ↓
-Customer
+FAILED_DELIVERY
+      ↓
+Attempt count = 2
+      ↓
+Hub Operator
+      ↓
+PICKUP_FROM_HUB
 ```
 
 ---
@@ -1051,9 +1342,6 @@ Authentication
 JWT Access Token
   │
   ▼
-Protected API
-  │
-  ▼
 JWT Authentication Filter
   │
   ▼
@@ -1073,8 +1361,40 @@ Controller
 | Authentication | Public / Authenticated |
 | Customer shipment operations | `CUSTOMER` |
 | Delivery operations | `DELIVERY_AGENT` |
+| Hub operations | `HUB_OPERATOR` |
 | Administrative operations | `ADMIN` |
-| Future hub operations | `HUB_OPERATOR` |
+
+### Defense in Depth
+
+The application uses both URL-level and method-level authorization.
+
+Examples include:
+
+```java
+@PreAuthorize("hasRole('DELIVERY_AGENT')")
+```
+
+and:
+
+```java
+@PreAuthorize("hasRole('HUB_OPERATOR')")
+```
+
+This ensures that role access is enforced even when a broader URL matcher allows multiple operational roles.
+
+### Hub Ownership Authorization
+
+Hub Operator operations additionally validate:
+
+```text
+Authenticated Hub Operator
+        ↓
+operator.hubId
+        ↓
+shipment.currentHubId
+```
+
+and Delivery Agent selection is restricted to agents assigned to the same hub.
 
 JWT authentication is applied to protected APIs.
 
@@ -1116,39 +1436,110 @@ Validation errors are returned through the centralized exception-handling mechan
 
 # 🧪 Testing
 
-Manual API testing is currently performed using Postman throughout development.
+Manual API testing is performed using Postman throughout development.
+
+The core V1 shipment, hub, assignment, delivery, and failed-delivery workflows have now been integration-tested.
 
 ## ✅ Tested
+
+### Authentication & Authorization
 
 - ✅ Customer registration
 - ✅ Customer login
 - ✅ Admin login
 - ✅ Delivery Agent login
+- ✅ Hub Operator login
 - ✅ JWT authentication
 - ✅ Role-based authorization
+- ✅ Role-specific controller protection
+
+### Shipment & Pricing
+
 - ✅ Shipment creation
 - ✅ Shipment retrieval
 - ✅ Shipment update
 - ✅ Shipment cancellation
 - ✅ Price estimation
 - ✅ Admin pricing configuration
-- ✅ Tracking history
-- ✅ Valid shipment status transitions
-- ✅ Invalid shipment status transitions
-- ✅ Admin → Delivery Agent assignment
-- ✅ Delivery Agent → assigned shipment retrieval
-- ✅ Assignment status initialization as `PENDING`
+- ✅ Server-side shipment pricing
+- ✅ Automatic origin hub assignment
+- ✅ Automatic destination hub assignment
+
+### Hub & Assignment
+
+- ✅ Hub creation
+- ✅ Active hub lookup
+- ✅ Hub Operator assignment to hub
+- ✅ Delivery Agent assignment to hub
+- ✅ Hub Operator shipment assignment
+- ✅ Delivery Agent assignment initialization as `PENDING`
 - ✅ Delivery Agent assignment acceptance
 - ✅ `PENDING → ACCEPTED` assignment transition
 - ✅ Assignment ownership validation
+- ✅ Hub ownership validation
+- ✅ Same-hub Delivery Agent validation
+- ✅ Shipment reassignment
+- ✅ Delivery retry assignment
+- ✅ Assignment history recording
 
-## 🔄 Testing in Progress
+### Shipment Lifecycle
 
-- 🔄 Delivery Agent assignment rejection
-- 🔄 Pickup workflow
-- 🔄 Delivery status progression
-- 🔄 Delivery confirmation
-- 🔄 Failed-delivery workflow
+- ✅ `CREATED → CONFIRMED`
+- ✅ `CONFIRMED → PICKED_UP`
+- ✅ `PICKED_UP → IN_TRANSIT`
+- ✅ `IN_TRANSIT → OUT_FOR_DELIVERY`
+- ✅ `OUT_FOR_DELIVERY → DELIVERED`
+- ✅ `OUT_FOR_DELIVERY → FAILED_DELIVERY`
+
+### Failed Delivery
+
+- ✅ First failed delivery attempt
+- ✅ Delivery attempt record creation
+- ✅ Hub Operator retry after first failed attempt
+- ✅ Delivery Agent accepts retry assignment
+- ✅ Second failed delivery attempt
+- ✅ Third retry blocked after 2 actual attempts
+- ✅ HTTP `400 Bad Request` for maximum-attempt protection
+- ✅ `FAILED_DELIVERY → PICKUP_FROM_HUB`
+- ✅ Agent assignment cleared after pickup-from-hub
+- ✅ Assignment status cleared after pickup-from-hub
+- ✅ Tracking history records the complete failure/pickup lifecycle
+
+### Tracking
+
+- ✅ Tracking history
+- ✅ Tracking-event creation
+- ✅ Complete lifecycle history verification
+- ✅ Failed-delivery history
+- ✅ Pickup-from-hub history
+
+## 🟢 Integration Testing Status
+
+The main V1 integration-testing target for the implemented shipment workflow is complete.
+
+The tested failure branch was:
+
+```text
+CREATED
+   ↓
+CONFIRMED
+   ↓
+PICKED_UP
+   ↓
+IN_TRANSIT
+   ↓
+OUT_FOR_DELIVERY
+   ↓
+FAILED_DELIVERY #1
+   ↓
+RETRY
+   ↓
+OUT_FOR_DELIVERY
+   ↓
+FAILED_DELIVERY #2
+   ↓
+PICKUP_FROM_HUB
+```
 
 ## ⏱️ Future Testing
 
@@ -1156,9 +1547,10 @@ Manual API testing is currently performed using Postman throughout development.
 - ⏱️ Service-layer tests
 - ⏱️ Controller tests
 - ⏱️ Repository tests
-- ⏱️ Integration tests
+- ⏱️ Expanded automated integration testing
 - ⏱️ Security tests
-- ⏱️ End-to-end workflow tests
+- ⏱️ End-to-end test automation
+- ⏱️ Load and performance testing
 
 ---
 
@@ -1191,7 +1583,23 @@ Manual API testing is currently performed using Postman throughout development.
 |---|---|---|
 | `POST` | `/api/admin/pricing` | Create/update pricing configuration |
 | `GET` | `/api/admin/pricing/active` | Get active pricing configuration |
-| `PATCH` | `/api/admin/shipments/{shipmentId}/assign?deliveryAgentId={agentId}` | Assign shipment to Delivery Agent |
+| `POST` | `/api/admin/hubs` | Create hub |
+| `GET` | `/api/admin/hubs` | Get all hubs |
+| `GET` | `/api/admin/hubs/{hubId}` | Get hub by ID |
+| `PUT` | `/api/admin/hubs/{hubId}` | Update hub |
+| `PATCH` | `/api/admin/hubs/{hubId}/deactivate` | Deactivate hub |
+| `PATCH` | `/api/admin/hubs/{hubId}/operators/{userId}` | Assign Hub Operator |
+| `PATCH` | `/api/admin/hubs/{hubId}/agents/{userId}` | Assign Delivery Agent |
+| `PATCH` | `/api/admin/shipments/{shipmentId}/assign?deliveryAgentId={agentId}` | Administrative shipment assignment |
+
+## 🧑‍💼 Hub Operator APIs
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `PATCH` | `/api/hub/shipments/{shipmentId}/assign?deliveryAgentId={agentId}` | Assign shipment |
+| `PATCH` | `/api/hub/shipments/{shipmentId}/reassign?deliveryAgentId={agentId}` | Reassign shipment |
+| `PATCH` | `/api/hub/shipments/{shipmentId}/retry?deliveryAgentId={agentId}` | Retry failed delivery |
+| `PATCH` | `/api/hub/shipments/{shipmentId}/pickup-from-hub` | Mark shipment available for hub pickup |
 
 ## 🚚 Delivery Agent APIs
 
@@ -1199,21 +1607,35 @@ Manual API testing is currently performed using Postman throughout development.
 |---|---|---|
 | `GET` | `/api/delivery/shipments` | Retrieve shipments assigned to authenticated Delivery Agent |
 | `PATCH` | `/api/delivery/shipments/{shipmentId}/accept` | Accept a pending shipment assignment |
-
-Additional Delivery Agent APIs will be added as the operational workflow is implemented.
+| `PATCH` | `/api/delivery/shipments/{shipmentId}/reject` | Reject a pending assignment |
+| `PATCH` | `/api/delivery/shipments/{shipmentId}/pickup` | Mark shipment picked up |
+| `PATCH` | `/api/delivery/shipments/{shipmentId}/in-transit` | Mark shipment in transit |
+| `PATCH` | `/api/delivery/shipments/{shipmentId}/out-for-delivery` | Mark shipment out for delivery |
+| `PATCH` | `/api/delivery/shipments/{shipmentId}/delivered` | Mark shipment delivered |
+| `PATCH` | `/api/delivery/shipments/{shipmentId}/failed-delivery` | Record failed delivery attempt |
 
 ---
 
 # 🧪 Example End-to-End Assignment Test
 
-The currently implemented assignment flow can be represented as:
+The current operational assignment flow is Hub Operator-driven.
 
 ```text
 Customer creates shipment
         ↓
 Shipment = CREATED
         ↓
-Admin assigns Delivery Agent
+Backend resolves sender city → origin hub
+        ↓
+Backend resolves receiver city → destination hub
+        ↓
+Shipment.currentHubId / destinationHubId saved
+        ↓
+Hub Operator authenticates
+        ↓
+Hub Operator selects eligible Delivery Agent
+        ↓
+Assignment validated against Hub
         ↓
 assignedDeliveryAgentId saved
         ↓
@@ -1232,7 +1654,7 @@ Assignment ownership validated
 assignmentStatus = ACCEPTED
 ```
 
-This verifies the relationship between shipment ownership, administrative assignment, authentication, assignment state management, and Delivery Agent-specific retrieval.
+This verifies the relationship between shipment ownership, hub ownership, authentication, assignment state management, and Delivery Agent-specific retrieval.
 
 ### Important
 
@@ -1273,8 +1695,10 @@ ACCEPTED
 - ✅ Customer role
 - ✅ Admin role
 - ✅ Delivery Agent role
-- ✅ Hub Operator role foundation
+- ✅ Hub Operator role
 - ✅ Google OAuth 2.0
+- ✅ Method-level authorization with `@PreAuthorize`
+- ✅ Role-specific controller protection
 
 ### 📦 Shipment Management
 
@@ -1289,6 +1713,9 @@ ACCEPTED
 - ✅ Customer shipment retrieval
 - ✅ Shipment update
 - ✅ Shipment cancellation
+- ✅ `currentHubId`
+- ✅ `destinationHubId`
+- ✅ Automatic origin/destination hub mapping
 
 ### 💰 Pricing
 
@@ -1299,6 +1726,47 @@ ACCEPTED
 - ✅ Priority-based pricing
 - ✅ COD pricing foundation
 
+### 🏢 Hub Operations
+
+- ✅ Hub entity
+- ✅ Hub repository
+- ✅ Hub CRUD
+- ✅ Active/inactive hub support
+- ✅ Hub code validation
+- ✅ Hub Operator assignment
+- ✅ Delivery Agent assignment to hub
+- ✅ Hub ownership validation
+- ✅ Automatic shipment hub mapping by city
+
+### 🚚 Delivery & Assignment
+
+- ✅ Delivery Agent authentication
+- ✅ Delivery Agent assigned-shipment retrieval
+- ✅ Hub Operator shipment assignment
+- ✅ Shipment reassignment
+- ✅ Assignment validation
+- ✅ Assignment status management
+- ✅ New assignments initialized as `PENDING`
+- ✅ Delivery Agent assignment acceptance
+- ✅ `PENDING → ACCEPTED` assignment transition
+- ✅ Assignment ownership validation
+- ✅ Assignment history
+- ✅ Retry assignment after failed delivery
+
+### ❌ Failed Delivery
+
+- ✅ Failed-delivery request validation
+- ✅ Structured failure reasons
+- ✅ Delivery attempt entity
+- ✅ Delivery attempt persistence
+- ✅ Attempt counting
+- ✅ Maximum 2 actual delivery attempts
+- ✅ Retry restriction after 2 attempts
+- ✅ `PICKUP_FROM_HUB` workflow
+- ✅ Assignment clearing after pickup-from-hub
+- ✅ Tracking history for failed attempts
+- ✅ Tracking history for pickup-from-hub
+
 ### 📍 Tracking & Workflow
 
 - ✅ Tracking history
@@ -1306,15 +1774,9 @@ ACCEPTED
 - ✅ Shipment status-transition engine
 - ✅ Invalid-transition validation
 - ✅ Terminal-state protection
-- ✅ Delivery Agent authentication
-- ✅ Delivery Agent assigned-shipment retrieval
-- ✅ Admin shipment assignment
-- ✅ Assignment validation
-- ✅ Assignment status management
-- ✅ New assignments initialized as `PENDING`
-- ✅ Delivery Agent assignment acceptance
-- ✅ `PENDING → ACCEPTED` assignment transition
-- ✅ Assignment ownership validation
+- ✅ Delivery lifecycle
+- ✅ Failed-delivery lifecycle
+- ✅ Hub pickup lifecycle
 
 ### 🧪 Testing
 
@@ -1323,54 +1785,61 @@ ACCEPTED
 - ✅ Authorization testing
 - ✅ Shipment workflow testing
 - ✅ Pricing testing
-- ✅ Tracking testing
+- ✅ Hub testing
 - ✅ Assignment testing
-- ✅ Assignment acceptance testing
+- ✅ Reassignment testing
+- ✅ Retry testing
+- ✅ Failed-delivery testing
+- ✅ Maximum-attempt testing
+- ✅ Pickup-from-hub testing
+- ✅ End-to-end integration workflow testing
 
 ---
 
 # 🔄 Current Development
 
-The current development focus is the operational Delivery Agent workflow.
+The core V1 shipment, hub, assignment, delivery, and failed-delivery workflow has been implemented and integration-tested.
 
-### 🔄 In Progress
+The next development focus is the remaining V1 business modules and production-oriented hardening.
 
-- 🔄 Delivery Agent assignment rejection
-- 🔄 Pickup workflow
-- 🔄 In-transit workflow
-- 🔄 Out-for-delivery workflow
-- 🔄 Delivery confirmation
-- 🔄 Failed-delivery workflow
-- 🔄 Delivery proof
-- 🔄 OTP verification
-- 🔄 COD collection
+### Current Core Flow
 
-The goal is to connect the already implemented assignment layer with the complete physical delivery lifecycle.
+```text
+Customer
+   ↓
+Create Shipment
+   ↓
+Server-Side Pricing
+   ↓
+Automatic Origin / Destination Hub Mapping
+   ↓
+Hub Operator Assignment
+   ↓
+Delivery Agent Acceptance
+   ↓
+Pickup
+   ↓
+In Transit
+   ↓
+Out For Delivery
+   ├──────────────→ Delivered
+   │
+   └──────────────→ Failed Delivery
+                         ↓
+                    Retry / Reassign
+                         ↓
+                    Second Attempt
+                         ↓
+                  Pickup From Hub
+```
 
 ---
 
 # ⏱️ Planned Modules
 
-## 🏢 Hub Operations
-
-- ⏱️ Hub management
-- ⏱️ Hub Operator operations
-- ⏱️ Shipment hub routing
-- ⏱️ Hub scan-in
-- ⏱️ Hub scan-out
-- ⏱️ Hub inventory
-- ⏱️ Hub-based shipment visibility
-
-## 🔎 Shipment Operations
-
-- ⏱️ Shipment pagination
-- ⏱️ Shipment search
-- ⏱️ Shipment filtering
-- ⏱️ Advanced tracking
-- ⏱️ Improved shipment update restrictions
-
 ## 💳 Payments
 
+- ⏱️ COD collection
 - ⏱️ COD settlement
 - ⏱️ Online payment gateway
 - ⏱️ Payment abstraction
@@ -1393,6 +1862,15 @@ The goal is to connect the already implemented assignment layer with the complet
 - ⏱️ Admin reports
 - ⏱️ Audit logging
 
+## 🔎 Shipment Operations
+
+- ⏱️ Shipment pagination
+- ⏱️ Shipment search
+- ⏱️ Shipment filtering
+- ⏱️ Advanced public tracking
+- ⏱️ Improved shipment update restrictions
+- ⏱️ Field-level update rules
+
 ## 🤖 Automation & Intelligence
 
 - ⏱️ Automatic Delivery Agent assignment
@@ -1405,6 +1883,7 @@ The goal is to connect the already implemented assignment layer with the complet
 
 - ⏱️ Swagger / OpenAPI
 - ⏱️ Automated testing
+- ⏱️ MongoDB indexes
 - ⏱️ Dockerization
 - ⏱️ Production deployment
 - ⏱️ Monitoring
@@ -1454,10 +1933,14 @@ Tracking History
 Status Transition Engine
 Tracking Events
 Delivery Agent Authentication
-Admin Assignment
-Assigned Shipments
 Assignment Validation
 Assignment Status
+Hub Management
+Hub Staff Assignment
+Automatic Origin / Destination Hub Mapping
+Hub Operator Assignment
+Reassignment
+Assignment History
 ```
 
 **Status: ✅ COMPLETED**
@@ -1474,33 +1957,21 @@ In Transit
 Out For Delivery
 Delivery Confirmation
 Failed Delivery
-Delivery Proof
-OTP
-COD Collection
+Delivery Attempt Tracking
+Retry / Reassignment
+Maximum 2 Delivery Attempts
+Pickup From Hub
 ```
 
-**Status: 🔄 IN PROGRESS**
+**Status: ✅ COMPLETED**
 
 ---
 
-## Phase 5 — Hub Operations
-
-```text
-Hub Management
-Hub Operators
-Shipment Routing
-Scan-In / Scan-Out
-Hub Inventory
-```
-
-**Status: ⏱️ PLANNED**
-
----
-
-## Phase 6 — Platform Features
+## Phase 5 — Platform Features
 
 ```text
 Payments
+COD Collection
 Notifications
 Invoices
 Ratings
@@ -1512,7 +1983,7 @@ Audit Logs
 
 ---
 
-## Phase 7 — Production Hardening
+## Phase 6 — Production Hardening
 
 ```text
 Pagination
@@ -1520,10 +1991,26 @@ Search
 Filtering
 Swagger / OpenAPI
 Automated Tests
+MongoDB Indexes
 Docker
 Deployment
 Monitoring
 Observability
+```
+
+**Status: ⏱️ PLANNED**
+
+---
+
+## Phase 7 — Future Scale
+
+```text
+Maps / Geocoding
+ETA Calculation
+Background Jobs
+Event-Driven Processing
+Caching
+Potential Service Decomposition
 ```
 
 **Status: ⏱️ PLANNED**
@@ -1547,6 +2034,11 @@ The project is being developed beyond basic CRUD implementation.
 - ✅ Ownership validation
 - ✅ Assignment validation
 - ✅ Assignment status management
+- ✅ Hub ownership validation
+- ✅ Delivery-agent hub validation
+- ✅ Assignment history
+- ✅ Delivery attempt tracking
+- ✅ Controlled failed-delivery workflow
 - ✅ Input validation
 - ✅ Centralized exception handling
 
@@ -1625,6 +2117,10 @@ Responsible for:
 - Ownership checks
 - Assignment validation
 - Assignment status management
+- Hub ownership validation
+- Delivery attempt management
+- Failed-delivery workflow
+- Assignment history
 - Authentication-related business logic
 
 ### 🗄️ Repository Layer
@@ -1635,6 +2131,9 @@ Responsible for:
 - User queries
 - Shipment queries
 - Pricing-configuration queries
+- Hub queries
+- Delivery-attempt queries
+- Assignment-history queries
 
 ### 📦 DTO Layer
 
@@ -1677,7 +2176,7 @@ src/
     │                   ├── mapper/
     │                   ├── security/
     │                   ├── exception/
-    │                   └── configuration/
+    │                   └── config/
     │
     └── resources/
         └── application.properties
@@ -1694,9 +2193,9 @@ The platform is designed around multiple operational roles.
 | Role | Responsibilities |
 |---|---|
 | 👤 `CUSTOMER` | Create shipments, manage permitted shipment information and track deliveries |
-| 🚚 `DELIVERY_AGENT` | Handle assigned shipments and perform delivery operations |
-| 🏢 `HUB_OPERATOR` | Manage hub operations and shipment movement |
-| 🛡️ `ADMIN` | Manage pricing, assignments, users and operational configuration |
+| 🚚 `DELIVERY_AGENT` | Accept assignments and perform pickup/delivery operations |
+| 🏢 `HUB_OPERATOR` | Operate shipments within the assigned hub, assign/reassign agents, retry deliveries, and handle pickup-from-hub |
+| 🛡️ `ADMIN` | Manage users, hubs, pricing, staff-to-hub membership, and administrative overrides |
 
 ---
 
@@ -1810,50 +2309,102 @@ This keeps pricing logic centralized and prevents clients from directly controll
 # 🔄 Shipment Workflow Architecture
 
 ```text
-             Shipment Created
-                    │
-                    ▼
-                CREATED
-               /       \
-              /         \
-             ▼           ▼
-       CONFIRMED      CANCELLED
-             │
-             ▼
-         PICKED_UP
-             │
-             ▼
-         IN_TRANSIT
-             │
-             ▼
-      OUT_FOR_DELIVERY
-          /       \
-         /         \
-        ▼           ▼
-   DELIVERED   FAILED_DELIVERY
-                    /      \
-                   /        \
-                  ▼          ▼
-          OUT_FOR_DELIVERY  RETURNED
+                         CUSTOMER
+                            │
+                            ▼
+                    Create Shipment
+                            │
+                            ▼
+                  Server-Side Pricing
+                            │
+                            ▼
+              Resolve Origin / Destination Hub
+                            │
+                            ▼
+                         CREATED
+                            │
+                            ▼
+                       CONFIRMED
+                            │
+                            ▼
+                       PICKED_UP
+                            │
+                            ▼
+                       IN_TRANSIT
+                            │
+                            ▼
+                    OUT_FOR_DELIVERY
+                       /          \
+                      /            \
+                     ▼              ▼
+                DELIVERED    FAILED_DELIVERY
+                                  │
+                         ┌────────┴────────┐
+                         ▼                 ▼
+                    Retry / Reassign   Pickup From Hub
+                         │
+                         ▼
+                  OUT_FOR_DELIVERY
+                         │
+                         ▼
+                  Second Attempt
+                         │
+                         ▼
+                  FAILED_DELIVERY
+                         │
+                         ▼
+                  PICKUP_FROM_HUB
 ```
 
 The transition engine is responsible for enforcing valid movement between shipment states.
 
 ### Assignment Workflow
 
-Assignment is maintained separately from the shipment state machine.
+```text
+                         HUB_OPERATOR
+                              │
+                              ▼
+                    Select Shipment at Hub
+                              │
+                              ▼
+                    Select Same-Hub Agent
+                              │
+                              ▼
+                       Validate Assignment
+                              │
+                              ▼
+                    assignmentStatus=PENDING
+                              │
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+                 ACCEPTED            REJECTED
+                    │
+                    ▼
+             DELIVERY_AGENT
+```
+
+### Failed Delivery Workflow
 
 ```text
-Shipment
-   │
-   ├── Shipment Status
-   │      │
-   │      └── CREATED → CONFIRMED → PICKED_UP → IN_TRANSIT
-   │
-   └── Assignment Status
-          │
-          └── PENDING → ACCEPTED
-                    └→ REJECTED
+OUT_FOR_DELIVERY
+      ↓
+Delivery Agent reports failure
+      ↓
+DeliveryAttempt #1
+      ↓
+FAILED_DELIVERY
+      ↓
+Hub Operator retry/reassigns
+      ↓
+OUT_FOR_DELIVERY
+      ↓
+Delivery Agent reports failure
+      ↓
+DeliveryAttempt #2
+      ↓
+FAILED_DELIVERY
+      ↓
+PICKUP_FROM_HUB
 ```
 
 ---
@@ -1878,39 +2429,49 @@ Shipment
 
 This allows the platform to preserve the shipment's operational history rather than overwriting previous states.
 
+Failed-delivery attempts and hub pickup decisions are also represented in the tracking history.
+
 ---
 
 # 🚚 Delivery Assignment Architecture
+
+Normal operational assignment is Hub Operator-driven.
 
 ```text
                          ADMIN
                            │
                            ▼
-                   Select Shipment
+                    Hub / Staff Setup
+                           │
+          ┌────────────────┴────────────────┐
+          ▼                                 ▼
+   HUB_OPERATOR                       DELIVERY_AGENT
+          │                                 │
+          │ hubId                           │ hubId
+          └────────────────┬────────────────┘
+                           ▼
+                          HUB
                            │
                            ▼
-               Select Delivery Agent
+                    Shipment.currentHubId
                            │
                            ▼
-                 Validate Assignment
+                    HUB_OPERATOR
                            │
                            ▼
-              assignedDeliveryAgentId
+                  Select Same-Hub Agent
                            │
                            ▼
-              assignmentStatus = PENDING
+                assignedDeliveryAgentId
                            │
                            ▼
-                    DELIVERY_AGENT
+                assignmentStatus=PENDING
                            │
                            ▼
-             GET /api/delivery/shipments
+                   DELIVERY_AGENT
                            │
                            ▼
-     PATCH /api/delivery/shipments/{shipmentId}/accept
-                           │
-                           ▼
-              assignmentStatus = ACCEPTED
+                     ACCEPT / REJECT
 ```
 
 ## Assignment State Separation
@@ -1918,18 +2479,40 @@ This allows the platform to preserve the shipment's operational history rather t
 ```text
 Shipment Status
       │
-      └── CREATED
+      └── CREATED / CONFIRMED / PICKED_UP / ...
 
 Assignment Status
       │
       ├── PENDING
-      │     │
-      │     └── ACCEPTED
+      │     ├── ACCEPTED
+      │     └── REJECTED
       │
-      └── REJECTED
+      └── cleared after final pickup-from-hub handling
 ```
 
-The assignment workflow does not replace or directly modify the shipment lifecycle.
+## Retry Architecture
+
+```text
+FAILED_DELIVERY
+      ↓
+Hub Operator checks attempt count
+      ↓
+Attempt count < 2
+      ↓
+Assign same or different eligible agent
+      ↓
+PENDING
+      ↓
+Agent accepts
+      ↓
+OUT_FOR_DELIVERY
+```
+
+After two actual failed attempts, retry is blocked and the Hub Operator can move the shipment to `PICKUP_FROM_HUB`.
+
+## Assignment History
+
+Every assignment/reassignment operation can create an `AssignmentHistory` record containing the current agent, previous agent, performer, hub, action, reason, notes, and timestamp.
 
 ---
 
@@ -2147,6 +2730,8 @@ Estimate Price
    ↓
 Create Shipment
    ↓
+Automatic Origin / Destination Hub Mapping
+   ↓
 Receive Tracking Number
    ↓
 View Shipment
@@ -2165,19 +2750,41 @@ Receive JWT
    ↓
 Configure Pricing
    ↓
-View Active Pricing
+Create / Manage Hubs
    ↓
-Select Shipment
+Assign Staff to Hubs
    ↓
-Assign Delivery Agent
-   ↓
-assignmentStatus = PENDING
+Administrative Shipment Operations
 ```
 
 ### Admin Assignment API
 
 ```http
 PATCH /api/admin/shipments/{shipmentId}/assign?deliveryAgentId={agentId}
+```
+
+## Hub Operator Flow
+
+```text
+Login
+   ↓
+Receive JWT
+   ↓
+Operate Within Assigned Hub
+   ↓
+View / Select Shipment
+   ↓
+Assign Delivery Agent
+   ↓
+assignmentStatus = PENDING
+   ↓
+Delivery Agent Accepts
+   ↓
+Assignment Status = ACCEPTED
+   ↓
+Manage Retry / Reassignment if Delivery Fails
+   ↓
+Pickup From Hub After 2 Failed Attempts
 ```
 
 ## Delivery Agent Flow
@@ -2200,11 +2807,16 @@ Pickup
 In Transit
    ↓
 Out For Delivery
-   ↓
-Delivery Confirmation
+   ├──────────────→ Delivered
+   │
+   └──────────────→ Failed Delivery
+                         ↓
+                    Hub Operator Retry
+                         ↓
+                    Second Attempt
+                         ↓
+                    Pickup From Hub
 ```
-
-The Delivery Agent operational steps after assignment are currently under development.
 
 ---
 
@@ -2255,7 +2867,7 @@ This keeps the project easier to develop, test, debug, and evolve before introdu
 
 # 📌 Current Project State
 
-The project has progressed beyond basic authentication and CRUD.
+The project has progressed beyond basic authentication and CRUD into a working hub-based shipment operations workflow.
 
 ## Current Implemented Flow
 
@@ -2266,45 +2878,94 @@ Authorization
       ↓
 User Management
       ↓
+Hub Management
+      ↓
+Hub Staff Assignment
+      ↓
 Shipment Management
       ↓
 Server-Side Pricing
       ↓
-Price Estimation
-      ↓
-Shipment Cancellation
+Automatic Origin / Destination Hub Mapping
       ↓
 Tracking History
       ↓
 Status Transition Engine
       ↓
-Delivery Agent Assignment
+Hub Operator Assignment
       ↓
 Assignment Status = PENDING
       ↓
-Assigned Shipment Retrieval
+Delivery Agent Retrieval
       ↓
 Assignment Acceptance
       ↓
 Assignment Status = ACCEPTED
+      ↓
+Pickup
+      ↓
+In Transit
+      ↓
+Out For Delivery
+      ├──────────────→ Delivered
+      │
+      └──────────────→ Failed Delivery
+                           ↓
+                     Delivery Attempt #1
+                           ↓
+                     Hub Operator Retry
+                           ↓
+                     Delivery Attempt #2
+                           ↓
+                     Pickup From Hub
 ```
+
+## Current Integration-Tested Branch
+
+The complete failure branch has been manually verified through Postman and MongoDB:
+
+```text
+CREATED
+   ↓
+CONFIRMED
+   ↓
+PICKED_UP
+   ↓
+IN_TRANSIT
+   ↓
+OUT_FOR_DELIVERY
+   ↓
+FAILED_DELIVERY #1
+   ↓
+RETRY
+   ↓
+OUT_FOR_DELIVERY
+   ↓
+FAILED_DELIVERY #2
+   ↓
+RETRY BLOCKED
+   ↓
+PICKUP_FROM_HUB
+```
+
+The final tested shipment state correctly clears the delivery-agent assignment and assignment status after the maximum number of delivery attempts is reached.
 
 ## Current Development Focus
 
 ```text
-Assignment
-    ↓
-Reject Assignment
-    ↓
-Pickup
-    ↓
-In Transit
-    ↓
-Out For Delivery
-    ↓
-Delivery Proof
-    ↓
-Delivered
+Core V1 Operational Workflow
+          ↓
+Payments / COD
+          ↓
+Invoices / Ratings
+          ↓
+Notifications
+          ↓
+Reports / Audit
+          ↓
+Automated Testing
+          ↓
+Production Hardening
 ```
 
 ---
@@ -2321,11 +2982,13 @@ Delivered
 | JWT Refresh Tokens | ✅ Completed |
 | JWT Authentication Filter | ✅ Completed |
 | Role-Based Authorization | ✅ Completed |
+| Method-Level Authorization | ✅ Completed |
 | Google OAuth 2.0 | ✅ Completed |
 | Customer Role | ✅ Completed |
 | Admin Role | ✅ Completed |
 | Delivery Agent Role | ✅ Completed |
-| Hub Operator Role Foundation | ✅ Completed |
+| Hub Operator Role | ✅ Completed |
+| User-to-Hub Staff Assignment | ✅ Completed |
 | Shipment Creation | ✅ Completed |
 | Shipment Retrieval | ✅ Completed |
 | Shipment Update | ✅ Completed |
@@ -2340,30 +3003,30 @@ Delivered
 | Tracking Events | ✅ Completed |
 | Status Transition Engine | ✅ Completed |
 | Invalid Transition Validation | ✅ Completed |
-| Admin Shipment Assignment | ✅ Completed |
+| Terminal State Protection | ✅ Completed |
+| Hub CRUD | ✅ Completed |
+| Active Hub Validation | ✅ Completed |
+| Automatic Origin Hub Mapping | ✅ Completed |
+| Automatic Destination Hub Mapping | ✅ Completed |
+| Current Hub Tracking | ✅ Completed |
+| Destination Hub Tracking | ✅ Completed |
+| Hub Operator Shipment Assignment | ✅ Completed |
+| Shipment Reassignment | ✅ Completed |
 | Assignment Validation | ✅ Completed |
 | Assignment Status Management | ✅ Completed |
 | Delivery Agent Assigned Shipments | ✅ Completed |
 | Delivery Agent Accept Assignment | ✅ Completed |
 | Assignment Ownership Validation | ✅ Completed |
+| Assignment History | ✅ Completed |
+| Delivery Attempt Tracking | ✅ Completed |
+| Failed Delivery Workflow | ✅ Completed |
+| Maximum 2 Delivery Attempts | ✅ Completed |
+| Retry Restriction After 2 Attempts | ✅ Completed |
+| Pickup From Hub | ✅ Completed |
+| Delivery Lifecycle | ✅ Completed |
 | Postman API Testing | ✅ Completed |
-| Delivery Agent Reject Assignment | 🔄 In Progress |
-| Pickup Workflow | 🔄 In Progress |
-| In-Transit Workflow | 🔄 In Progress |
-| Out-for-Delivery Workflow | 🔄 In Progress |
-| Delivery Confirmation | 🔄 In Progress |
-| Failed Delivery Workflow | 🔄 In Progress |
-| Delivery Proof / OTP | 🔄 In Progress |
-| COD Collection | 🔄 In Progress |
-| Hub Management | ⏱️ Planned |
-| Hub Operator Operations | ⏱️ Planned |
-| Shipment Hub Routing | ⏱️ Planned |
-| Hub Scan-In / Scan-Out | ⏱️ Planned |
-| Shipment Pagination | ⏱️ Planned |
-| Search & Filtering | ⏱️ Planned |
-| Swagger / OpenAPI | ⏱️ Planned |
-| Automated Testing | ⏱️ Planned |
-| COD Settlement | ⏱️ Planned |
+| End-to-End Integration Testing | ✅ Completed |
+| COD Collection | ⏱️ Planned |
 | Online Payment Gateway | ⏱️ Planned |
 | Payment Abstraction | ⏱️ Planned |
 | Email Notifications | ⏱️ Planned |
@@ -2377,6 +3040,11 @@ Delivered
 | Distance Calculation | ⏱️ Planned |
 | ETA Calculation | ⏱️ Planned |
 | Scheduled Background Jobs | ⏱️ Planned |
+| Pagination | ⏱️ Planned |
+| Search & Filtering | ⏱️ Planned |
+| Swagger / OpenAPI | ⏱️ Planned |
+| Automated Testing | ⏱️ Planned |
+| MongoDB Indexing | ⏱️ Planned |
 | Dockerization | ⏱️ Planned |
 | Production Deployment | ⏱️ Planned |
 | Monitoring & Observability | ⏱️ Planned |
@@ -2394,24 +3062,38 @@ The platform is designed around explicit backend business rules rather than allo
 - ✅ Active pricing configuration is maintained by Admin.
 - ✅ Priority affects the calculated price.
 - ✅ Distance and package weight participate in pricing.
+- ✅ Shipment creation recalculates the price on the server.
 
 ## 📦 Shipment Ownership
 
 - ✅ Customer operations are ownership-aware.
 - ✅ Authenticated users are resolved from the security context.
 - ✅ Sensitive shipment operations validate the requesting user's authority.
+- ✅ Delivery Agents can operate only on shipments assigned to them.
+
+## 🏢 Hub Ownership
+
+- ✅ Hub Operators are assigned to a specific hub.
+- ✅ Delivery Agents are assigned to a specific hub.
+- ✅ A Hub Operator can operate only on shipments whose `currentHubId` matches the operator's hub.
+- ✅ A Hub Operator can assign only Delivery Agents belonging to the same hub.
+- ✅ Shipment creation resolves active origin and destination hubs from sender/receiver cities.
+- ✅ Shipment creation fails when a required active hub cannot be found.
 
 ## 🔄 Status Transitions
 
 - ✅ Status changes are validated centrally.
 - ✅ Invalid transitions are rejected.
 - ✅ Terminal states cannot transition further.
-- ✅ Status changes can generate tracking events.
+- ✅ Status changes generate tracking events.
+- ✅ Failed delivery is allowed only from `OUT_FOR_DELIVERY`.
+- ✅ `PICKUP_FROM_HUB` is used after the maximum delivery-attempt limit is reached.
 
 ## 🚚 Assignment
 
-- ✅ Only authorized Admin operations can assign shipments.
-- ✅ Assigned users must have the `DELIVERY_AGENT` role.
+- ✅ Normal operational assignment is controlled by the Hub Operator.
+- ✅ Delivery Agents must have the `DELIVERY_AGENT` role.
+- ✅ Delivery Agents must belong to the Hub Operator's hub.
 - ✅ Existing assignments are validated.
 - ✅ New assignments start with `assignmentStatus = PENDING`.
 - ✅ Assignment status is separate from shipment status.
@@ -2419,8 +3101,18 @@ The platform is designed around explicit backend business rules rather than allo
 - ✅ Assignment acceptance is allowed only while `assignmentStatus = PENDING`.
 - ✅ Assignment acceptance changes `PENDING → ACCEPTED`.
 - ✅ Assignment acceptance does not change the shipment `status`.
-- 🔄 `REJECTED` is reserved for the upcoming assignment-rejection workflow.
-- ✅ Delivery Agents retrieve their own assigned shipments.
+- ✅ Reassignment validates the new agent and hub.
+- ✅ Retry can use the same or a different eligible agent.
+- ✅ Assignment rejection does not consume a delivery attempt.
+- ✅ Assignment changes are recorded in assignment history.
+
+## 🧪 Delivery Attempts
+
+- ✅ Only actual failed delivery attempts are counted.
+- ✅ A shipment can have at most 2 actual delivery attempts.
+- ✅ Retry is blocked when the attempt count reaches 2.
+- ✅ After the second failed attempt, the shipment can be moved to `PICKUP_FROM_HUB`.
+- ✅ Final pickup-from-hub handling clears the delivery-agent assignment.
 
 ---
 
@@ -2440,7 +3132,7 @@ The following improvements are intentionally separated from the currently implem
 ## ⏱️ Reliability
 
 - ⏱️ Automated testing
-- ⏱️ Integration testing
+- ⏱️ Expanded automated integration testing
 - ⏱️ Health checks
 - ⏱️ Retry mechanisms
 - ⏱️ Failure handling
@@ -2582,9 +3274,44 @@ Future operational dashboards can expose:
 
 ---
 
-# 🏢 Hub Operations — Future Design
+# 🏢 Hub Operations — Current & Future Design
 
-The planned hub module will introduce physical logistics-center operations.
+Hub operations now form part of the implemented V1 foundation.
+
+## Current V1 Hub Model
+
+```text
+                 ADMIN
+                   │
+          ┌────────┴────────┐
+          ▼                 ▼
+   HUB_OPERATOR       DELIVERY_AGENT
+          │                 │
+          └────────┬────────┘
+                   ▼
+                  HUB
+                   │
+                   ▼
+             CURRENT HUB
+                   │
+                   ▼
+                SHIPMENT
+```
+
+### Implemented
+
+- ✅ Hub CRUD
+- ✅ Active/inactive hubs
+- ✅ Hub address and city
+- ✅ Hub Operator membership
+- ✅ Delivery Agent membership
+- ✅ Shipment current-hub relationship
+- ✅ Shipment destination-hub relationship
+- ✅ Automatic city-to-hub mapping
+- ✅ Same-hub Delivery Agent assignment validation
+- ✅ Hub Operator shipment ownership validation
+
+## Future Hub Operations
 
 ```text
 Shipment
@@ -2597,19 +3324,20 @@ Processing
    ↓
 Scan-Out
    ↓
-Destination Hub
+Destination / Next Hub
    ↓
 Delivery Agent
 ```
 
-Potential responsibilities include:
+Potential future responsibilities include:
 
-- ⏱️ Shipment receiving
-- ⏱️ Shipment scanning
-- ⏱️ Shipment routing
-- ⏱️ Local assignment
-- ⏱️ Inventory visibility
-- ⏱️ Hub-level tracking
+- ⏱️ Shipment receiving/scanning
+- ⏱️ Shipment outbound scanning
+- ⏱️ Multi-hop hub routing
+- ⏱️ Hub inventory
+- ⏱️ Route management
+- ⏱️ Hub-level dashboards
+- ⏱️ Operational scan history
 
 ---
 
@@ -2678,9 +3406,12 @@ User
 ├── authProvider
 ├── providerId
 ├── enabled
+├── hubId
 ├── createdAt
 └── updatedAt
 ```
+
+`hubId` associates operational staff such as Hub Operators and Delivery Agents with the hub they are authorized to operate in.
 
 ## Shipment
 
@@ -2697,10 +3428,54 @@ Shipment
 ├── cost
 ├── status
 ├── trackingHistory
+├── currentHubId
+├── destinationHubId
 ├── assignedDeliveryAgentId
 ├── assignmentStatus
 ├── createdAt
 └── updatedAt
+```
+
+## Hub
+
+```text
+Hub
+├── id
+├── name
+├── code
+├── address
+├── active
+├── createdAt
+└── updatedAt
+```
+
+## Delivery Attempt
+
+```text
+DeliveryAttempt
+├── id
+├── shipmentId
+├── attemptNumber
+├── deliveryAgentId
+├── attemptedAt
+├── failureReason
+└── notes
+```
+
+## Assignment History
+
+```text
+AssignmentHistory
+├── id
+├── shipmentId
+├── deliveryAgentId
+├── previousDeliveryAgentId
+├── performedBy
+├── action
+├── hubId
+├── timestamp
+├── reason
+└── notes
 ```
 
 ### Assignment Status
@@ -2729,13 +3504,31 @@ SHIPMENT
    │
    ├──────────────► PRICING
    │
+   ├──────────────► CURRENT HUB
+   │                    │
+   │                    └── HUB_OPERATOR
+   │
+   ├──────────────► DESTINATION HUB
+   │
    └──────────────► DELIVERY AGENT ASSIGNMENT
-                         │
-                         ├── assignedDeliveryAgentId
-                         └── assignmentStatus
+                          │
+                          ├── assignedDeliveryAgentId
+                          └── assignmentStatus
 ```
 
-The authenticated customer is used to determine ownership-sensitive operations instead of trusting arbitrary user identifiers supplied by the client.
+### Operational Hub Ownership
+
+```text
+HUB_OPERATOR.hubId
+        =
+SHIPMENT.currentHubId
+        =
+DELIVERY_AGENT.hubId
+```
+
+The authenticated customer is used to determine customer ownership-sensitive operations instead of trusting arbitrary user identifiers supplied by the client.
+
+Hub Operators additionally operate only within their assigned hub, and Delivery Agent assignment is restricted to agents belonging to that hub.
 
 ---
 
@@ -2748,9 +3541,10 @@ The authenticated customer is used to determine ownership-sensitive operations i
 | `PICKED_UP` | `IN_TRANSIT` |
 | `IN_TRANSIT` | `OUT_FOR_DELIVERY` |
 | `OUT_FOR_DELIVERY` | `DELIVERED`, `FAILED_DELIVERY` |
-| `FAILED_DELIVERY` | `OUT_FOR_DELIVERY`, `RETURNED` |
+| `FAILED_DELIVERY` | `OUT_FOR_DELIVERY`, `PICKUP_FROM_HUB`, `RETURNED` |
 | `DELIVERED` | None |
 | `CANCELLED` | None |
+| `PICKUP_FROM_HUB` | None |
 | `RETURNED` | None |
 
 This state machine is enforced by the centralized shipment workflow logic.
@@ -2763,7 +3557,29 @@ This state machine is enforced by the centralized shipment workflow logic.
 | `ACCEPTED` | None |
 | `REJECTED` | None |
 
-The assignment state machine is separate from the shipment state machine.
+### Delivery Attempt State
+
+Delivery attempts are persisted separately from the shipment status.
+
+```text
+OUT_FOR_DELIVERY
+      ↓
+FAILED_DELIVERY
+      ↓
+Attempt #1
+      ↓
+Retry
+      ↓
+OUT_FOR_DELIVERY
+      ↓
+FAILED_DELIVERY
+      ↓
+Attempt #2
+      ↓
+PICKUP_FROM_HUB
+```
+
+The assignment state machine and delivery-attempt tracking are separate from the shipment state machine.
 
 ---
 
@@ -2776,25 +3592,39 @@ The assignment state machine is separate from the shipment state machine.
              ↓
 3. Pricing service calculates cost
              ↓
-4. Tracking number generated
+4. Backend finds active origin hub from sender city
              ↓
-5. Shipment stored as CREATED
+5. Backend finds active destination hub from receiver city
              ↓
-6. Admin confirms / assigns
+6. Tracking number generated
              ↓
-7. Assignment status becomes PENDING
+7. Shipment stored as CREATED
              ↓
-8. Delivery Agent accepts assignment
+8. Hub Operator assigns eligible same-hub Delivery Agent
              ↓
-9. Assignment status becomes ACCEPTED
+9. Assignment status becomes PENDING
              ↓
-10. Delivery workflow begins
+10. Delivery Agent accepts assignment
              ↓
-11. Shipment progresses through valid states
+11. Assignment status becomes ACCEPTED
              ↓
-12. Tracking history records events
+12. Shipment progresses through valid delivery states
              ↓
-13. Shipment reaches DELIVERED
+13. Delivery Agent reports pickup / transit / out-for-delivery
+             ↓
+14. Shipment is delivered
+             OR
+15. Delivery attempt fails
+             ↓
+16. DeliveryAttempt is recorded
+             ↓
+17. Hub Operator retries / reassigns if attempts < 2
+             ↓
+18. Second failure
+             ↓
+19. Shipment becomes available for PICKUP_FROM_HUB
+             ↓
+20. Tracking history preserves the complete operational timeline
 ```
 
 ---
@@ -2824,7 +3654,11 @@ The API validates shipment-related information before processing.
 - ✅ Ownership checks
 - ✅ Assignment checks
 - ✅ Assignment ownership checks
+- ✅ Hub ownership checks
+- ✅ Same-hub Delivery Agent validation
 - ✅ Valid assignment status transitions
+- ✅ Delivery-attempt limit validation
+- ✅ Failed-delivery reason validation
 
 ---
 
@@ -2920,7 +3754,7 @@ The current development workflow uses:
 
 # 🖥️ Development Environment
 
-The application is currently configured for local development.
+The application is currently configured for local development and the core V1 operational workflow has been integration-tested.
 
 ```text
 Backend
@@ -3034,12 +3868,18 @@ Authentication → Shipment Management → Pricing → Tracking → Delivery Ope
 | 💰 Pricing Engine | ✅ Completed |
 | 📍 Tracking | ✅ Completed |
 | 🔄 Status Workflow | ✅ Completed |
+| 🏢 Hub Management | ✅ Completed |
+| 🗺️ Automatic Hub Mapping | ✅ Completed |
 | 🚚 Delivery Assignment | ✅ Completed |
 | 🔄 Assignment Status Management | ✅ Completed |
+| 🧾 Assignment History | ✅ Completed |
 | 🤝 Delivery Agent Assignment Acceptance | ✅ Completed |
-| 🧪 Manual API Testing | ✅ Completed |
-| 🚛 Delivery Operations | 🔄 In Progress |
-| 🏢 Hub Operations | ⏱️ Planned |
+| 🧪 Delivery Attempt Tracking | ✅ Completed |
+| ❌ Failed Delivery Workflow | ✅ Completed |
+| 🔁 Retry / Reassignment Workflow | ✅ Completed |
+| 🏢 Pickup From Hub | ✅ Completed |
+| 🚛 Delivery Operations | ✅ Completed |
+| 🧪 End-to-End Integration Testing | ✅ Completed |
 | 💳 Payments | ⏱️ Planned |
 | 🔔 Notifications | ⏱️ Planned |
 | 📄 Invoices & Ratings | ⏱️ Planned |
