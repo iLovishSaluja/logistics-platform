@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.lovish.logistic.platform.enums.AuthProvider;
 import com.lovish.logistic.platform.enums.Role;
 
-
 @Document(collection = "users")
 public class User {
 
@@ -22,6 +21,8 @@ public class User {
 	private String password;
 
 	private Role role;
+
+	private String hubId;
 
 	private AuthProvider authProvider;
 
@@ -37,14 +38,16 @@ public class User {
 		super();
 	}
 
-	public User(String id, String username, String email, String password, Role role, AuthProvider authProvider,
-			String providerId, boolean enabled, LocalDateTime createdAt, LocalDateTime updatedAt) {
+	public User(String id, String username, String email, String password, Role role, String hubId,
+			AuthProvider authProvider, String providerId, boolean enabled, LocalDateTime createdAt,
+			LocalDateTime updatedAt) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.role = role;
+		this.hubId = hubId;
 		this.authProvider = authProvider;
 		this.providerId = providerId;
 		this.enabled = enabled;
@@ -131,6 +134,13 @@ public class User {
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	
-	
+
+	public String getHubId() {
+		return hubId;
+	}
+
+	public void setHubId(String hubId) {
+		this.hubId = hubId;
+	}
+
 }

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import com.lovish.logistic.platform.enums.AssignmentStatus;
 import com.lovish.logistic.platform.enums.Priority;
 import com.lovish.logistic.platform.enums.ShipmentStatus;
@@ -22,8 +24,16 @@ public class Shipment {
 	private BigDecimal cost;
 	private ShipmentStatus status;
 
+	@Field(write = Field.Write.ALWAYS)
+	private String currentHubId;
+
+	@Field(write = Field.Write.ALWAYS)
+	private String destinationHubId;
+
+	@Field(write=Field.Write.ALWAYS)
 	private String assignedDeliveryAgentId;
 
+	@Field(write = Field.Write.ALWAYS)
 	private AssignmentStatus assignmentStatus;
 
 	private LocalDateTime createdAt;
@@ -37,8 +47,9 @@ public class Shipment {
 
 	public Shipment(String id, String trackingNumber, String customerId, Address senderAddress, Address receiverAddress,
 			PackageDetails packageDetails, Priority priority, BigDecimal cost, ShipmentStatus status,
-			String assignedDeliveryAgentId, AssignmentStatus assignmentStatus, LocalDateTime createdAt,
-			LocalDateTime updatedAt, List<TrackingHistory> trackingHistory) {
+			String currentHubId, String destinationHubId, String assignedDeliveryAgentId,
+			AssignmentStatus assignmentStatus, LocalDateTime createdAt, LocalDateTime updatedAt,
+			List<TrackingHistory> trackingHistory) {
 		super();
 		this.id = id;
 		this.trackingNumber = trackingNumber;
@@ -49,6 +60,8 @@ public class Shipment {
 		this.priority = priority;
 		this.cost = cost;
 		this.status = status;
+		this.currentHubId = currentHubId;
+		this.destinationHubId = destinationHubId;
 		this.assignedDeliveryAgentId = assignedDeliveryAgentId;
 		this.assignmentStatus = assignmentStatus;
 		this.createdAt = createdAt;
@@ -166,6 +179,22 @@ public class Shipment {
 
 	public void setAssignmentStatus(AssignmentStatus assignmentStatus) {
 		this.assignmentStatus = assignmentStatus;
+	}
+
+	public String getCurrentHubId() {
+		return currentHubId;
+	}
+
+	public void setCurrentHubId(String currentHubId) {
+		this.currentHubId = currentHubId;
+	}
+
+	public String getDestinationHubId() {
+		return destinationHubId;
+	}
+
+	public void setDestinationHubId(String destinationHubId) {
+		this.destinationHubId = destinationHubId;
 	}
 
 }

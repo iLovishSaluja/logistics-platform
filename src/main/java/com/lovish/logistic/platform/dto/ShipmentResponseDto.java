@@ -3,7 +3,7 @@ package com.lovish.logistic.platform.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.lovish.logistic.platform.enums.ShipmentStatus;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.lovish.logistic.platform.enums.*;
 
@@ -21,7 +21,13 @@ public class ShipmentResponseDto {
 	private BigDecimal cost;
 	private ShipmentStatus status;
 
+	private String currentHubId;
+
+	private String destinationHubId;
+
 	private String assignedDeliveryAgentId;
+
+	private AssignmentStatus assignmentStatus;
 
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
@@ -32,7 +38,8 @@ public class ShipmentResponseDto {
 
 	public ShipmentResponseDto(String id, String trackingNumber, String customerId, AddressDto senderAddress,
 			AddressDto receiverAddress, PackageDetailsDto packageDetails, Priority priority, BigDecimal cost,
-			ShipmentStatus status, String assignedDeliveryAgentId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+			ShipmentStatus status, String currentHubId, String destinationHubId, String assignedDeliveryAgentId,
+			AssignmentStatus assignmentStatus, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		super();
 		this.id = id;
 		this.trackingNumber = trackingNumber;
@@ -43,7 +50,10 @@ public class ShipmentResponseDto {
 		this.priority = priority;
 		this.cost = cost;
 		this.status = status;
+		this.currentHubId = currentHubId;
+		this.destinationHubId = destinationHubId;
 		this.assignedDeliveryAgentId = assignedDeliveryAgentId;
+		this.assignmentStatus = assignmentStatus;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
@@ -142,6 +152,30 @@ public class ShipmentResponseDto {
 
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public String getCurrentHubId() {
+		return currentHubId;
+	}
+
+	public void setCurrentHubId(String currentHubId) {
+		this.currentHubId = currentHubId;
+	}
+
+	public AssignmentStatus getAssignmentStatus() {
+		return assignmentStatus;
+	}
+
+	public void setAssignmentStatus(AssignmentStatus assignmentStatus) {
+		this.assignmentStatus = assignmentStatus;
+	}
+
+	public String getDestinationHubId() {
+		return destinationHubId;
+	}
+
+	public void setDestinationHubId(String destinationHubId) {
+		this.destinationHubId = destinationHubId;
 	}
 
 }

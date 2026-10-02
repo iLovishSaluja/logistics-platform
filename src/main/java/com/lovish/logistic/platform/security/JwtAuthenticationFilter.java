@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		} catch (JwtException | IllegalArgumentException e) {
 
 			log.warn("Invalid or expired JWT received for request: {} {}", request.getMethod(),
-					request.getRequestURI());
+					request.getRequestURI(),e);
 
 			SecurityContextHolder.clearContext();
 		}

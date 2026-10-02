@@ -28,7 +28,7 @@ public class ShipmentStatusServiceImpl implements ShipmentStatusService {
 				EnumSet.of(ShipmentStatus.DELIVERED, ShipmentStatus.FAILED_DELIVERY));
 
 		allowedTransitions.put(ShipmentStatus.FAILED_DELIVERY,
-				EnumSet.of(ShipmentStatus.OUT_FOR_DELIVERY, ShipmentStatus.RETURNED));
+				EnumSet.of(ShipmentStatus.OUT_FOR_DELIVERY, ShipmentStatus.PICKUP_FROM_HUB, ShipmentStatus.RETURNED));
 
 		allowedTransitions.put(ShipmentStatus.DELIVERED, EnumSet.noneOf(ShipmentStatus.class));
 

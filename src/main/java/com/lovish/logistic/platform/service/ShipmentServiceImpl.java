@@ -16,6 +16,7 @@ import com.lovish.logistic.platform.dto.ShipmentSummaryDto;
 import com.lovish.logistic.platform.dto.ShipmentTrackingResponseDto;
 import com.lovish.logistic.platform.dto.ShipmentUpdateRequestDto;
 import com.lovish.logistic.platform.dto.TrackingHistoryDto;
+import com.lovish.logistic.platform.entity.Hub;
 import com.lovish.logistic.platform.entity.Shipment;
 import com.lovish.logistic.platform.entity.TrackingHistory;
 import com.lovish.logistic.platform.entity.User;
@@ -24,6 +25,7 @@ import com.lovish.logistic.platform.exception.BadRequestException;
 import com.lovish.logistic.platform.exception.ResourceNotFoundException;
 import com.lovish.logistic.platform.exception.UnauthorizedException;
 import com.lovish.logistic.platform.mapper.ShipmentMapper;
+import com.lovish.logistic.platform.repository.HubRepository;
 import com.lovish.logistic.platform.repository.ShipmentRepository;
 import com.lovish.logistic.platform.repository.UserRepository;
 
@@ -35,26 +37,52 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private final UserRepository userRepository;
 	private final PricingService pricingService;
 	private final ShipmentStatusService shipmentStatusService;
+	private final HubRepository hubRepository;
 
 	public ShipmentServiceImpl(ShipmentRepository shipmentRepository, ShipmentMapper shipmentMapper,
-			UserRepository userRepository, PricingService pricingService, ShipmentStatusService shipmentStatusService) {
+			UserRepository userRepository, PricingService pricingService, ShipmentStatusService shipmentStatusService,
+			HubRepository hubRepository) {
 		super();
 		this.shipmentRepository = shipmentRepository;
 		this.shipmentMapper = shipmentMapper;
 		this.userRepository = userRepository;
 		this.pricingService = pricingService;
 		this.shipmentStatusService = shipmentStatusService;
+		this.hubRepository = hubRepository;
 	}
 
 	@Override
 	public ShipmentResponseDto createShipment(ShipmentCreateRequestDto request) {
 
 		Shipment shipment = shipmentMapper.toEntity(request);
+
 		String customerId = getCurrentUserId();
+
+		// Find origin hub using sender city
+		String senderCity = request.getSenderAddress().getCity();
+
+		Hub originHub = hubRepository.findByAddressCityIgnoreCaseAndActiveTrue(senderCity)
+				.orElseThrow(() -> new BadRequestException("No active hub found for sender city: " + senderCity));
+
+		// Find destination hub using receiver city
+		String receiverCity = request.getReceiverAddress().getCity();
+
+		Hub destinationHub = hubRepository.findByAddressCityIgnoreCaseAndActiveTrue(receiverCity)
+				.orElseThrow(() -> new BadRequestException("No active hub found for receiver city: " + receiverCity));
 
 		shipment.setTrackingNumber(generateTrackingNumber());
 		shipment.setCustomerId(customerId);
+
 		shipment.setStatus(ShipmentStatus.CREATED);
+
+		// Automatically determined hubs
+		shipment.setCurrentHubId(originHub.getId());
+		shipment.setDestinationHubId(destinationHub.getId());
+
+		// No delivery agent assigned yet
+		shipment.setAssignedDeliveryAgentId(null);
+		shipment.setAssignmentStatus(null);
+
 		addTrackingEvent(shipment, ShipmentStatus.CREATED, shipment.getSenderAddress().getCity(), "Shipment created",
 				customerId, null);
 

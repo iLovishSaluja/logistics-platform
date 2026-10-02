@@ -40,6 +40,8 @@ public class SecurityConfig {
 						// Admin-only endpoints
 						.requestMatchers("/api/admin/**").hasRole("ADMIN")
 
+						.requestMatchers("/api/hub/**").hasAnyRole("HUB_OPERATOR", "ADMIN")
+
 						// Delivery agent endpoints
 						.requestMatchers("/api/delivery/**").hasAnyRole("DELIVERY_AGENT", "ADMIN")
 
