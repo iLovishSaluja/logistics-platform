@@ -51,6 +51,7 @@ Designed around secure authentication, shipment lifecycle management, server-sid
 - [✏️ Shipment Updates](#️-shipment-updates)
 - [❌ Shipment Cancellation](#-shipment-cancellation)
 - [🚚 Delivery Agent Management](#-delivery-agent-management)
+- [👨‍💼 Admin Shipment Assignment](#-admin-shipment-assignment)
 - [🚛 Delivery Agent Workflow](#-delivery-agent-workflow)
 - [🏢 Hub Management](#-hub-management)
 - [💳 Payments & COD](#-payments--cod)
@@ -184,6 +185,8 @@ The platform is being built to simulate the backend architecture and business wo
 | 🔄 Status Transition Engine | ✅ Completed |
 | 👨‍💼 Admin Shipment Assignment | ✅ Completed |
 | 🚚 Assigned Shipment Retrieval | ✅ Completed |
+| 🔄 Assignment Status Management | ✅ Completed |
+| 🤝 Delivery Agent Assignment Acceptance | ✅ Completed |
 | 🧪 Manual API Testing | ✅ Completed |
 | 🚛 Delivery Agent Operational Workflow | 🔄 In Progress |
 | 🏢 Hub Management | ⏱️ Planned |
@@ -321,6 +324,7 @@ Shipment
 ├── status
 ├── trackingHistory
 ├── assignedDeliveryAgentId
+├── assignmentStatus
 ├── createdAt
 └── updatedAt
 ```
@@ -498,9 +502,24 @@ FAILED_DELIVERY
 RETURNED
 ```
 
+### Assignment Workflow
+
+Assignment status is a separate workflow from the shipment lifecycle.
+
+```text
+Shipment Status
+CREATED → CONFIRMED → PICKED_UP → IN_TRANSIT → OUT_FOR_DELIVERY → DELIVERED
+
+Assignment Status
+PENDING → ACCEPTED
+       └→ REJECTED
+```
+
+`assignmentStatus` must not be treated as a replacement for `ShipmentStatus`.
+
 ---
 
-# 🧠 Shipment Status Transition Engine
+# 🧠 Status Transition Engine
 
 A centralized service validates whether a shipment is allowed to move from one status to another.
 
@@ -695,6 +714,50 @@ The API automatically identifies the authenticated Delivery Agent and returns on
 
 The Delivery Agent does not provide their own user ID in the request.
 
+## Assignment Status
+
+Each shipment assignment has a separate assignment state.
+
+### Assignment Status Values
+
+```text
+PENDING
+ACCEPTED
+REJECTED
+```
+
+### Current Assignment Flow
+
+```text
+ADMIN ASSIGNS
+      ↓
+PENDING
+      ↓
+DELIVERY AGENT ACCEPTS
+      ↓
+ACCEPTED
+```
+
+### Important Rule
+
+Accepting an assignment changes only the `assignmentStatus`.
+
+It does **not** change the shipment's `status`.
+
+For example:
+
+```text
+Shipment Status:
+CREATED
+
+Assignment Status:
+PENDING
+       ↓
+ACCEPTED
+```
+
+The shipment remains `CREATED` until the appropriate shipment-status workflow operation is performed.
+
 ---
 
 # 👨‍💼 Admin Shipment Assignment
@@ -704,16 +767,24 @@ Administrators can assign shipments to Delivery Agents.
 ### API
 
 ```http
-POST /api/admin/shipments/{shipmentId}/assign
+PATCH /api/admin/shipments/{shipmentId}/assign?deliveryAgentId={agentId}
 ```
 
-### Example Request
+### Example
 
-```json
-{
-  "deliveryAgentId": "delivery-agent-user-id"
-}
+```http
+PATCH /api/admin/shipments/6ab3eea1a61a831face727d5/assign?deliveryAgentId=delivery-agent-user-id
 ```
+
+The Delivery Agent ID is provided as a query parameter.
+
+The endpoint currently returns:
+
+```text
+HTTP 200 OK
+```
+
+with an empty response body.
 
 ## Assignment Validation
 
@@ -744,10 +815,19 @@ Validate Assignment
 assignedDeliveryAgentId
   │
   ▼
+assignmentStatus = PENDING
+  │
+  ▼
 DELIVERY_AGENT
   │
   ▼
 GET /api/delivery/shipments
+  │
+  ▼
+PATCH /api/delivery/shipments/{shipmentId}/accept
+  │
+  ▼
+assignmentStatus = ACCEPTED
 ```
 
 ---
@@ -761,15 +841,42 @@ Delivery Agent Login
         ↓
 Admin Assignment
         ↓
+Assignment Status = PENDING
+        ↓
 View Assigned Shipments
+        ↓
+Accept Assignment
+        ↓
+Assignment Status = ACCEPTED
 ```
+
+## Assignment Acceptance API
+
+```http
+PATCH /api/delivery/shipments/{shipmentId}/accept
+```
+
+### Acceptance Rules
+
+- ✅ Shipment must exist
+- ✅ Shipment must be assigned to a Delivery Agent
+- ✅ Authenticated Delivery Agent must own the assignment
+- ✅ Assignment must currently be `PENDING`
+- ✅ Assignment changes from `PENDING` to `ACCEPTED`
+- ✅ Shipment status is not changed by acceptance
+
+The endpoint currently returns:
+
+```text
+HTTP 200 OK
+```
+
+with an empty response body.
 
 ## 🔄 Currently In Progress
 
 ```text
-Assigned
-   ↓
-Accept / Reject
+Accepted
    ↓
 Pickup
    ↓
@@ -784,7 +891,6 @@ Delivered
 
 ## 🔄 Delivery Features in Progress
 
-- 🔄 Accept assignment
 - 🔄 Reject assignment
 - 🔄 Pickup confirmation
 - 🔄 Delivery-progress updates
@@ -1031,10 +1137,14 @@ Manual API testing is currently performed using Postman throughout development.
 - ✅ Invalid shipment status transitions
 - ✅ Admin → Delivery Agent assignment
 - ✅ Delivery Agent → assigned shipment retrieval
+- ✅ Assignment status initialization as `PENDING`
+- ✅ Delivery Agent assignment acceptance
+- ✅ `PENDING → ACCEPTED` assignment transition
+- ✅ Assignment ownership validation
 
 ## 🔄 Testing in Progress
 
-- 🔄 Delivery Agent accept/reject workflow
+- 🔄 Delivery Agent assignment rejection
 - 🔄 Pickup workflow
 - 🔄 Delivery status progression
 - 🔄 Delivery confirmation
@@ -1081,13 +1191,14 @@ Manual API testing is currently performed using Postman throughout development.
 |---|---|---|
 | `POST` | `/api/admin/pricing` | Create/update pricing configuration |
 | `GET` | `/api/admin/pricing/active` | Get active pricing configuration |
-| `POST` | `/api/admin/shipments/{shipmentId}/assign` | Assign shipment to Delivery Agent |
+| `PATCH` | `/api/admin/shipments/{shipmentId}/assign?deliveryAgentId={agentId}` | Assign shipment to Delivery Agent |
 
 ## 🚚 Delivery Agent APIs
 
 | Method | Endpoint | Description |
 |---|---|---|
 | `GET` | `/api/delivery/shipments` | Retrieve shipments assigned to authenticated Delivery Agent |
+| `PATCH` | `/api/delivery/shipments/{shipmentId}/accept` | Accept a pending shipment assignment |
 
 Additional Delivery Agent APIs will be added as the operational workflow is implemented.
 
@@ -1106,14 +1217,36 @@ Admin assigns Delivery Agent
         ↓
 assignedDeliveryAgentId saved
         ↓
+assignmentStatus = PENDING
+        ↓
 Delivery Agent authenticates
         ↓
 GET /api/delivery/shipments
         ↓
 Assigned shipment returned
+        ↓
+PATCH /api/delivery/shipments/{shipmentId}/accept
+        ↓
+Assignment ownership validated
+        ↓
+assignmentStatus = ACCEPTED
 ```
 
-This verifies the relationship between shipment ownership, administrative assignment, authentication, and Delivery Agent-specific retrieval.
+This verifies the relationship between shipment ownership, administrative assignment, authentication, assignment state management, and Delivery Agent-specific retrieval.
+
+### Important
+
+Accepting the assignment does not change the shipment lifecycle status.
+
+```text
+Shipment Status:
+CREATED
+
+Assignment Status:
+PENDING
+   ↓
+ACCEPTED
+```
 
 ---
 
@@ -1177,6 +1310,11 @@ This verifies the relationship between shipment ownership, administrative assign
 - ✅ Delivery Agent assigned-shipment retrieval
 - ✅ Admin shipment assignment
 - ✅ Assignment validation
+- ✅ Assignment status management
+- ✅ New assignments initialized as `PENDING`
+- ✅ Delivery Agent assignment acceptance
+- ✅ `PENDING → ACCEPTED` assignment transition
+- ✅ Assignment ownership validation
 
 ### 🧪 Testing
 
@@ -1187,6 +1325,7 @@ This verifies the relationship between shipment ownership, administrative assign
 - ✅ Pricing testing
 - ✅ Tracking testing
 - ✅ Assignment testing
+- ✅ Assignment acceptance testing
 
 ---
 
@@ -1196,7 +1335,7 @@ The current development focus is the operational Delivery Agent workflow.
 
 ### 🔄 In Progress
 
-- 🔄 Delivery Agent accept/reject
+- 🔄 Delivery Agent assignment rejection
 - 🔄 Pickup workflow
 - 🔄 In-transit workflow
 - 🔄 Out-for-delivery workflow
@@ -1318,6 +1457,7 @@ Delivery Agent Authentication
 Admin Assignment
 Assigned Shipments
 Assignment Validation
+Assignment Status
 ```
 
 **Status: ✅ COMPLETED**
@@ -1327,7 +1467,8 @@ Assignment Validation
 ## Phase 4 — Delivery Operations
 
 ```text
-Accept / Reject
+Accept Assignment
+Reject Assignment
 Pickup
 In Transit
 Out For Delivery
@@ -1404,6 +1545,8 @@ The project is being developed beyond basic CRUD implementation.
 - ✅ Server-side pricing
 - ✅ State-transition validation
 - ✅ Ownership validation
+- ✅ Assignment validation
+- ✅ Assignment status management
 - ✅ Input validation
 - ✅ Centralized exception handling
 
@@ -1481,6 +1624,7 @@ Responsible for:
 - Status-transition validation
 - Ownership checks
 - Assignment validation
+- Assignment status management
 - Authentication-related business logic
 
 ### 🗄️ Repository Layer
@@ -1693,7 +1837,24 @@ This keeps pricing logic centralized and prevents clients from directly controll
           OUT_FOR_DELIVERY  RETURNED
 ```
 
-The transition engine is responsible for enforcing valid movement between states.
+The transition engine is responsible for enforcing valid movement between shipment states.
+
+### Assignment Workflow
+
+Assignment is maintained separately from the shipment state machine.
+
+```text
+Shipment
+   │
+   ├── Shipment Status
+   │      │
+   │      └── CREATED → CONFIRMED → PICKED_UP → IN_TRANSIT
+   │
+   └── Assignment Status
+          │
+          └── PENDING → ACCEPTED
+                    └→ REJECTED
+```
 
 ---
 
@@ -1722,31 +1883,53 @@ This allows the platform to preserve the shipment's operational history rather t
 # 🚚 Delivery Assignment Architecture
 
 ```text
-                    ADMIN
-                      │
-                      ▼
-              Select Shipment
-                      │
-                      ▼
-          Select Delivery Agent
-                      │
-                      ▼
-            Validate Assignment
-                      │
-                      ▼
-       assignedDeliveryAgentId
-                      │
-                      ▼
-              Assigned Shipment
-                      │
-                      ▼
-              DELIVERY_AGENT
-                      │
-                      ▼
-         GET /api/delivery/shipments
+                         ADMIN
+                           │
+                           ▼
+                   Select Shipment
+                           │
+                           ▼
+               Select Delivery Agent
+                           │
+                           ▼
+                 Validate Assignment
+                           │
+                           ▼
+              assignedDeliveryAgentId
+                           │
+                           ▼
+              assignmentStatus = PENDING
+                           │
+                           ▼
+                    DELIVERY_AGENT
+                           │
+                           ▼
+             GET /api/delivery/shipments
+                           │
+                           ▼
+     PATCH /api/delivery/shipments/{shipmentId}/accept
+                           │
+                           ▼
+              assignmentStatus = ACCEPTED
 ```
 
-The authenticated Delivery Agent can retrieve only shipments assigned to that account.
+## Assignment State Separation
+
+```text
+Shipment Status
+      │
+      └── CREATED
+
+Assignment Status
+      │
+      ├── PENDING
+      │     │
+      │     └── ACCEPTED
+      │
+      └── REJECTED
+```
+
+The assignment workflow does not replace or directly modify the shipment lifecycle.
 
 ---
 
@@ -1987,6 +2170,14 @@ View Active Pricing
 Select Shipment
    ↓
 Assign Delivery Agent
+   ↓
+assignmentStatus = PENDING
+```
+
+### Admin Assignment API
+
+```http
+PATCH /api/admin/shipments/{shipmentId}/assign?deliveryAgentId={agentId}
 ```
 
 ## Delivery Agent Flow
@@ -1998,7 +2189,11 @@ Receive JWT
    ↓
 View Assigned Shipments
    ↓
+Assignment Status = PENDING
+   ↓
 Accept Assignment
+   ↓
+Assignment Status = ACCEPTED
    ↓
 Pickup
    ↓
@@ -2085,7 +2280,13 @@ Status Transition Engine
       ↓
 Delivery Agent Assignment
       ↓
+Assignment Status = PENDING
+      ↓
 Assigned Shipment Retrieval
+      ↓
+Assignment Acceptance
+      ↓
+Assignment Status = ACCEPTED
 ```
 
 ## Current Development Focus
@@ -2093,7 +2294,7 @@ Assigned Shipment Retrieval
 ```text
 Assignment
     ↓
-Accept / Reject
+Reject Assignment
     ↓
 Pickup
     ↓
@@ -2141,9 +2342,12 @@ Delivered
 | Invalid Transition Validation | ✅ Completed |
 | Admin Shipment Assignment | ✅ Completed |
 | Assignment Validation | ✅ Completed |
+| Assignment Status Management | ✅ Completed |
 | Delivery Agent Assigned Shipments | ✅ Completed |
+| Delivery Agent Accept Assignment | ✅ Completed |
+| Assignment Ownership Validation | ✅ Completed |
 | Postman API Testing | ✅ Completed |
-| Delivery Agent Accept / Reject | 🔄 In Progress |
+| Delivery Agent Reject Assignment | 🔄 In Progress |
 | Pickup Workflow | 🔄 In Progress |
 | In-Transit Workflow | 🔄 In Progress |
 | Out-for-Delivery Workflow | 🔄 In Progress |
@@ -2209,6 +2413,13 @@ The platform is designed around explicit backend business rules rather than allo
 - ✅ Only authorized Admin operations can assign shipments.
 - ✅ Assigned users must have the `DELIVERY_AGENT` role.
 - ✅ Existing assignments are validated.
+- ✅ New assignments start with `assignmentStatus = PENDING`.
+- ✅ Assignment status is separate from shipment status.
+- ✅ Only the Delivery Agent assigned to the shipment can accept the assignment.
+- ✅ Assignment acceptance is allowed only while `assignmentStatus = PENDING`.
+- ✅ Assignment acceptance changes `PENDING → ACCEPTED`.
+- ✅ Assignment acceptance does not change the shipment `status`.
+- 🔄 `REJECTED` is reserved for the upcoming assignment-rejection workflow.
 - ✅ Delivery Agents retrieve their own assigned shipments.
 
 ---
@@ -2286,6 +2497,7 @@ Security is treated as a backend responsibility.
 - ✅ Role-based API protection
 - ✅ Authenticated-user resolution
 - ✅ Ownership checks
+- ✅ Assignment ownership validation
 - ✅ Server-side pricing
 
 ## ⏱️ Future Security Hardening
@@ -2361,6 +2573,7 @@ Future operational dashboards can expose:
 - ⏱️ Failed deliveries
 - ⏱️ Returned shipments
 - ⏱️ Pending assignments
+- ⏱️ Accepted assignments
 - ⏱️ Delivery-agent workload
 - ⏱️ Hub workload
 - ⏱️ Revenue / pricing metrics
@@ -2444,6 +2657,9 @@ Potential events include:
 - ⏱️ Delivered
 - ⏱️ Failed delivery
 - ⏱️ Returned
+- ⏱️ Assignment created
+- ⏱️ Assignment accepted
+- ⏱️ Assignment rejected
 - ⏱️ Payment updates
 
 ---
@@ -2482,9 +2698,21 @@ Shipment
 ├── status
 ├── trackingHistory
 ├── assignedDeliveryAgentId
+├── assignmentStatus
 ├── createdAt
 └── updatedAt
 ```
+
+### Assignment Status
+
+```text
+AssignmentStatus
+├── PENDING
+├── ACCEPTED
+└── REJECTED
+```
+
+`AssignmentStatus` represents the state of a Delivery Agent assignment and is intentionally separate from `ShipmentStatus`.
 
 ---
 
@@ -2501,7 +2729,10 @@ SHIPMENT
    │
    ├──────────────► PRICING
    │
-   └──────────────► DELIVERY AGENT
+   └──────────────► DELIVERY AGENT ASSIGNMENT
+                         │
+                         ├── assignedDeliveryAgentId
+                         └── assignmentStatus
 ```
 
 The authenticated customer is used to determine ownership-sensitive operations instead of trusting arbitrary user identifiers supplied by the client.
@@ -2524,6 +2755,16 @@ The authenticated customer is used to determine ownership-sensitive operations i
 
 This state machine is enforced by the centralized shipment workflow logic.
 
+### Separate Assignment State Machine
+
+| Current Assignment State | Allowed Next State |
+|---|---|
+| `PENDING` | `ACCEPTED`, `REJECTED` |
+| `ACCEPTED` | None |
+| `REJECTED` | None |
+
+The assignment state machine is separate from the shipment state machine.
+
 ---
 
 # 📦 Shipment Lifecycle Example
@@ -2541,13 +2782,19 @@ This state machine is enforced by the centralized shipment workflow logic.
              ↓
 6. Admin confirms / assigns
              ↓
-7. Delivery workflow begins
+7. Assignment status becomes PENDING
              ↓
-8. Shipment progresses through valid states
+8. Delivery Agent accepts assignment
              ↓
-9. Tracking history records events
+9. Assignment status becomes ACCEPTED
              ↓
-10. Shipment reaches DELIVERED
+10. Delivery workflow begins
+             ↓
+11. Shipment progresses through valid states
+             ↓
+12. Tracking history records events
+             ↓
+13. Shipment reaches DELIVERED
 ```
 
 ---
@@ -2576,6 +2823,8 @@ The API validates shipment-related information before processing.
 - ✅ Valid distance
 - ✅ Ownership checks
 - ✅ Assignment checks
+- ✅ Assignment ownership checks
+- ✅ Valid assignment status transitions
 
 ---
 
@@ -2786,6 +3035,8 @@ Authentication → Shipment Management → Pricing → Tracking → Delivery Ope
 | 📍 Tracking | ✅ Completed |
 | 🔄 Status Workflow | ✅ Completed |
 | 🚚 Delivery Assignment | ✅ Completed |
+| 🔄 Assignment Status Management | ✅ Completed |
+| 🤝 Delivery Agent Assignment Acceptance | ✅ Completed |
 | 🧪 Manual API Testing | ✅ Completed |
 | 🚛 Delivery Operations | 🔄 In Progress |
 | 🏢 Hub Operations | ⏱️ Planned |
