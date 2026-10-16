@@ -3,16 +3,21 @@ package com.lovish.logistic.platform.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.lovish.logistic.platform.oauth.GoogleOAuth2SuccessHandler;
 import com.lovish.logistic.platform.security.JwtAuthenticationFilter;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -40,9 +45,10 @@ public class SecurityConfig {
 						// Admin-only endpoints
 						.requestMatchers("/api/admin/**").hasRole("ADMIN")
 
+						// Hub Operator endpoints
 						.requestMatchers("/api/hub/**").hasAnyRole("HUB_OPERATOR", "ADMIN")
 
-						// Delivery agent endpoints
+						// Delivery Agent endpoints
 						.requestMatchers("/api/delivery/**").hasAnyRole("DELIVERY_AGENT", "ADMIN")
 
 						// Customer endpoints
@@ -50,6 +56,42 @@ public class SecurityConfig {
 
 						// Everything else requires authentication
 						.anyRequest().authenticated())
+
+				.exceptionHandling(exception -> exception
+
+						// Never redirect REST API requests to Google login
+						.defaultAuthenticationEntryPointFor((request, response, authException) -> {
+
+							response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+							response.setContentType("application/json");
+							response.setCharacterEncoding("UTF-8");
+
+							response.getWriter().write("""
+									{
+									  "status": 401,
+									  "error": "Unauthorized",
+									  "message": "Authentication is required"
+									}
+									""");
+						}, new AntPathRequestMatcher("/api/**"))
+
+						// Authenticated user but insufficient role
+						.defaultAccessDeniedHandlerFor((request, response, accessDeniedException) -> {
+
+							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+							response.setContentType("application/json");
+							response.setCharacterEncoding("UTF-8");
+
+							response.getWriter().write("""
+									{
+									  "status": 403,
+									  "error": "Forbidden",
+									  "message": "You do not have permission to access this resource"
+									}
+									""");
+						}, new AntPathRequestMatcher("/api/**")))
 
 				.httpBasic(httpBasic -> httpBasic.disable())
 

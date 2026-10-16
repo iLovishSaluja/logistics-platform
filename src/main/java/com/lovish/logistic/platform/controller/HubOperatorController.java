@@ -4,11 +4,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lovish.logistic.platform.dto.AutomaticAssignmentToggleRequestDto;
 import com.lovish.logistic.platform.service.HubOperatorService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/hub")
@@ -56,6 +60,34 @@ public class HubOperatorController {
 		hubOperatorService.markPickupFromHub(shipmentId);
 
 		return ResponseEntity.ok().build();
+	}
+
+	@PatchMapping("/automatic-assignment")
+	@PreAuthorize("hasRole('HUB_OPERATOR')")
+	public ResponseEntity<Void> toggleAutomaticAssignment(
+			@Valid @RequestBody AutomaticAssignmentToggleRequestDto request) {
+
+		hubOperatorService.toggleAutomaticAssignment(request.getEnabled());
+
+		return ResponseEntity.noContent().build();
+	}
+
+	@PatchMapping("/shipments/{shipmentId}/receive")
+	@PreAuthorize("hasRole('HUB_OPERATOR')")
+	public ResponseEntity<Void> receiveShipment(@PathVariable String shipmentId) {
+
+		hubOperatorService.receiveShipment(shipmentId);
+
+		return ResponseEntity.noContent().build();
+	}
+
+	@PatchMapping("/shipments/{shipmentId}/dispatch")
+	@PreAuthorize("hasRole('HUB_OPERATOR')")
+	public ResponseEntity<Void> dispatchShipment(@PathVariable String shipmentId) {
+
+		hubOperatorService.dispatchShipment(shipmentId);
+
+		return ResponseEntity.noContent().build();
 	}
 
 }

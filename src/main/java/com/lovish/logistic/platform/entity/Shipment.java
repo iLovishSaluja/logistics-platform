@@ -7,8 +7,14 @@ import java.util.List;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.lovish.logistic.platform.enums.AssignmentStatus;
+import com.lovish.logistic.platform.enums.CodCollectionStatus;
+import com.lovish.logistic.platform.enums.CodSettlementStatus;
+import com.lovish.logistic.platform.enums.PaymentMethod;
+import com.lovish.logistic.platform.enums.PaymentPayer;
+import com.lovish.logistic.platform.enums.PaymentStatus;
 import com.lovish.logistic.platform.enums.Priority;
 import com.lovish.logistic.platform.enums.ShipmentStatus;
+import com.lovish.logistic.platform.enums.ShipmentType;
 
 public class Shipment {
 
@@ -30,12 +36,42 @@ public class Shipment {
 	@Field(write = Field.Write.ALWAYS)
 	private String destinationHubId;
 
-	@Field(write=Field.Write.ALWAYS)
+	@Field(write = Field.Write.ALWAYS)
 	private String assignedDeliveryAgentId;
 
 	@Field(write = Field.Write.ALWAYS)
 	private AssignmentStatus assignmentStatus;
 
+	private String deliveryOtpHash;
+
+	private LocalDateTime deliveryOtpExpiresAt;
+
+	private boolean deliveryOtpVerified;
+
+	private BigDecimal shippingCost;
+
+	private BigDecimal codAmount;
+
+	private PaymentMethod paymentMethod;
+
+	private PaymentStatus paymentStatus = PaymentStatus.PENDING;
+
+	private PaymentPayer paymentPayer;
+
+	private ShipmentType shipmentType;
+
+	private BigDecimal codCollectedAmount;
+	private LocalDateTime codCollectedAt;
+	private String codCollectedByAgentId;
+	private String codCollectionNotes;
+
+	private CodSettlementStatus codSettlementStatus = CodSettlementStatus.NOT_APPLICABLE;
+
+	private LocalDateTime codSettledAt;
+	private String codSettledByAdminId;
+	private String codSettlementNotes;
+
+	private CodCollectionStatus codCollectionStatus = CodCollectionStatus.NOT_APPLICABLE;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
@@ -48,8 +84,13 @@ public class Shipment {
 	public Shipment(String id, String trackingNumber, String customerId, Address senderAddress, Address receiverAddress,
 			PackageDetails packageDetails, Priority priority, BigDecimal cost, ShipmentStatus status,
 			String currentHubId, String destinationHubId, String assignedDeliveryAgentId,
-			AssignmentStatus assignmentStatus, LocalDateTime createdAt, LocalDateTime updatedAt,
-			List<TrackingHistory> trackingHistory) {
+			AssignmentStatus assignmentStatus, String deliveryOtpHash, LocalDateTime deliveryOtpExpiresAt,
+			boolean deliveryOtpVerified, BigDecimal shippingCost, BigDecimal codAmount, PaymentMethod paymentMethod,
+			PaymentStatus paymentStatus, PaymentPayer paymentPayer, ShipmentType shipmentType,
+			BigDecimal codCollectedAmount, LocalDateTime codCollectedAt, String codCollectedByAgentId,
+			String codCollectionNotes, CodSettlementStatus codSettlementStatus, LocalDateTime codSettledAt,
+			String codSettledByAdminId, String codSettlementNotes, CodCollectionStatus codCollectionStatus,
+			LocalDateTime createdAt, LocalDateTime updatedAt, List<TrackingHistory> trackingHistory) {
 		super();
 		this.id = id;
 		this.trackingNumber = trackingNumber;
@@ -64,6 +105,24 @@ public class Shipment {
 		this.destinationHubId = destinationHubId;
 		this.assignedDeliveryAgentId = assignedDeliveryAgentId;
 		this.assignmentStatus = assignmentStatus;
+		this.deliveryOtpHash = deliveryOtpHash;
+		this.deliveryOtpExpiresAt = deliveryOtpExpiresAt;
+		this.deliveryOtpVerified = deliveryOtpVerified;
+		this.shippingCost = shippingCost;
+		this.codAmount = codAmount;
+		this.paymentMethod = paymentMethod;
+		this.paymentStatus = paymentStatus;
+		this.paymentPayer = paymentPayer;
+		this.shipmentType = shipmentType;
+		this.codCollectedAmount = codCollectedAmount;
+		this.codCollectedAt = codCollectedAt;
+		this.codCollectedByAgentId = codCollectedByAgentId;
+		this.codCollectionNotes = codCollectionNotes;
+		this.codSettlementStatus = codSettlementStatus;
+		this.codSettledAt = codSettledAt;
+		this.codSettledByAdminId = codSettledByAdminId;
+		this.codSettlementNotes = codSettlementNotes;
+		this.codCollectionStatus = codCollectionStatus;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.trackingHistory = trackingHistory;
@@ -197,4 +256,147 @@ public class Shipment {
 		this.destinationHubId = destinationHubId;
 	}
 
+	public String getDeliveryOtpHash() {
+		return deliveryOtpHash;
+	}
+
+	public void setDeliveryOtpHash(String deliveryOtpHash) {
+		this.deliveryOtpHash = deliveryOtpHash;
+	}
+
+	public LocalDateTime getDeliveryOtpExpiresAt() {
+		return deliveryOtpExpiresAt;
+	}
+
+	public void setDeliveryOtpExpiresAt(LocalDateTime deliveryOtpExpiresAt) {
+		this.deliveryOtpExpiresAt = deliveryOtpExpiresAt;
+	}
+
+	public boolean isDeliveryOtpVerified() {
+		return deliveryOtpVerified;
+	}
+
+	public void setDeliveryOtpVerified(boolean deliveryOtpVerified) {
+		this.deliveryOtpVerified = deliveryOtpVerified;
+	}
+
+	public BigDecimal getShippingCost() {
+		return shippingCost;
+	}
+
+	public void setShippingCost(BigDecimal shippingCost) {
+		this.shippingCost = shippingCost;
+	}
+
+	public BigDecimal getCodAmount() {
+		return codAmount;
+	}
+
+	public void setCodAmount(BigDecimal codAmount) {
+		this.codAmount = codAmount;
+	}
+
+	public PaymentMethod getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
+	public PaymentPayer getPaymentPayer() {
+		return paymentPayer;
+	}
+
+	public void setPaymentPayer(PaymentPayer paymentPayer) {
+		this.paymentPayer = paymentPayer;
+	}
+
+	public ShipmentType getShipmentType() {
+		return shipmentType;
+	}
+
+	public void setShipmentType(ShipmentType shipmentType) {
+		this.shipmentType = shipmentType;
+	}
+
+	public PaymentStatus getPaymentStatus() {
+		return paymentStatus;
+	}
+
+	public void setPaymentStatus(PaymentStatus paymentStatus) {
+		this.paymentStatus = paymentStatus;
+	}
+
+	public CodCollectionStatus getCodCollectionStatus() {
+		return codCollectionStatus;
+	}
+
+	public void setCodCollectionStatus(CodCollectionStatus codCollectionStatus) {
+		this.codCollectionStatus = codCollectionStatus;
+	}
+
+	public BigDecimal getCodCollectedAmount() {
+		return codCollectedAmount;
+	}
+
+	public void setCodCollectedAmount(BigDecimal codCollectedAmount) {
+		this.codCollectedAmount = codCollectedAmount;
+	}
+
+	public LocalDateTime getCodCollectedAt() {
+		return codCollectedAt;
+	}
+
+	public void setCodCollectedAt(LocalDateTime codCollectedAt) {
+		this.codCollectedAt = codCollectedAt;
+	}
+
+	public String getCodCollectedByAgentId() {
+		return codCollectedByAgentId;
+	}
+
+	public void setCodCollectedByAgentId(String codCollectedByAgentId) {
+		this.codCollectedByAgentId = codCollectedByAgentId;
+	}
+
+	public String getCodCollectionNotes() {
+		return codCollectionNotes;
+	}
+
+	public void setCodCollectionNotes(String codCollectionNotes) {
+		this.codCollectionNotes = codCollectionNotes;
+	}
+
+	public CodSettlementStatus getCodSettlementStatus() {
+		return codSettlementStatus;
+	}
+
+	public void setCodSettlementStatus(CodSettlementStatus codSettlementStatus) {
+		this.codSettlementStatus = codSettlementStatus;
+	}
+
+	public LocalDateTime getCodSettledAt() {
+		return codSettledAt;
+	}
+
+	public void setCodSettledAt(LocalDateTime codSettledAt) {
+		this.codSettledAt = codSettledAt;
+	}
+
+	public String getCodSettledByAdminId() {
+		return codSettledByAdminId;
+	}
+
+	public void setCodSettledByAdminId(String codSettledByAdminId) {
+		this.codSettledByAdminId = codSettledByAdminId;
+	}
+
+	public String getCodSettlementNotes() {
+		return codSettlementNotes;
+	}
+
+	public void setCodSettlementNotes(String codSettlementNotes) {
+		this.codSettlementNotes = codSettlementNotes;
+	}
 }

@@ -3,9 +3,14 @@ package com.lovish.logistic.platform.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import org.springframework.data.mongodb.core.mapping.Field;
-
-import com.lovish.logistic.platform.enums.*;
+import com.lovish.logistic.platform.enums.AssignmentStatus;
+import com.lovish.logistic.platform.enums.CodCollectionStatus;
+import com.lovish.logistic.platform.enums.PaymentMethod;
+import com.lovish.logistic.platform.enums.PaymentPayer;
+import com.lovish.logistic.platform.enums.PaymentStatus;
+import com.lovish.logistic.platform.enums.Priority;
+import com.lovish.logistic.platform.enums.ShipmentStatus;
+import com.lovish.logistic.platform.enums.ShipmentType;
 
 public class ShipmentResponseDto {
 
@@ -29,6 +34,14 @@ public class ShipmentResponseDto {
 
 	private AssignmentStatus assignmentStatus;
 
+	private BigDecimal shippingCost;
+	private BigDecimal codAmount;
+	private PaymentMethod paymentMethod;
+	private PaymentPayer paymentPayer;
+	private ShipmentType shipmentType;
+	private CodCollectionStatus codCollectionStatus;
+	private PaymentStatus paymentStatus;
+
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
@@ -39,7 +52,10 @@ public class ShipmentResponseDto {
 	public ShipmentResponseDto(String id, String trackingNumber, String customerId, AddressDto senderAddress,
 			AddressDto receiverAddress, PackageDetailsDto packageDetails, Priority priority, BigDecimal cost,
 			ShipmentStatus status, String currentHubId, String destinationHubId, String assignedDeliveryAgentId,
-			AssignmentStatus assignmentStatus, LocalDateTime createdAt, LocalDateTime updatedAt) {
+			AssignmentStatus assignmentStatus, BigDecimal shippingCost, BigDecimal codAmount,
+			PaymentMethod paymentMethod, PaymentPayer paymentPayer, ShipmentType shipmentType,
+			CodCollectionStatus codCollectionStatus, PaymentStatus paymentStatus, LocalDateTime createdAt,
+			LocalDateTime updatedAt) {
 		super();
 		this.id = id;
 		this.trackingNumber = trackingNumber;
@@ -54,6 +70,13 @@ public class ShipmentResponseDto {
 		this.destinationHubId = destinationHubId;
 		this.assignedDeliveryAgentId = assignedDeliveryAgentId;
 		this.assignmentStatus = assignmentStatus;
+		this.shippingCost = shippingCost;
+		this.codAmount = codAmount;
+		this.paymentMethod = paymentMethod;
+		this.paymentPayer = paymentPayer;
+		this.shipmentType = shipmentType;
+		this.codCollectionStatus = codCollectionStatus;
+		this.paymentStatus = paymentStatus;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
@@ -176,6 +199,62 @@ public class ShipmentResponseDto {
 
 	public void setDestinationHubId(String destinationHubId) {
 		this.destinationHubId = destinationHubId;
+	}
+
+	public BigDecimal getShippingCost() {
+		return shippingCost;
+	}
+
+	public void setShippingCost(BigDecimal shippingCost) {
+		this.shippingCost = shippingCost;
+	}
+
+	public BigDecimal getCodAmount() {
+		return codAmount;
+	}
+
+	public void setCodAmount(BigDecimal codAmount) {
+		this.codAmount = codAmount;
+	}
+
+	public PaymentMethod getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
+	public PaymentPayer getPaymentPayer() {
+		return paymentPayer;
+	}
+
+	public void setPaymentPayer(PaymentPayer paymentPayer) {
+		this.paymentPayer = paymentPayer;
+	}
+
+	public ShipmentType getShipmentType() {
+		return shipmentType;
+	}
+
+	public void setShipmentType(ShipmentType shipmentType) {
+		this.shipmentType = shipmentType;
+	}
+
+	public PaymentStatus getPaymentStatus() {
+		return paymentStatus;
+	}
+
+	public void setPaymentStatus(PaymentStatus paymentStatus) {
+		this.paymentStatus = paymentStatus;
+	}
+
+	public CodCollectionStatus getCodCollectionStatus() {
+		return codCollectionStatus;
+	}
+
+	public void setCodCollectionStatus(CodCollectionStatus codCollectionStatus) {
+		this.codCollectionStatus = codCollectionStatus;
 	}
 
 }

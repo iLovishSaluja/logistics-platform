@@ -1,6 +1,11 @@
 package com.lovish.logistic.platform.dto;
 
+import java.math.BigDecimal;
+
+import com.lovish.logistic.platform.enums.PaymentMethod;
+import com.lovish.logistic.platform.enums.PaymentPayer;
 import com.lovish.logistic.platform.enums.Priority;
+import com.lovish.logistic.platform.enums.ShipmentType;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
@@ -29,16 +34,33 @@ public class ShipmentCreateRequestDto {
 
 	private boolean cod;
 
+	@NotNull(message = "Payment method is required")
+	private PaymentMethod paymentMethod;
+
+	@NotNull(message = "Payment payer is required")
+	private PaymentPayer paymentPayer;
+
+	@DecimalMin(value = "0.0", message = "COD amount cannot be negative")
+	private BigDecimal codAmount;
+	
+	@NotNull(message = "Shipment type is required")
+	private ShipmentType shipmentType;
+
 	public ShipmentCreateRequestDto() {
 		super();
 	}
+
+
 
 	public ShipmentCreateRequestDto(@NotNull(message = "Sender address is required") @Valid AddressDto senderAddress,
 			@NotNull(message = "Receiver address is required") @Valid AddressDto receiverAddress,
 			@NotNull(message = "Package details are required") @Valid PackageDetailsDto packageDetails,
 			@NotNull(message = "Priority is required") Priority priority,
 			@NotNull(message = "Distance is required") @DecimalMin(value = "0.0", message = "Distance cannot be negative") Double distanceKm,
-			boolean cod) {
+			boolean cod, @NotNull(message = "Payment method is required") PaymentMethod paymentMethod,
+			@NotNull(message = "Payment payer is required") PaymentPayer paymentPayer,
+			@DecimalMin(value = "0.0", message = "COD amount cannot be negative") BigDecimal codAmount,
+			@NotNull(message = "Shipment type is required") ShipmentType shipmentType) {
 		super();
 		this.senderAddress = senderAddress;
 		this.receiverAddress = receiverAddress;
@@ -46,7 +68,13 @@ public class ShipmentCreateRequestDto {
 		this.priority = priority;
 		this.distanceKm = distanceKm;
 		this.cod = cod;
+		this.paymentMethod = paymentMethod;
+		this.paymentPayer = paymentPayer;
+		this.codAmount = codAmount;
+		this.shipmentType = shipmentType;
 	}
+
+
 
 	public AddressDto getSenderAddress() {
 		return senderAddress;
@@ -94,6 +122,42 @@ public class ShipmentCreateRequestDto {
 
 	public void setCod(boolean cod) {
 		this.cod = cod;
+	}
+
+	public PaymentMethod getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
+	public PaymentPayer getPaymentPayer() {
+		return paymentPayer;
+	}
+
+	public void setPaymentPayer(PaymentPayer paymentPayer) {
+		this.paymentPayer = paymentPayer;
+	}
+
+	public BigDecimal getCodAmount() {
+		return codAmount;
+	}
+
+	public void setCodAmount(BigDecimal codAmount) {
+		this.codAmount = codAmount;
+	}
+
+
+
+	public ShipmentType getShipmentType() {
+		return shipmentType;
+	}
+
+
+
+	public void setShipmentType(ShipmentType shipmentType) {
+		this.shipmentType = shipmentType;
 	}
 
 }

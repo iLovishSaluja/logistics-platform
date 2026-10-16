@@ -13,4 +13,6 @@ public interface DeliveryAttemptRepository extends MongoRepository<DeliveryAttem
 	List<DeliveryAttempt> findByShipmentIdOrderByAttemptNumberAsc(String shipmentId);
 
 	long countByShipmentId(String shipmentId);
+
+	long countByDeliveryAgentId(String deliveryAgentId);
 }

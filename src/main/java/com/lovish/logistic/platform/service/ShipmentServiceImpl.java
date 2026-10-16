@@ -20,7 +20,12 @@ import com.lovish.logistic.platform.entity.Hub;
 import com.lovish.logistic.platform.entity.Shipment;
 import com.lovish.logistic.platform.entity.TrackingHistory;
 import com.lovish.logistic.platform.entity.User;
+import com.lovish.logistic.platform.enums.CodCollectionStatus;
+import com.lovish.logistic.platform.enums.PaymentMethod;
+import com.lovish.logistic.platform.enums.PaymentPayer;
+import com.lovish.logistic.platform.enums.PaymentStatus;
 import com.lovish.logistic.platform.enums.ShipmentStatus;
+import com.lovish.logistic.platform.enums.ShipmentType;
 import com.lovish.logistic.platform.exception.BadRequestException;
 import com.lovish.logistic.platform.exception.ResourceNotFoundException;
 import com.lovish.logistic.platform.exception.UnauthorizedException;
@@ -38,10 +43,11 @@ public class ShipmentServiceImpl implements ShipmentService {
 	private final PricingService pricingService;
 	private final ShipmentStatusService shipmentStatusService;
 	private final HubRepository hubRepository;
+	private final AutomaticAssignmentService automaticAssignmentService;
 
 	public ShipmentServiceImpl(ShipmentRepository shipmentRepository, ShipmentMapper shipmentMapper,
 			UserRepository userRepository, PricingService pricingService, ShipmentStatusService shipmentStatusService,
-			HubRepository hubRepository) {
+			HubRepository hubRepository, AutomaticAssignmentService automaticAssignmentService) {
 		super();
 		this.shipmentRepository = shipmentRepository;
 		this.shipmentMapper = shipmentMapper;
@@ -49,12 +55,47 @@ public class ShipmentServiceImpl implements ShipmentService {
 		this.pricingService = pricingService;
 		this.shipmentStatusService = shipmentStatusService;
 		this.hubRepository = hubRepository;
+		this.automaticAssignmentService = automaticAssignmentService;
 	}
 
 	@Override
 	public ShipmentResponseDto createShipment(ShipmentCreateRequestDto request) {
 
 		Shipment shipment = shipmentMapper.toEntity(request);
+
+		// Validate shipment type and payment payer
+		if (request.getShipmentType() == ShipmentType.P2P) {
+
+			if (request.getPaymentPayer() != PaymentPayer.SENDER
+					&& request.getPaymentPayer() != PaymentPayer.RECEIVER) {
+				throw new BadRequestException("P2P shipments must have SENDER or RECEIVER as payment payer");
+			}
+
+		} else if (request.getShipmentType() == ShipmentType.COMPANY_TO_PERSON) {
+
+			if (request.getPaymentPayer() != PaymentPayer.RECEIVER) {
+				throw new BadRequestException("Company-to-person shipments must be paid by the receiver");
+			}
+
+		} else {
+			throw new BadRequestException("Valid shipment type is required");
+		}
+
+		// Validate payment method and COD amount
+		if (request.getPaymentMethod() == PaymentMethod.ONLINE && request.getCodAmount() != null
+				&& request.getCodAmount().compareTo(BigDecimal.ZERO) > 0) {
+			throw new BadRequestException("COD amount must not be provided for online payment");
+		}
+
+		if (request.getPaymentMethod() == PaymentMethod.COD
+				&& (request.getCodAmount() == null || request.getCodAmount().compareTo(BigDecimal.ZERO) <= 0)) {
+			throw new BadRequestException("COD amount is required for COD payment");
+		}
+		if (request.getPaymentMethod() == PaymentMethod.COD) {
+			shipment.setCodCollectionStatus(CodCollectionStatus.PENDING);
+		} else {
+			shipment.setCodCollectionStatus(CodCollectionStatus.NOT_APPLICABLE);
+		}
 
 		String customerId = getCurrentUserId();
 
@@ -72,7 +113,6 @@ public class ShipmentServiceImpl implements ShipmentService {
 
 		shipment.setTrackingNumber(generateTrackingNumber());
 		shipment.setCustomerId(customerId);
-
 		shipment.setStatus(ShipmentStatus.CREATED);
 
 		// Automatically determined hubs
@@ -83,22 +123,36 @@ public class ShipmentServiceImpl implements ShipmentService {
 		shipment.setAssignedDeliveryAgentId(null);
 		shipment.setAssignmentStatus(null);
 
+		// Add initial tracking event
 		addTrackingEvent(shipment, ShipmentStatus.CREATED, shipment.getSenderAddress().getCity(), "Shipment created",
 				customerId, null);
 
-		BigDecimal cost = pricingService.calculatePrice(request.getPackageDetails().getWeight(),
-				request.getDistanceKm(), request.getPriority(), request.isCod());
+		// Calculate shipping cost without any COD handling charge
+		BigDecimal shippingCost = pricingService.calculatePrice(request.getPackageDetails().getWeight(),
+				request.getDistanceKm(), request.getPriority(), false);
 
-		shipment.setCost(cost);
+		shipment.setShippingCost(shippingCost);
+		shipment.setPaymentStatus(PaymentStatus.PENDING);
+
+		// Retain the existing cost field for backward compatibility
+		shipment.setCost(shippingCost);
 
 		LocalDateTime now = LocalDateTime.now();
 
 		shipment.setCreatedAt(now);
 		shipment.setUpdatedAt(now);
 
+		// Save shipment
 		Shipment savedShipment = shipmentRepository.save(shipment);
 
-		return shipmentMapper.toResponseDto(savedShipment);
+		// Automatically assign a delivery agent if enabled for the hub
+		automaticAssignmentService.automaticallyAssignShipment(savedShipment.getId());
+
+		// Fetch the latest shipment after automatic assignment
+		Shipment updatedShipment = shipmentRepository.findById(savedShipment.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("Shipment not found after automatic assignment"));
+
+		return shipmentMapper.toResponseDto(updatedShipment);
 	}
 
 	@Override

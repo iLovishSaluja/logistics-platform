@@ -1,5 +1,6 @@
 package com.lovish.logistic.platform.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +8,18 @@ import java.util.List;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.lovish.logistic.platform.dto.AgentCodDetailsDto;
+import com.lovish.logistic.platform.dto.CodCollectionRequestDto;
+import com.lovish.logistic.platform.dto.CodCollectionResponseDto;
 import com.lovish.logistic.platform.dto.FailedDeliveryRequestDto;
 import com.lovish.logistic.platform.dto.ShipmentSummaryDto;
 import com.lovish.logistic.platform.entity.Shipment;
 import com.lovish.logistic.platform.entity.TrackingHistory;
 import com.lovish.logistic.platform.entity.User;
 import com.lovish.logistic.platform.enums.AssignmentStatus;
+import com.lovish.logistic.platform.enums.CodCollectionStatus;
+import com.lovish.logistic.platform.enums.PaymentMethod;
+import com.lovish.logistic.platform.enums.Role;
 import com.lovish.logistic.platform.enums.ShipmentStatus;
 import com.lovish.logistic.platform.exception.BadRequestException;
 import com.lovish.logistic.platform.exception.ResourceNotFoundException;
@@ -29,16 +36,21 @@ public class DeliveryAgentServiceImpl implements DeliveryAgentService {
 	private final UserRepository userRepository;
 	private final ShipmentStatusService shipmentStatusService;
 	private final DeliveryAttemptService deliveryAttemptService;
+	private final DeliveryOtpService deliveryOtpService;
+	private final NotificationService notificationService;
 
 	public DeliveryAgentServiceImpl(ShipmentRepository shipmentRepository, ShipmentMapper shipmentMapper,
 			UserRepository userRepository, ShipmentStatusService shipmentStatusService,
-			DeliveryAttemptService deliveryAttemptService) {
+			DeliveryAttemptService deliveryAttemptService, DeliveryOtpService deliveryOtpService,
+			NotificationService notificationService) {
 		super();
 		this.shipmentRepository = shipmentRepository;
 		this.shipmentMapper = shipmentMapper;
 		this.userRepository = userRepository;
 		this.shipmentStatusService = shipmentStatusService;
 		this.deliveryAttemptService = deliveryAttemptService;
+		this.deliveryOtpService = deliveryOtpService;
+		this.notificationService = notificationService;
 	}
 
 	@Override
@@ -249,18 +261,19 @@ public class DeliveryAgentServiceImpl implements DeliveryAgentService {
 				.orElseThrow(() -> new ResourceNotFoundException("Shipment not found with id: " + shipmentId));
 
 		if (shipment.getAssignedDeliveryAgentId() == null) {
-
 			throw new BadRequestException("Shipment is not assigned to any delivery agent");
 		}
 
 		if (!shipment.getAssignedDeliveryAgentId().equals(deliveryAgent.getId())) {
-
 			throw new UnauthorizedException("You are not authorized to update this shipment");
 		}
 
 		if (shipment.getAssignmentStatus() != AssignmentStatus.ACCEPTED) {
-
 			throw new BadRequestException("Shipment assignment must be ACCEPTED before marking it out for delivery");
+		}
+
+		if (shipment.getStatus() != ShipmentStatus.IN_TRANSIT) {
+			throw new BadRequestException("Shipment must be IN_TRANSIT before marking it OUT_FOR_DELIVERY");
 		}
 
 		ShipmentStatus currentStatus = shipment.getStatus();
@@ -269,55 +282,87 @@ public class DeliveryAgentServiceImpl implements DeliveryAgentService {
 				ShipmentStatus.OUT_FOR_DELIVERY);
 
 		if (!validTransition) {
-
 			throw new BadRequestException(
 					"Shipment cannot be marked OUT_FOR_DELIVERY from its current status: " + currentStatus);
 		}
 
+		String otp = deliveryOtpService.generateOtp();
+
+		shipment.setDeliveryOtpHash(deliveryOtpService.hashOtp(otp));
+
+		shipment.setDeliveryOtpExpiresAt(LocalDateTime.now().plusMinutes(10));
+
+		shipment.setDeliveryOtpVerified(false);
+
+		String receiverPhone = shipment.getReceiverAddress().getPhoneNumber();
+
+		notificationService.sendDeliveryOtp(receiverPhone, otp);
+
 		shipment.setStatus(ShipmentStatus.OUT_FOR_DELIVERY);
 
-		shipment.setUpdatedAt(java.time.LocalDateTime.now());
+		shipment.setUpdatedAt(LocalDateTime.now());
 
 		shipmentRepository.save(shipment);
 	}
 
 	@Override
-	public void markDelivered(String shipmentId) {
+	public void markDelivered(String shipmentId, String otp) {
 
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		User deliveryAgent = userRepository.findByUsername(username)
-				.orElseThrow(() -> new ResourceNotFoundException("Current user not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Current delivery agent not found"));
 
-		Shipment shipment = shipmentRepository.findById(shipmentId)
-				.orElseThrow(() -> new ResourceNotFoundException("Shipment not found with id: " + shipmentId));
-
-		if (shipment.getAssignedDeliveryAgentId() == null) {
-			throw new BadRequestException("Shipment is not assigned to any delivery agent");
+		if (deliveryAgent.getRole() != Role.DELIVERY_AGENT) {
+			throw new BadRequestException("Only delivery agents can complete delivery");
 		}
 
-		if (!shipment.getAssignedDeliveryAgentId().equals(deliveryAgent.getId())) {
+		Shipment shipment = shipmentRepository.findById(shipmentId)
+				.orElseThrow(() -> new ResourceNotFoundException("Shipment not found"));
 
-			throw new UnauthorizedException("You are not authorized to deliver this shipment");
+		if (!deliveryAgent.getId().equals(shipment.getAssignedDeliveryAgentId())) {
+
+			throw new BadRequestException("You are not assigned to this shipment");
 		}
 
 		if (shipment.getAssignmentStatus() != AssignmentStatus.ACCEPTED) {
 
-			throw new BadRequestException("Shipment assignment must be ACCEPTED before delivery");
+			throw new BadRequestException("Delivery assignment must be accepted first");
 		}
 
-		ShipmentStatus currentStatus = shipment.getStatus();
+		if (shipment.getStatus() != ShipmentStatus.OUT_FOR_DELIVERY) {
 
-		boolean validTransition = shipmentStatusService.isValidTransition(currentStatus, ShipmentStatus.DELIVERED);
-
-		if (!validTransition) {
-
-			throw new BadRequestException("Shipment cannot be delivered from its current status: " + currentStatus);
+			throw new BadRequestException("Shipment must be out for delivery");
 		}
+
+		if (shipment.isDeliveryOtpVerified()) {
+
+			throw new BadRequestException("Delivery OTP has already been verified");
+		}
+
+		if (shipment.getDeliveryOtpHash() == null || shipment.getDeliveryOtpExpiresAt() == null) {
+
+			throw new BadRequestException("Delivery OTP is not available");
+		}
+
+		if (LocalDateTime.now().isAfter(shipment.getDeliveryOtpExpiresAt())) {
+
+			throw new BadRequestException("Delivery OTP has expired");
+		}
+
+		if (!deliveryOtpService.matches(otp, shipment.getDeliveryOtpHash())) {
+
+			throw new BadRequestException("Invalid delivery OTP");
+		}
+
+		shipment.setDeliveryOtpVerified(true);
 
 		shipment.setStatus(ShipmentStatus.DELIVERED);
 
-		shipment.setUpdatedAt(java.time.LocalDateTime.now());
+		shipment.setUpdatedAt(LocalDateTime.now());
+
+		addTrackingEvent(shipment, ShipmentStatus.DELIVERED, shipment.getReceiverAddress().getCity(),
+				"Shipment delivered successfully", deliveryAgent.getId(), "Delivery confirmed using OTP");
 
 		shipmentRepository.save(shipment);
 	}
@@ -397,5 +442,105 @@ public class DeliveryAgentServiceImpl implements DeliveryAgentService {
 		shipment.setUpdatedAt(now);
 
 		shipmentRepository.save(shipment);
+	}
+
+	private void addTrackingEvent(Shipment shipment, ShipmentStatus status, String location, String description,
+			String performedBy, String notes) {
+
+		TrackingHistory event = new TrackingHistory();
+
+		event.setStatus(status);
+		event.setTimestamp(LocalDateTime.now());
+		event.setLocation(location);
+		event.setDescription(description);
+		event.setPerformedBy(performedBy);
+		event.setNotes(notes);
+
+		shipment.getTrackingHistory().add(event);
+	}
+
+	@Override
+	public List<AgentCodDetailsDto> getAssignedCodShipments() {
+
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		User deliveryAgent = userRepository.findByUsername(username)
+				.orElseThrow(() -> new ResourceNotFoundException("Current user not found"));
+
+		if (deliveryAgent.getRole() != Role.DELIVERY_AGENT) {
+			throw new UnauthorizedException("Only delivery agents can view assigned COD shipments");
+		}
+
+		String deliveryAgentId = deliveryAgent.getId();
+
+		return shipmentRepository.findByAssignedDeliveryAgentIdAndPaymentMethod(deliveryAgentId, PaymentMethod.COD)
+				.stream()
+				.map(shipment -> new AgentCodDetailsDto(shipment.getId(), shipment.getTrackingNumber(),
+						shipment.getPaymentMethod(), shipment.getCodAmount(), shipment.getCodCollectionStatus()))
+				.toList();
+	}
+
+	@Override
+	public CodCollectionResponseDto collectCod(String shipmentId, CodCollectionRequestDto request) {
+
+		// Identify the authenticated agent from the security context.
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		User deliveryAgent = userRepository.findByUsername(username)
+				.orElseThrow(() -> new ResourceNotFoundException("Current user not found"));
+
+		if (deliveryAgent.getRole() != Role.DELIVERY_AGENT) {
+			throw new UnauthorizedException("Only delivery agents can collect COD");
+		}
+
+		String deliveryAgentId = deliveryAgent.getId();
+
+		// Find the shipment.
+		Shipment shipment = shipmentRepository.findById(shipmentId)
+				.orElseThrow(() -> new ResourceNotFoundException("Shipment not found"));
+
+		// The agent must be assigned to this exact shipment.
+		if (!deliveryAgentId.equals(shipment.getAssignedDeliveryAgentId())) {
+			throw new UnauthorizedException("You are not assigned to this shipment");
+		}
+
+		// Only COD shipments can use this endpoint.
+		if (shipment.getPaymentMethod() != PaymentMethod.COD) {
+			throw new BadRequestException("COD collection is allowed only for COD shipments");
+		}
+
+		// Prevent duplicate collection.
+		if (shipment.getCodCollectionStatus() != CodCollectionStatus.PENDING) {
+			throw new BadRequestException("COD collection has already been processed");
+		}
+
+		BigDecimal expectedAmount = shipment.getCodAmount();
+		BigDecimal actualAmount = request.getCollectedAmount();
+
+		if (expectedAmount == null || expectedAmount.signum() <= 0) {
+			throw new BadRequestException("Shipment has an invalid COD amount");
+		}
+
+		// This version requires exact payment; partial collection is not allowed.
+		if (actualAmount == null || actualAmount.compareTo(expectedAmount) != 0) {
+			throw new BadRequestException("Collected amount must equal the expected COD amount of " + expectedAmount);
+		}
+
+		// Record collection details.
+		LocalDateTime collectedAt = LocalDateTime.now();
+
+		shipment.setCodCollectedAmount(actualAmount);
+		shipment.setCodCollectedAt(collectedAt);
+		shipment.setCodCollectedByAgentId(deliveryAgentId);
+		shipment.setCodCollectionNotes(request.getNotes());
+		shipment.setCodCollectionStatus(CodCollectionStatus.COLLECTED);
+
+		// Persist the updated shipment.
+		Shipment savedShipment = shipmentRepository.save(shipment);
+
+		return new CodCollectionResponseDto(savedShipment.getId(), savedShipment.getTrackingNumber(),
+				savedShipment.getCodAmount(), savedShipment.getCodCollectedAmount(),
+				savedShipment.getCodCollectionStatus(), savedShipment.getCodCollectedAt(),
+				savedShipment.getCodCollectedByAgentId(), savedShipment.getCodCollectionNotes());
 	}
 }

@@ -11,8 +11,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lovish.logistic.platform.dto.AgentCodDetailsDto;
+import com.lovish.logistic.platform.dto.AgentPerformanceStatsDto;
+import com.lovish.logistic.platform.dto.CodCollectionRequestDto;
+import com.lovish.logistic.platform.dto.CodCollectionResponseDto;
+import com.lovish.logistic.platform.dto.DeliveryOtpVerificationRequestDto;
 import com.lovish.logistic.platform.dto.FailedDeliveryRequestDto;
 import com.lovish.logistic.platform.dto.ShipmentSummaryDto;
+import com.lovish.logistic.platform.service.AgentPerformanceService;
 import com.lovish.logistic.platform.service.DeliveryAgentService;
 
 import jakarta.validation.Valid;
@@ -23,10 +29,13 @@ import jakarta.validation.Valid;
 public class DeliveryAgentController {
 
 	private final DeliveryAgentService deliveryAgentService;
+	private final AgentPerformanceService agentPerformanceService;
 
-	public DeliveryAgentController(DeliveryAgentService deliveryAgentService) {
-
+	public DeliveryAgentController(DeliveryAgentService deliveryAgentService,
+			AgentPerformanceService agentPerformanceService) {
+		super();
 		this.deliveryAgentService = deliveryAgentService;
+		this.agentPerformanceService = agentPerformanceService;
 	}
 
 	@GetMapping("/shipments")
@@ -77,12 +86,14 @@ public class DeliveryAgentController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PatchMapping("/shipments/{shipmentId}/delivered")
-	public ResponseEntity<Void> markDelivered(@PathVariable String shipmentId) {
+	@PatchMapping("/shipments/{shipmentId}/deliver")
+	@PreAuthorize("hasRole('DELIVERY_AGENT')")
+	public ResponseEntity<Void> markDelivered(@PathVariable String shipmentId,
+			@Valid @RequestBody DeliveryOtpVerificationRequestDto request) {
 
-		deliveryAgentService.markDelivered(shipmentId);
+		deliveryAgentService.markDelivered(shipmentId, request.getOtp());
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.noContent().build();
 	}
 
 	@PatchMapping("/shipments/{shipmentId}/failed-delivery")
@@ -92,5 +103,26 @@ public class DeliveryAgentController {
 		deliveryAgentService.markFailedDelivery(shipmentId, request);
 
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/statistics")
+	public ResponseEntity<AgentPerformanceStatsDto> getPerformanceStatistics() {
+
+		AgentPerformanceStatsDto response = agentPerformanceService.getCurrentAgentPerformance();
+
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/shipments/cod")
+	public ResponseEntity<List<AgentCodDetailsDto>> getAssignedCodShipments() {
+
+		return ResponseEntity.ok(deliveryAgentService.getAssignedCodShipments());
+	}
+
+	@PatchMapping("/shipments/{shipmentId}/cod-collection")
+	public ResponseEntity<CodCollectionResponseDto> collectCod(@PathVariable String shipmentId,
+			@Valid @RequestBody CodCollectionRequestDto request) {
+
+		return ResponseEntity.ok(deliveryAgentService.collectCod(shipmentId, request));
 	}
 }

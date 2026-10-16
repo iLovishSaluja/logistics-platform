@@ -19,25 +19,11 @@ public class Hub {
 
 	private boolean active;
 
+	private boolean automaticAssignmentEnabled;
+
 	private LocalDateTime createdAt;
 
 	private LocalDateTime updatedAt;
-
-	public Hub() {
-		super();
-	}
-
-	public Hub(String id, String name, String code, Address address, boolean active, LocalDateTime createdAt,
-			LocalDateTime updatedAt) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.code = code;
-		this.address = address;
-		this.active = active;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-	}
 
 	public String getId() {
 		return id;
@@ -77,6 +63,14 @@ public class Hub {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public boolean isAutomaticAssignmentEnabled() {
+		return automaticAssignmentEnabled;
+	}
+
+	public void setAutomaticAssignmentEnabled(boolean automaticAssignmentEnabled) {
+		this.automaticAssignmentEnabled = automaticAssignmentEnabled;
 	}
 
 	public LocalDateTime getCreatedAt() {

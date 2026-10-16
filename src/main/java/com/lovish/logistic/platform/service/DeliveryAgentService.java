@@ -2,6 +2,9 @@ package com.lovish.logistic.platform.service;
 
 import java.util.List;
 
+import com.lovish.logistic.platform.dto.AgentCodDetailsDto;
+import com.lovish.logistic.platform.dto.CodCollectionRequestDto;
+import com.lovish.logistic.platform.dto.CodCollectionResponseDto;
 import com.lovish.logistic.platform.dto.FailedDeliveryRequestDto;
 import com.lovish.logistic.platform.dto.ShipmentSummaryDto;
 
@@ -21,7 +24,11 @@ public interface DeliveryAgentService {
 
 	void markOutForDelivery(String shipmentId);
 
-	void markDelivered(String shipmentId);
+	void markDelivered(String shipmentId, String otp);
 
 	void markFailedDelivery(String shipmentId, FailedDeliveryRequestDto request);
+
+	List<AgentCodDetailsDto> getAssignedCodShipments();
+
+	CodCollectionResponseDto collectCod(String shipmentId, CodCollectionRequestDto request);
 }

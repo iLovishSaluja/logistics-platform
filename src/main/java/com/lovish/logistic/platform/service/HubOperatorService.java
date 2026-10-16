@@ -10,4 +10,10 @@ public interface HubOperatorService {
 
 	void markPickupFromHub(String shipmentId);
 
+	void toggleAutomaticAssignment(boolean enabled);
+
+	void receiveShipment(String shipmentId);
+	
+	 void dispatchShipment(String shipmentId);
+
 }

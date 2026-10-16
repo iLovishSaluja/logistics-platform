@@ -385,4 +385,185 @@ public class HubOperatorServiceImpl implements HubOperatorService {
 
 		shipmentRepository.save(shipment);
 	}
+
+	@Override
+	public void toggleAutomaticAssignment(boolean enabled) {
+
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		User hubOperator = userRepository.findByUsername(username)
+				.orElseThrow(() -> new ResourceNotFoundException("Current hub operator not found"));
+
+		Hub hub = hubRepository.findById(hubOperator.getHubId())
+				.orElseThrow(() -> new ResourceNotFoundException("Hub assigned to hub operator not found"));
+
+		if (!hub.isActive()) {
+			throw new BadRequestException("Cannot change automatic assignment for an inactive hub");
+		}
+
+		hub.setAutomaticAssignmentEnabled(enabled);
+		hub.setUpdatedAt(LocalDateTime.now());
+
+		hubRepository.save(hub);
+	}
+
+	@Override
+	public void receiveShipment(String shipmentId) {
+
+		// 1. Get currently logged-in user
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		User hubOperator = userRepository.findByUsername(username)
+				.orElseThrow(() -> new ResourceNotFoundException("Current user not found"));
+
+		// 2. Verify logged-in user is a Hub Operator
+		if (hubOperator.getRole() != Role.HUB_OPERATOR) {
+			throw new UnauthorizedException("Only a Hub Operator can perform this operation");
+		}
+
+		// 3. Verify Hub Operator is assigned to a Hub
+		if (hubOperator.getHubId() == null || hubOperator.getHubId().isBlank()) {
+			throw new BadRequestException("Hub Operator is not assigned to any hub");
+		}
+
+		// 4. Get Hub
+		Hub hub = hubRepository.findById(hubOperator.getHubId())
+				.orElseThrow(() -> new ResourceNotFoundException("Hub not found with id: " + hubOperator.getHubId()));
+
+		// 5. Verify Hub is active
+		if (!hub.isActive()) {
+			throw new BadRequestException("Cannot operate from an inactive hub");
+		}
+
+		// 6. Get Shipment
+		Shipment shipment = shipmentRepository.findById(shipmentId)
+				.orElseThrow(() -> new ResourceNotFoundException("Shipment not found with id: " + shipmentId));
+
+		// 7. Verify shipment has a current hub
+		if (shipment.getCurrentHubId() == null || shipment.getCurrentHubId().isBlank()) {
+			throw new BadRequestException("Shipment is not currently assigned to any hub");
+		}
+
+		// 8. Verify shipment currently belongs to this Hub
+		if (!shipment.getCurrentHubId().equals(hub.getId())) {
+			throw new UnauthorizedException("You are not authorized to receive this shipment at this hub");
+		}
+
+		// 9. Shipment must be in transit
+		if (shipment.getStatus() != ShipmentStatus.IN_TRANSIT) {
+			throw new BadRequestException("Only shipments in transit can be received at a hub");
+		}
+
+		// 10. Verify destination hub exists on the shipment
+		if (shipment.getDestinationHubId() == null || shipment.getDestinationHubId().isBlank()) {
+			throw new BadRequestException("Shipment does not have a destination hub");
+		}
+
+		// 11. Verify this Hub is the shipment's destination Hub
+		if (!shipment.getDestinationHubId().equals(hub.getId())) {
+			throw new BadRequestException(
+					"Shipment cannot be received at this hub because it is not the destination hub");
+		}
+
+		// 12. Shipment should not have an active delivery-agent assignment
+		if (shipment.getAssignedDeliveryAgentId() != null) {
+			throw new BadRequestException("Shipment still has an active delivery-agent assignment");
+		}
+
+		// 13. Record shipment receipt
+		LocalDateTime now = LocalDateTime.now();
+
+		TrackingHistory trackingHistory = new TrackingHistory();
+
+		trackingHistory.setStatus(ShipmentStatus.IN_TRANSIT);
+		trackingHistory.setTimestamp(now);
+		trackingHistory.setLocation(hub.getAddress().getCity());
+		trackingHistory.setPerformedBy(hubOperator.getId());
+		trackingHistory.setDescription("Shipment received and scanned at destination hub");
+		trackingHistory.setNotes("Shipment received by Hub Operator");
+
+		if (shipment.getTrackingHistory() == null) {
+			shipment.setTrackingHistory(new ArrayList<>());
+		}
+
+		shipment.getTrackingHistory().add(trackingHistory);
+
+		// 14. Update current hub
+		shipment.setCurrentHubId(hub.getId());
+
+		// 15. Update timestamp
+		shipment.setUpdatedAt(now);
+
+		// 16. Save shipment
+		shipmentRepository.save(shipment);
+	}
+
+	@Override
+	public void dispatchShipment(String shipmentId) {
+
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		User hubOperator = userRepository.findByUsername(username)
+				.orElseThrow(() -> new ResourceNotFoundException("Current hub operator not found"));
+
+		if (hubOperator.getRole() != Role.HUB_OPERATOR) {
+			throw new BadRequestException("Only hub operators can dispatch shipments");
+		}
+
+		if (hubOperator.getHubId() == null) {
+			throw new BadRequestException("Hub operator is not assigned to any hub");
+		}
+
+		Hub hub = hubRepository.findById(hubOperator.getHubId())
+				.orElseThrow(() -> new ResourceNotFoundException("Hub assigned to hub operator not found"));
+
+		if (!hub.isActive()) {
+			throw new BadRequestException("Cannot dispatch shipment from an inactive hub");
+		}
+
+		Shipment shipment = shipmentRepository.findById(shipmentId)
+				.orElseThrow(() -> new ResourceNotFoundException("Shipment not found"));
+
+		if (shipment.getCurrentHubId() == null) {
+			throw new BadRequestException("Shipment is not currently associated with a hub");
+		}
+
+		if (!hub.getId().equals(shipment.getCurrentHubId())) {
+			throw new BadRequestException("Shipment does not belong to your hub");
+		}
+
+		if (shipment.getDestinationHubId() == null) {
+			throw new BadRequestException("Shipment destination hub is not configured");
+		}
+
+		if (hub.getId().equals(shipment.getDestinationHubId())) {
+			throw new BadRequestException("Shipment is already at its destination hub");
+		}
+
+		if (shipment.getStatus() != ShipmentStatus.IN_TRANSIT) {
+			throw new BadRequestException("Only in-transit shipments can be dispatched");
+		}
+
+		addTrackingEvent(shipment, ShipmentStatus.IN_TRANSIT, hub.getAddress().getCity(),
+				"Shipment dispatched from hub", username, "Shipment dispatched towards destination hub");
+
+		shipment.setUpdatedAt(LocalDateTime.now());
+
+		shipmentRepository.save(shipment);
+	}
+
+	private void addTrackingEvent(Shipment shipment, ShipmentStatus status, String location, String description,
+			String performedBy, String notes) {
+
+		TrackingHistory event = new TrackingHistory();
+
+		event.setStatus(status);
+		event.setTimestamp(LocalDateTime.now());
+		event.setLocation(location);
+		event.setDescription(description);
+		event.setPerformedBy(performedBy);
+		event.setNotes(notes);
+
+		shipment.getTrackingHistory().add(event);
+	}
 }
