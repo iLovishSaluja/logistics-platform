@@ -1,0 +1,550 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Platform - Razorpay Payment</title>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px 20px;
+            background: #1769ff;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            background: #f2f2f2;
+            padding: 12px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Logistics Platform</h2>
+    <p>Online Payment Verification Test</p>
+
+    <div class="form-group">
+        <label for="shipmentId">Shipment ID</label>
+        <input
+            id="shipmentId"
+            placeholder="Enter valid Shipment ID"
+            autocomplete="off">
+    </div>
+
+    <div class="form-group">
+        <label for="token">Customer Access Token (JWT)</label>
+        <input
+            id="token"
+            type="password"
+            placeholder="Paste fresh customer Bearer token"
+            autocomplete="off">
+    </div>
+
+    <button id="payButton" type="button">Pay with Razorpay</button>
+
+    <h3>Transaction Status</h3>
+    <pre id="result">Ready to initiate payment.</pre>
+
+    <script>
+        const result = document.getElementById("result");
+        const payButton = document.getElementById("payButton");
+
+        let checkoutInProgress = false;
+
+        payButton.addEventListener("click", async function () {
+            if (checkoutInProgress) {
+                return;
+            }
+
+            const shipmentId =
+                document.getElementById("shipmentId").value.trim();
+            const token =
+                document.getElementById("token").value.trim();
+
+            if (!shipmentId || !token) {
+                result.textContent =
+                    "Please provide both Shipment ID and Customer Access Token.";
+                return;
+            }
+
+            if (!window.Razorpay) {
+                result.textContent =
+                    "Razorpay Checkout SDK failed to load. Check your connection.";
+                return;
+            }
+
+            checkoutInProgress = true;
+            payButton.disabled = true;
+
+            let checkoutOpened = false;
+
+            try {
+                result.textContent =
+                    "1. Creating Razorpay order from backend...";
+
+                const orderApiResponse = await fetch(
+                    `/api/customer/payments/shipments/${encodeURIComponent(shipmentId)}/order`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + token
+                        }
+                    }
+                );
+
+                if (!orderApiResponse.ok) {
+                    const errorText = await orderApiResponse.text();
+                    throw new Error(
+                        `Order creation failed: ${orderApiResponse.status} ${errorText}`
+                    );
+                }
+
+                const orderData = await orderApiResponse.json();
+
+                if (!orderData.razorpayKeyId
+                    || !orderData.razorpayOrderId
+                    || orderData.amount == null
+                    || !orderData.currency) {
+                    throw new Error(
+                        "Backend returned incomplete Razorpay order details."
+                    );
+                }
+
+                result.textContent =
+                    "2. Order created. Opening Razorpay Checkout...";
+
+                const options = {
+                    key: orderData.razorpayKeyId,
+                    amount: Math.round(Number(orderData.amount) * 100),
+                    currency: orderData.currency,
+                    name: "Logistics Platform",
+                    description: "Shipment Payment",
+                    order_id: orderData.razorpayOrderId,
+
+                    handler: async function (response) {
+                        result.textContent =
+                            "3. Payment response received. Verifying with backend...";
+
+                        try {
+                            const verificationData = {
+                                razorpayOrderId: response.razorpay_order_id,
+                                razorpayPaymentId: response.razorpay_payment_id,
+                                razorpaySignature: response.razorpay_signature
+                            };
+
+                            const verifyApiResponse = await fetch(
+                                "/api/customer/payments/verify",
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "Authorization": "Bearer " + token
+                                    },
+                                    body: JSON.stringify(verificationData)
+                                }
+                            );
+
+                            const responseText =
+                                await verifyApiResponse.text();
+
+                            let verifyResult;
+
+                            try {
+                                verifyResult = JSON.parse(responseText);
+                            } catch {
+                                verifyResult = { response: responseText };
+                            }
+
+                            if (verifyApiResponse.ok
+                                && verifyResult.status === "PAID") {
+                                result.textContent =
+                                    "SUCCESS: Backend verified the payment as PAID.\n\n"
+                                    + JSON.stringify(verifyResult, null, 2);
+                            } else if (verifyApiResponse.ok) {
+                                result.textContent =
+                                    "PAYMENT NOT CONFIRMED AS PAID.\n"
+                                    + "Current backend payment status: "
+                                    + (verifyResult.status || "Unknown")
+                                    + "\nDo not treat this transaction as successful yet.\n\n"
+                                    + JSON.stringify(verifyResult, null, 2);
+                            } else {
+                                result.textContent =
+                                    "VERIFICATION FAILED. Check the backend status before retrying.\n\n"
+                                    + JSON.stringify(verifyResult, null, 2);
+                            }
+                        } catch (error) {
+                            result.textContent =
+                                "Could not confirm payment with the backend.\n"
+                                + error.message
+                                + "\nCheck the payment status before attempting another payment.";
+                        } finally {
+                            checkoutInProgress = false;
+                            payButton.disabled = false;
+                        }
+                    },
+
+                    theme: {
+                        color: "#1769ff"
+                    },
+
+                    modal: {
+                        ondismiss: function () {
+                            result.textContent =
+                                "Checkout closed. Payment status has not been confirmed by this page. "
+                                + "Check your payment history or backend status before retrying.";
+
+                            checkoutInProgress = false;
+                            payButton.disabled = false;
+                        }
+                    }
+                };
+
+                const checkout = new Razorpay(options);
+
+                checkout.on("payment.failed", function (response) {
+                    const error = response.error || {};
+
+                    result.textContent =
+                        "Razorpay reported a payment failure.\n"
+                        + "Code: " + (error.code || "Unavailable") + "\n"
+                        + "Description: "
+                        + (error.description || "No description provided")
+                        + "\n\nThe backend webhook or a subsequent status check "
+                        + "must determine the persisted payment status.";
+
+                    checkoutInProgress = false;
+                    payButton.disabled = false;
+                });
+
+                checkout.open();
+                checkoutOpened = true;
+
+            } catch (error) {
+                result.textContent =
+                    "Payment Error:\n" + error.message;
+
+                checkoutInProgress = false;
+                payButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
+``````html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Platform - Razorpay Payment</title>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px 20px;
+            background: #1769ff;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            background: #f2f2f2;
+            padding: 12px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Logistics Platform</h2>
+    <p>Online Payment Verification Test</p>
+
+    <div class="form-group">
+        <label for="shipmentId">Shipment ID</label>
+        <input
+            id="shipmentId"
+            placeholder="Enter valid Shipment ID"
+            autocomplete="off">
+    </div>
+
+    <div class="form-group">
+        <label for="token">Customer Access Token (JWT)</label>
+        <input
+            id="token"
+            type="password"
+            placeholder="Paste fresh customer Bearer token"
+            autocomplete="off">
+    </div>
+
+    <button id="payButton" type="button">Pay with Razorpay</button>
+
+    <h3>Transaction Status</h3>
+    <pre id="result">Ready to initiate payment.</pre>
+
+    <script>
+        const result = document.getElementById("result");
+        const payButton = document.getElementById("payButton");
+
+        let checkoutInProgress = false;
+
+        payButton.addEventListener("click", async function () {
+            if (checkoutInProgress) {
+                return;
+            }
+
+            const shipmentId =
+                document.getElementById("shipmentId").value.trim();
+            const token =
+                document.getElementById("token").value.trim();
+
+            if (!shipmentId || !token) {
+                result.textContent =
+                    "Please provide both Shipment ID and Customer Access Token.";
+                return;
+            }
+
+            if (!window.Razorpay) {
+                result.textContent =
+                    "Razorpay Checkout SDK failed to load. Check your connection.";
+                return;
+            }
+
+            checkoutInProgress = true;
+            payButton.disabled = true;
+
+            let checkoutOpened = false;
+
+            try {
+                result.textContent =
+                    "1. Creating Razorpay order from backend...";
+
+                const orderApiResponse = await fetch(
+                    `/api/customer/payments/shipments/${encodeURIComponent(shipmentId)}/order`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + token
+                        }
+                    }
+                );
+
+                if (!orderApiResponse.ok) {
+                    const errorText = await orderApiResponse.text();
+                    throw new Error(
+                        `Order creation failed: ${orderApiResponse.status} ${errorText}`
+                    );
+                }
+
+                const orderData = await orderApiResponse.json();
+
+                if (!orderData.razorpayKeyId
+                    || !orderData.razorpayOrderId
+                    || orderData.amount == null
+                    || !orderData.currency) {
+                    throw new Error(
+                        "Backend returned incomplete Razorpay order details."
+                    );
+                }
+
+                result.textContent =
+                    "2. Order created. Opening Razorpay Checkout...";
+
+                const options = {
+                    key: orderData.razorpayKeyId,
+                    amount: Math.round(Number(orderData.amount) * 100),
+                    currency: orderData.currency,
+                    name: "Logistics Platform",
+                    description: "Shipment Payment",
+                    order_id: orderData.razorpayOrderId,
+
+                    handler: async function (response) {
+                        result.textContent =
+                            "3. Payment response received. Verifying with backend...";
+
+                        try {
+                            const verificationData = {
+                                razorpayOrderId: response.razorpay_order_id,
+                                razorpayPaymentId: response.razorpay_payment_id,
+                                razorpaySignature: response.razorpay_signature
+                            };
+
+                            const verifyApiResponse = await fetch(
+                                "/api/customer/payments/verify",
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "Authorization": "Bearer " + token
+                                    },
+                                    body: JSON.stringify(verificationData)
+                                }
+                            );
+
+                            const responseText =
+                                await verifyApiResponse.text();
+
+                            let verifyResult;
+
+                            try {
+                                verifyResult = JSON.parse(responseText);
+                            } catch {
+                                verifyResult = { response: responseText };
+                            }
+
+                            if (verifyApiResponse.ok
+                                && verifyResult.status === "PAID") {
+                                result.textContent =
+                                    "SUCCESS: Backend verified the payment as PAID.\n\n"
+                                    + JSON.stringify(verifyResult, null, 2);
+                            } else if (verifyApiResponse.ok) {
+                                result.textContent =
+                                    "PAYMENT NOT CONFIRMED AS PAID.\n"
+                                    + "Current backend payment status: "
+                                    + (verifyResult.status || "Unknown")
+                                    + "\nDo not treat this transaction as successful yet.\n\n"
+                                    + JSON.stringify(verifyResult, null, 2);
+                            } else {
+                                result.textContent =
+                                    "VERIFICATION FAILED. Check the backend status before retrying.\n\n"
+                                    + JSON.stringify(verifyResult, null, 2);
+                            }
+                        } catch (error) {
+                            result.textContent =
+                                "Could not confirm payment with the backend.\n"
+                                + error.message
+                                + "\nCheck the payment status before attempting another payment.";
+                        } finally {
+                            checkoutInProgress = false;
+                            payButton.disabled = false;
+                        }
+                    },
+
+                    theme: {
+                        color: "#1769ff"
+                    },
+
+                    modal: {
+                        ondismiss: function () {
+                            result.textContent =
+                                "Checkout closed. Payment status has not been confirmed by this page. "
+                                + "Check your payment history or backend status before retrying.";
+
+                            checkoutInProgress = false;
+                            payButton.disabled = false;
+                        }
+                    }
+                };
+
+                const checkout = new Razorpay(options);
+
+                checkout.on("payment.failed", function (response) {
+                    const error = response.error || {};
+
+                    result.textContent =
+                        "Razorpay reported a payment failure.\n"
+                        + "Code: " + (error.code || "Unavailable") + "\n"
+                        + "Description: "
+                        + (error.description || "No description provided")
+                        + "\n\nThe backend webhook or a subsequent status check "
+                        + "must determine the persisted payment status.";
+
+                    checkoutInProgress = false;
+                    payButton.disabled = false;
+                });
+
+                checkout.open();
+                checkoutOpened = true;
+
+            } catch (error) {
+                result.textContent =
+                    "Payment Error:\n" + error.message;
+
+                checkoutInProgress = false;
+                payButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
