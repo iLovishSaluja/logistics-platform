@@ -63,6 +63,7 @@ Designed around secure authentication, shipment lifecycle management, server-sid
 - [📈 Delivery Agent Performance Statistics](#-delivery-agent-performance-statistics)
 - [🧪 Delivery Attempts & Failed Delivery](#-delivery-attempts--failed-delivery)
 - [💳 Payments & COD](#-payments--cod)
+- [💳 Online Payment (Razorpay)](#-online-payment-razorpay)
 - [💰 Payment Data Model & Business Rules](#-payment-data-model--business-rules)
 - [💵 COD Collection System](#-cod-collection-system)
 - [🧾 Admin COD Settlement](#-admin-cod-settlement)
@@ -221,7 +222,7 @@ The platform is being built to simulate the backend architecture and business wo
 | 💵 COD Collection | ✅ Completed |
 | 🧾 Admin COD Settlement | ✅ Completed |
 | 🧪 End-to-End Integration Testing (Postman) | ✅ Completed |
-| 💳 Online Payment Gateway Integration | ⏱️ Planned |
+| 💳 Online Payment Gateway Integration | ✅ Completed |
 | 🔔 Notifications | ⏱️ Planned |
 | 📄 Invoices & Ratings | ⏱️ Planned |
 | 📊 Reports & Audit Logging | ⏱️ Planned |
@@ -1408,6 +1409,22 @@ This makes the shipment available for customer collection from the designated hu
 # 💳 Payments & COD
 
 The platform supports both Cash on Delivery and online payment methods. The COD collection and settlement workflow is fully implemented; real online-gateway integration is planned.
+
+## 💳 Online Payment (Razorpay)
+
+### ✅ Completed Features
+
+- ✅ Razorpay order creation and payment verification
+- ✅ Secure payment signature verification
+- ✅ Payment status tracking and MongoDB persistence
+- ✅ Razorpay webhook integration for payment events
+- ✅ Admin-controlled full payment refunds
+- ✅ Refund status tracking (`PENDING`, `PROCESSED`, `FAILED`)
+- ✅ Refund webhook handling
+- ✅ Duplicate refund prevention
+- ✅ Webhook signature validation for security
+- ✅ Automatic payment status synchronization between payments and shipments
+- ✅ Support for online payments and Cash on Delivery (COD)
 
 ## ✅ Implemented COD Lifecycle
 
